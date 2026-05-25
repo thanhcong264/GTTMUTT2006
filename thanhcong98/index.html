@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặng Thành Công | Lập trình viên chuyên nghiệp</title>
+    <meta name="description"
+        content="Portfolio cá nhân của Đặng Thành Công - Lập trình viên chuyên nghiệp chuyên về phát triển Web, ứng dụng di động và các giải pháp phần mềm hiện đại.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dark-theme">
+    <!-- Background Blur Decorative Elements -->
+    <div class="bg-blur blur-1"></div>
+    <div class="bg-blur blur-2"></div>
+    <div class="bg-blur blur-3"></div>
+
+    <!-- Header / Navigation -->
+    <header id="main-header" class="header">
+        <div class="container nav-container">
+            <a href="#" class="logo" id="nav-logo">
+                <span class="logo-accent">&lt;</span> Thành Công <span class="logo-accent">/&gt;</span>
+            </a>
+
+            <nav class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li><a href="#hero" class="nav-link active" id="link-hero">Trang chủ</a></li>
+                    <li><a href="#about" class="nav-link" id="link-about">Giới thiệu</a></li>
+                    <li><a href="#skills" class="nav-link" id="link-skills">Kỹ năng</a></li>
+                    <li><a href="#projects" class="nav-link" id="link-projects">Dự án</a></li>
+                    <li><a href="#contact" class="nav-link" id="link-contact">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Chuyển đổi giao diện sáng tối">
+                    <i class="fa-solid fa-moon moon-icon"></i>
+                    <i class="fa-solid fa-sun sun-icon"></i>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Mở menu di động">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <span class="hero-tagline">Sáng tạo thông qua từng dòng code</span>
+                    <h1 class="hero-title">
+                        Xin chào, tôi là<br>
+                        <span class="highlight-text">Đặng Thành Công</span>
+                    </h1>
+                    <h2 class="hero-subtitle">
+                        Tôi là một <span id="typing-text" class="typing-text">Lập trình viên Fullstack</span><span
+                            class="cursor">|</span>
+                    </h2>
+                    <p class="hero-desc">
+                        Chuyên kiến tạo các sản phẩm web và ứng dụng tối ưu, hiệu năng cao với giao diện người dùng mượt
+                        mà và hệ thống backend ổn định, bảo mật.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn btn-primary" id="hero-btn-projects">
+                            Xem dự án <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="#contact" class="btn btn-outline" id="hero-btn-contact">
+                            Liên hệ <i class="fa-regular fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-image-wrapper">
+                    <div class="hero-card-glass">
+                        <div class="window-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="window-title">thanhcong.dev</span>
+                        </div>
+                        <div class="window-body">
+                            <pre><code class="code-editor"><span class="keyword">const</span> developer = {
+  name: <span class="string">'Đặng Thành Công'</span>,
+  role: <span class="string">'Lập trình viên'</span>,
+  skills: [
+    <span class="string">'Frontend'</span>, <span class="string">'Backend'</span>, 
+    <span class="string">'Database'</span>, <span class="string">'Cloud'</span>
+  ],
+  passion: <span class="string">'Xây dựng sản phẩm chất lượng'</span>,
+  code: () => {
+    <span class="keyword">return</span> <span class="string">'Coffee ☕ + Code 💻 = Success 🚀'</span>;
+  }
+};
+console.log(developer.code());</code></pre>
+                        </div>
+                    </div>
+                    <!-- Animated Tech Stack Orbit -->
+                    <div class="orbit-container">
+                        <div class="tech-icon icon-1" title="React"><i class="fa-brands fa-react"></i></div>
+                        <div class="tech-icon icon-2" title="Node.js"><i class="fa-brands fa-node-js"></i></div>
+                        <div class="tech-icon icon-3" title="JS/TS"><i class="fa-brands fa-js"></i></div>
+                        <div class="tech-icon icon-4" title="Python"><i class="fa-brands fa-python"></i></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="about-section scroll-offset">
+            <div class="container">
+                <div class="section-title-wrapper">
+                    <span class="section-subtitle">Về Tôi</span>
+                    <h2 class="section-title">Câu chuyện của tôi</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-info-card glass-panel">
+                        <h3>Tôi là ai?</h3>
+                        <p class="about-text">
+                            Tôi là một lập trình viên đầy nhiệt huyết và đam mê công nghệ. Tôi yêu thích việc giải quyết
+                            các bài toán hóc búa và chuyển tải các ý tưởng sáng tạo thành những ứng dụng thực tế hoạt
+                            động mượt mà, trực quan.
+                        </p>
+                        <p class="about-text">
+                            Với phương châm học tập không ngừng, tôi luôn cập nhật những công nghệ mới nhất để mang lại
+                            các giải pháp kỹ thuật tốt nhất cho dự án và đối tác của mình.
+                        </p>
+                        <div class="personal-info">
+                            <div class="info-item">
+                                <span class="info-label">Vị trí:</span>
+                                <span class="info-val">Triều Khúc, Hà Nội</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Ngôn ngữ:</span>
+                                <span class="info-val">Tiếng Việt, Tiếng Anh, Tiếng Trung</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Sở thích:</span>
+                                <span class="info-val">Lập trình, Đọc sách , Trà đá vỉa hè, Thể thao</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-stats-grid">
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon"><i class="fa-solid fa-code"></i></div>
+                            <div class="stat-number">2+</div>
+                            <div class="stat-label">Năm học & làm việc</div>
+                        </div>
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">Dự án hoàn thành</div>
+                        </div>
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Nhiệt huyết & Đam mê</div>
+                        </div>
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon"><i class="fa-solid fa-mug-hot"></i></div>
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">Giờ code & Ly cafe</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="skills-section scroll-offset">
+            <div class="container">
+                <div class="section-title-wrapper">
+                    <span class="section-subtitle">Chuyên Môn</span>
+                    <h2 class="section-title">Kỹ năng công nghệ</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <div class="skills-grid">
+                    <!-- Frontend Skills -->
+                    <div class="skills-category-card glass-panel">
+                        <div class="category-header">
+                            <i class="fa-solid fa-display category-icon"></i>
+                            <h3>Frontend Development</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">HTML5 / CSS3 / ES6+</span>
+                                    <span class="skill-percent">90%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 90%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">ReactJS / Next.js</span>
+                                    <span class="skill-percent">85%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 85%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Responsive Design (Mobile-First)</span>
+                                    <span class="skill-percent">95%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 95%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backend Skills -->
+                    <div class="skills-category-card glass-panel">
+                        <div class="category-header">
+                            <i class="fa-solid fa-server category-icon"></i>
+                            <h3>Backend Development</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Node.js (Express)</span>
+                                    <span class="skill-percent">80%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Cơ sở dữ liệu (MongoDB, SQL)</span>
+                                    <span class="skill-percent">75%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">RESTful APIs / GraphQL</span>
+                                    <span class="skill-percent">80%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools & Workflow -->
+                    <div class="skills-category-card glass-panel">
+                        <div class="category-header">
+                            <i class="fa-solid fa-screwdriver-wrench category-icon"></i>
+                            <h3>Công cụ & Công nghệ khác</h3>
+                        </div>
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Git / GitHub / Version Control</span>
+                                    <span class="skill-percent">90%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 90%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">Docker / Deployment (Vercel, Heroku)</span>
+                                    <span class="skill-percent">70%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 70%;"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-info">
+                                    <span class="skill-name">UI/UX Figma (Cơ bản)</span>
+                                    <span class="skill-percent">75%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="projects-section scroll-offset">
+            <div class="container">
+                <div class="section-title-wrapper">
+                    <span class="section-subtitle">Sản Phẩm</span>
+                    <h2 class="section-title">Dự án tiêu biểu</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <!-- Project Filters -->
+                <div class="project-filters">
+                    <button class="filter-btn active" data-filter="all">Tất Cả</button>
+                    <button class="filter-btn" data-filter="frontend">Frontend</button>
+                    <button class="filter-btn" data-filter="backend">Backend / Fullstack</button>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="projects-grid">
+                    <!-- Project 1 -->
+                    <div class="project-card glass-panel" data-category="frontend">
+                        <div class="project-img-wrapper">
+                            <div class="project-overlay">
+                                <div class="overlay-links">
+                                    <a href="#" class="overlay-link" title="Xem Code (GitHub)"
+                                        aria-label="Xem mã nguồn"><i class="fa-brands fa-github"></i></a>
+                                    <a href="#" class="overlay-link" title="Xem Demo trực tiếp"
+                                        aria-label="Xem bản demo"><i class="fa-solid fa-up-right-from-square"></i></a>
+                                </div>
+                            </div>
+                            <!-- Styled SVG Mockup instead of placeholders -->
+                            <svg class="project-mock-img" viewBox="0 0 400 220" width="100%" height="100%">
+                                <defs>
+                                    <linearGradient id="proj1-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4FACFE" />
+                                        <stop offset="100%" stop-color="#00F2FE" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#proj1-grad)" />
+                                <text x="50%" y="45%" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Outfit', sans-serif" font-weight="700" font-size="20">E-Commerce
+                                    Landing Page</text>
+                                <text x="50%" y="65%" text-anchor="middle" fill="#E2E8F0"
+                                    font-family="'Inter', sans-serif" font-size="12">Giao diện mua sắm trực tuyến hiện
+                                    đại</text>
+                                <rect x="150" y="160" width="100" height="25" rx="5" fill="rgba(255,255,255,0.2)"
+                                    stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+                                <text x="200" y="177" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Inter', sans-serif" font-weight="500" font-size="11">Xem Chi
+                                    Tiết</text>
+                            </svg>
+                        </div>
+                        <div class="project-details">
+                            <div class="project-tags">
+                                <span class="tag">ReactJS</span>
+                                <span class="tag">Styled CSS</span>
+                                <span class="tag">Framer Motion</span>
+                            </div>
+                            <h3 class="project-title">E-Commerce Modern Landing Page</h3>
+                            <p class="project-desc">
+                                Một trang web thương mại điện tử với trải nghiệm mượt mà, tích hợp bộ lọc sản phẩm thông
+                                minh, giỏ hàng động và hoạt ảnh tương tác bắt mắt.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card glass-panel" data-category="backend">
+                        <div class="project-img-wrapper">
+                            <div class="project-overlay">
+                                <div class="overlay-links">
+                                    <a href="#" class="overlay-link" title="Xem Code" aria-label="Xem mã nguồn"><i
+                                            class="fa-brands fa-github"></i></a>
+                                    <a href="#" class="overlay-link" title="Xem Demo" aria-label="Xem bản demo"><i
+                                            class="fa-solid fa-up-right-from-square"></i></a>
+                                </div>
+                            </div>
+                            <svg class="project-mock-img" viewBox="0 0 400 220" width="100%" height="100%">
+                                <defs>
+                                    <linearGradient id="proj2-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#F857A6" />
+                                        <stop offset="100%" stop-color="#FF5858" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#proj2-grad)" />
+                                <text x="50%" y="45%" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Outfit', sans-serif" font-weight="700" font-size="20">Task Management
+                                    App</text>
+                                <text x="50%" y="65%" text-anchor="middle" fill="#E2E8F0"
+                                    font-family="'Inter', sans-serif" font-size="12">Ứng dụng quản lý công việc
+                                    nhóm</text>
+                                <rect x="150" y="160" width="100" height="25" rx="5" fill="rgba(255,255,255,0.2)"
+                                    stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+                                <text x="200" y="177" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Inter', sans-serif" font-weight="500" font-size="11">Xem Chi
+                                    Tiết</text>
+                            </svg>
+                        </div>
+                        <div class="project-details">
+                            <div class="project-tags">
+                                <span class="tag">NodeJS</span>
+                                <span class="tag">MongoDB</span>
+                                <span class="tag">React</span>
+                            </div>
+                            <h3 class="project-title">Ứng Dụng Quản Lý Công Việc (TaskManager)</h3>
+                            <p class="project-desc">
+                                Hệ thống quản lý công việc và cộng tác thời gian thực cho đội ngũ phát triển. Hỗ trợ
+                                tạo, chia sẻ, bình luận và theo dõi tiến độ qua sơ đồ kéo thả.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card glass-panel" data-category="frontend">
+                        <div class="project-img-wrapper">
+                            <div class="project-overlay">
+                                <div class="overlay-links">
+                                    <a href="#" class="overlay-link" title="Xem Code" aria-label="Xem mã nguồn"><i
+                                            class="fa-brands fa-github"></i></a>
+                                    <a href="#" class="overlay-link" title="Xem Demo" aria-label="Xem bản demo"><i
+                                            class="fa-solid fa-up-right-from-square"></i></a>
+                                </div>
+                            </div>
+                            <svg class="project-mock-img" viewBox="0 0 400 220" width="100%" height="100%">
+                                <defs>
+                                    <linearGradient id="proj3-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#11998e" />
+                                        <stop offset="100%" stop-color="#38ef7d" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#proj3-grad)" />
+                                <text x="50%" y="45%" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Outfit', sans-serif" font-weight="700" font-size="20">Smart Weather
+                                    Dashboard</text>
+                                <text x="50%" y="65%" text-anchor="middle" fill="#E2E8F0"
+                                    font-family="'Inter', sans-serif" font-size="12">Dự báo thời tiết thông minh theo
+                                    thời gian thực</text>
+                                <rect x="150" y="160" width="100" height="25" rx="5" fill="rgba(255,255,255,0.2)"
+                                    stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+                                <text x="200" y="177" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Inter', sans-serif" font-weight="500" font-size="11">Xem Chi
+                                    Tiết</text>
+                            </svg>
+                        </div>
+                        <div class="project-details">
+                            <div class="project-tags">
+                                <span class="tag">JavaScript</span>
+                                <span class="tag">OpenWeather API</span>
+                                <span class="tag">CSS Grid</span>
+                            </div>
+                            <h3 class="project-title">Bảng Điều Khiển Dự Báo Thời Tiết</h3>
+                            <p class="project-desc">
+                                Ứng dụng dự báo thời tiết trực quan với đồ thị lượng mưa, nhiệt độ động và gợi ý trang
+                                phục/hoạt động phù hợp dựa trên thuật toán tích hợp.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card glass-panel" data-category="backend">
+                        <div class="project-img-wrapper">
+                            <div class="project-overlay">
+                                <div class="overlay-links">
+                                    <a href="#" class="overlay-link" title="Xem Code" aria-label="Xem mã nguồn"><i
+                                            class="fa-brands fa-github"></i></a>
+                                    <a href="#" class="overlay-link" title="Xem Demo" aria-label="Xem bản demo"><i
+                                            class="fa-solid fa-up-right-from-square"></i></a>
+                                </div>
+                            </div>
+                            <svg class="project-mock-img" viewBox="0 0 400 220" width="100%" height="100%">
+                                <defs>
+                                    <linearGradient id="proj4-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#FC466B" />
+                                        <stop offset="100%" stop-color="#3F5EFB" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#proj4-grad)" />
+                                <text x="50%" y="45%" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Outfit', sans-serif" font-weight="700" font-size="20">Smart REST API
+                                    Gateway</text>
+                                <text x="50%" y="65%" text-anchor="middle" fill="#E2E8F0"
+                                    font-family="'Inter', sans-serif" font-size="12">Hệ thống phân luồng API tối
+                                    ưu</text>
+                                <rect x="150" y="160" width="100" height="25" rx="5" fill="rgba(255,255,255,0.2)"
+                                    stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+                                <text x="200" y="177" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Inter', sans-serif" font-weight="500" font-size="11">Xem Chi
+                                    Tiết</text>
+                            </svg>
+                        </div>
+                        <div class="project-details">
+                            <div class="project-tags">
+                                <span class="tag">Express</span>
+                                <span class="tag">Redis Cache</span>
+                                <span class="tag">Docker</span>
+                            </div>
+                            <h3 class="project-title">Hệ Thống API Gateway Cho Microservices</h3>
+                            <p class="project-desc">
+                                Giải pháp định tuyến, kiểm soát truy cập và phân tải lưu lượng cho hệ thống
+                                microservices phức tạp, tích hợp cơ chế caching nhanh bằng Redis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="project-card glass-panel" data-category="backend">
+                        <div class="project-img-wrapper">
+                            <div class="project-overlay">
+                                <div class="overlay-links">
+                                    <a href="#" class="overlay-link" title="Xem Code" aria-label="Xem mã nguồn"><i
+                                            class="fa-brands fa-github"></i></a>
+                                    <a href="#" class="overlay-link btn-demo-odoo" title="Xem Demo Sinh Viên"
+                                        aria-label="Xem Demo Sinh Viên"><i
+                                            class="fa-solid fa-up-right-from-square"></i></a>
+                                </div>
+                            </div>
+                            <svg class="project-mock-img" viewBox="0 0 400 220" width="100%" height="100%">
+                                <defs>
+                                    <linearGradient id="proj6-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#f2994a" />
+                                        <stop offset="100%" stop-color="#f2c94c" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#proj6-grad)" />
+                                <text x="50%" y="45%" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Outfit', sans-serif" font-weight="700" font-size="20">Odoo Enterprise
+                                    ERP</text>
+                                <text x="50%" y="65%" text-anchor="middle" fill="#E2E8F0"
+                                    font-family="'Inter', sans-serif" font-size="12">Phần mềm quản lý doanh nghiệp toàn
+                                    diện</text>
+                                <rect x="150" y="160" width="100" height="25" rx="5" fill="rgba(255,255,255,0.2)"
+                                    stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+                                <text x="200" y="177" text-anchor="middle" fill="#FFFFFF"
+                                    font-family="'Inter', sans-serif" font-weight="500" font-size="11">Xem Chi
+                                    Tiết</text>
+                            </svg>
+                        </div>
+                        <div class="project-details">
+                            <div class="project-tags">
+                                <span class="tag">Odoo</span>
+                                <span class="tag">Python</span>
+                                <span class="tag">PostgreSQL</span>
+                            </div>
+                            <h3 class="project-title">Hệ Thống Quản Lý Doanh Nghiệp (Odoo ERP)</h3>
+                            <p class="project-desc">
+                                Giải pháp hoạch định nguồn lực doanh nghiệp (ERP) toàn diện trên nền tảng Odoo. Tích hợp
+                                sâu CRM, Kế toán, Bán hàng, Kho bãi và Sản xuất.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section scroll-offset">
+            <div class="container">
+                <div class="section-title-wrapper">
+                    <span class="section-subtitle">Thông Tin</span>
+                    <h2 class="section-title">Kết nối với tôi</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <div class="contact-grid">
+                    <!-- Contact Information -->
+                    <div class="contact-info glass-panel">
+                        <h3>Hãy nói về ý tưởng của bạn!</h3>
+                        <p class="contact-intro">
+                            Tôi luôn sẵn sàng thảo luận về các cơ hội hợp tác, dự án mới hoặc đơn giản là một cuộc trò
+                            chuyện thú vị về công nghệ lập trình.
+                        </p>
+
+                        <div class="contact-details-list">
+                            <div class="contact-item">
+                                <div class="contact-icon-wrapper">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="contact-label">Email cho tôi</span>
+                                    <a href="mailto:dangthanhcong345@gmail.com"
+                                        class="contact-value">dangthanhcong345@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon-wrapper">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="contact-label">Gọi trực tiếp</span>
+                                    <a href="tel:0383903467" class="contact-value">0383903467</a>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon-wrapper">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <span class="contact-label">Vị trí</span>
+                                    <span class="contact-value">Triều Khúc, Hà Nội</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="social-links-wrapper">
+                            <h4>Mạng xã hội:</h4>
+                            <div class="social-links">
+                                <a href="https://github.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="LinkedIn"><i
+                                        class="fa-brands fa-linkedin-in"></i></a>
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="Facebook"><i
+                                        class="fa-brands fa-facebook-f"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="contact-form-wrapper glass-panel">
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-group">
+                                <label for="form-name">Họ và Tên</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-user input-icon"></i>
+                                    <input type="text" id="form-name" required placeholder="Ví dụ: Nguyễn Văn A">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="form-email">Email Liên Hệ</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-envelope input-icon"></i>
+                                    <input type="email" id="form-email" required placeholder="name@company.com">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="form-message">Nội Dung Lời Nhắn</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-comment input-icon message-icon"></i>
+                                    <textarea id="form-message" rows="5" required
+                                        placeholder="Tôi có một dự án muốn thảo luận cùng bạn..."></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-submit" id="btn-submit-form">
+                                Gửi Tin Nhắn <i class="fa-regular fa-paper-plane"></i>
+                            </button>
+                        </form>
+
+                        <!-- Success/Notification Modal/Toast within the container -->
+                        <div id="form-toast" class="form-toast hidden">
+                            <div class="toast-content">
+                                <i class="fa-regular fa-circle-check toast-icon"></i>
+                                <div class="toast-text">
+                                    <h4>Thành công!</h4>
+                                    <p>Lời nhắn của bạn đã được gửi. Tôi sẽ liên hệ lại sớm nhất.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-left">
+                <p>&copy; 2026 Đặng Thành Công. Đã đăng ký bản quyền.</p>
+            </div>
+            <div class="footer-right">
+                <p>Thiết kế tinh tế với <i class="fa-solid fa-heart heart-pulse"></i> &amp; Pure CSS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top Button -->
+    <button id="back-to-top" class="back-to-top-btn" aria-label="Cuộn về đầu trang">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- Odoo Student Management Modal -->
+    <div id="odoo-modal" class="modal-overlay hidden">
+        <div class="modal-container glass-panel">
+            <button class="modal-close" aria-label="Đóng">&times;</button>
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-graduation-cap"></i> Quản lý Sinh viên (Odoo)</h3>
+                <p>Module mở rộng ERP hỗ trợ quản lý hồ sơ và điểm số</p>
+            </div>
+            <div class="modal-body">
+                <div class="odoo-dashboard">
+                    <div class="odoo-sidebar">
+                        <ul>
+                            <li class="odoo-tab-btn active" data-target="tab-students"><i class="fa-solid fa-users"></i>
+                                Sinh viên</li>
+                            <li class="odoo-tab-btn" data-target="tab-courses"><i class="fa-solid fa-book"></i> Khóa học
+                            </li>
+                            <li class="odoo-tab-btn" data-target="tab-grades"><i class="fa-solid fa-chart-line"></i>
+                                Bảng điểm</li>
+                        </ul>
+                    </div>
+                    <div class="odoo-content">
+                        <!-- Sinh viên Tab -->
+                        <div id="tab-students" class="odoo-tab-content">
+                            <div class="odoo-toolbar">
+                                <button class="btn-odoo-primary" id="btn-create-student"><i
+                                        class="fa-solid fa-plus"></i> Tạo mới</button>
+                                <input type="text" placeholder="Tìm kiếm sinh viên..." class="odoo-search"
+                                    id="search-students">
+                            </div>
+
+                            <!-- Form tạo mới sinh viên -->
+                            <div id="form-create-student" class="odoo-form-panel" style="display:none;">
+                                <div class="odoo-form-header">
+                                    <h4><i class="fa-solid fa-user-plus"></i> Tạo sinh viên mới</h4>
+                                    <button class="btn-odoo-cancel" id="btn-cancel-student"><i
+                                            class="fa-solid fa-xmark"></i></button>
+                                </div>
+                                <div class="odoo-form-body">
+                                    <div class="odoo-form-row">
+                                        <div class="odoo-form-group">
+                                            <label>Mã sinh viên <span class="required">*</span></label>
+                                            <input type="text" id="new-sv-id" placeholder="VD: SV004"
+                                                class="odoo-input">
+                                        </div>
+                                        <div class="odoo-form-group">
+                                            <label>Họ và Tên <span class="required">*</span></label>
+                                            <input type="text" id="new-sv-name" placeholder="VD: Phạm Thị D"
+                                                class="odoo-input">
+                                        </div>
+                                    </div>
+                                    <div class="odoo-form-row">
+                                        <div class="odoo-form-group">
+                                            <label>Ngành học <span class="required">*</span></label>
+                                            <select id="new-sv-major" class="odoo-input odoo-select">
+                                                <option value="">-- Chọn ngành --</option>
+                                                <option>Công nghệ thông tin</option>
+                                                <option>Kinh tế</option>
+                                                <option>Marketing</option>
+                                                <option>Kế toán</option>
+                                                <option>Quản trị kinh doanh</option>
+                                                <option>Kỹ thuật phần mềm</option>
+                                            </select>
+                                        </div>
+                                        <div class="odoo-form-group">
+                                            <label>Trạng thái</label>
+                                            <select id="new-sv-status" class="odoo-input odoo-select">
+                                                <option value="active">Đang học</option>
+                                                <option value="graduated">Đã tốt nghiệp</option>
+                                                <option value="suspended">Tạm dừng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="odoo-form-footer">
+                                    <button class="btn-odoo-save" id="btn-save-student"><i
+                                            class="fa-solid fa-floppy-disk"></i> Lưu & Đóng</button>
+                                    <button class="btn-odoo-discard" id="btn-discard-student"><i
+                                            class="fa-solid fa-rotate-left"></i> Huỷ bỏ</button>
+                                </div>
+                            </div>
+
+                            <table class="odoo-table" id="table-students">
+                                <thead>
+                                    <tr>
+                                        <th>Mã SV</th>
+                                        <th>Họ & Tên</th>
+                                        <th>Ngành học</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-students">
+                                    <tr>
+                                        <td>SV001</td>
+                                        <td>Nguyễn Văn A</td>
+                                        <td>Công nghệ thông tin</td>
+                                        <td><span class="status-badge active">Đang học</span></td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SV002</td>
+                                        <td>Trần Thị B</td>
+                                        <td>Kinh tế</td>
+                                        <td><span class="status-badge active">Đang học</span></td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SV003</td>
+                                        <td>Lê Hoàng C</td>
+                                        <td>Marketing</td>
+                                        <td><span class="status-badge graduated">Đã tốt nghiệp</span></td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Khóa học Tab -->
+                        <div id="tab-courses" class="odoo-tab-content" style="display: none;">
+                            <div class="odoo-toolbar">
+                                <button class="btn-odoo-primary" id="btn-create-course"><i class="fa-solid fa-plus"></i>
+                                    Thêm khóa học</button>
+                                <input type="text" placeholder="Tìm kiếm khóa học..." class="odoo-search"
+                                    id="search-courses">
+                            </div>
+
+                            <!-- Form tạo mới khóa học -->
+                            <div id="form-create-course" class="odoo-form-panel" style="display:none;">
+                                <div class="odoo-form-header">
+                                    <h4><i class="fa-solid fa-book-medical"></i> Thêm khóa học mới</h4>
+                                    <button class="btn-odoo-cancel" id="btn-cancel-course"><i
+                                            class="fa-solid fa-xmark"></i></button>
+                                </div>
+                                <div class="odoo-form-body">
+                                    <div class="odoo-form-row">
+                                        <div class="odoo-form-group">
+                                            <label>Mã khóa học <span class="required">*</span></label>
+                                            <input type="text" id="new-kh-id" placeholder="VD: KH103"
+                                                class="odoo-input">
+                                        </div>
+                                        <div class="odoo-form-group">
+                                            <label>Tên khóa học <span class="required">*</span></label>
+                                            <input type="text" id="new-kh-name" placeholder="VD: Lập trình Backend"
+                                                class="odoo-input">
+                                        </div>
+                                    </div>
+                                    <div class="odoo-form-row">
+                                        <div class="odoo-form-group">
+                                            <label>Giảng viên <span class="required">*</span></label>
+                                            <input type="text" id="new-kh-teacher" placeholder="VD: TS. Nguyễn F"
+                                                class="odoo-input">
+                                        </div>
+                                        <div class="odoo-form-group">
+                                            <label>Số tín chỉ <span class="required">*</span></label>
+                                            <input type="number" id="new-kh-credits" placeholder="VD: 3" min="1" max="6"
+                                                class="odoo-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="odoo-form-footer">
+                                    <button class="btn-odoo-save" id="btn-save-course"><i
+                                            class="fa-solid fa-floppy-disk"></i> Lưu & Đóng</button>
+                                    <button class="btn-odoo-discard" id="btn-discard-course"><i
+                                            class="fa-solid fa-rotate-left"></i> Huỷ bỏ</button>
+                                </div>
+                            </div>
+
+                            <table class="odoo-table" id="table-courses">
+                                <thead>
+                                    <tr>
+                                        <th>Mã KH</th>
+                                        <th>Tên khóa học</th>
+                                        <th>Giảng viên</th>
+                                        <th>Số tín chỉ</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-courses">
+                                    <tr>
+                                        <td>KH101</td>
+                                        <td>Lập trình Frontend</td>
+                                        <td>PGS. TS. Trần D</td>
+                                        <td>3</td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>KH102</td>
+                                        <td>Hệ quản trị CSDL</td>
+                                        <td>ThS. Lê E</td>
+                                        <td>4</td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Bảng điểm Tab -->
+                        <div id="tab-grades" class="odoo-tab-content" style="display: none;">
+                            <div class="odoo-toolbar">
+                                <button class="btn-odoo-primary" id="btn-create-grade"><i class="fa-solid fa-plus"></i>
+                                    Nhập điểm</button>
+                                <input type="text" placeholder="Lọc theo sinh viên..." class="odoo-search"
+                                    id="search-grades">
+                            </div>
+
+                            <!-- Form nhập điểm -->
+                            <div id="form-create-grade" class="odoo-form-panel" style="display:none;">
+                                <div class="odoo-form-header">
+                                    <h4><i class="fa-solid fa-chart-line"></i> Nhập điểm mới</h4>
+                                    <button class="btn-odoo-cancel" id="btn-cancel-grade"><i
+                                            class="fa-solid fa-xmark"></i></button>
+                                </div>
+                                <div class="odoo-form-body">
+                                    <div class="odoo-form-row">
+                                        <div class="odoo-form-group">
+                                            <label>Sinh viên <span class="required">*</span></label>
+                                            <input type="text" id="new-grade-sv" placeholder="VD: Nguyễn Văn A"
+                                                class="odoo-input">
+                                        </div>
+                                        <div class="odoo-form-group">
+                                            <label>Khóa học <span class="required">*</span></label>
+                                            <input type="text" id="new-grade-kh" placeholder="VD: Lập trình Frontend"
+                                                class="odoo-input">
+                                        </div>
+                                    </div>
+                                    <div class="odoo-form-row">
+                                        <div class="odoo-form-group">
+                                            <label>Điểm Giữa kỳ <span class="required">*</span></label>
+                                            <input type="number" id="new-grade-gk" placeholder="0 - 10" min="0" max="10"
+                                                step="0.1" class="odoo-input">
+                                        </div>
+                                        <div class="odoo-form-group">
+                                            <label>Điểm Cuối kỳ <span class="required">*</span></label>
+                                            <input type="number" id="new-grade-ck" placeholder="0 - 10" min="0" max="10"
+                                                step="0.1" class="odoo-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="odoo-form-footer">
+                                    <button class="btn-odoo-save" id="btn-save-grade"><i
+                                            class="fa-solid fa-floppy-disk"></i> Lưu & Đóng</button>
+                                    <button class="btn-odoo-discard" id="btn-discard-grade"><i
+                                            class="fa-solid fa-rotate-left"></i> Huỷ bỏ</button>
+                                </div>
+                            </div>
+
+                            <table class="odoo-table" id="table-grades">
+                                <thead>
+                                    <tr>
+                                        <th>Sinh viên</th>
+                                        <th>Khóa học</th>
+                                        <th>Điểm GK</th>
+                                        <th>Điểm CK</th>
+                                        <th>Tổng kết</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-grades">
+                                    <tr>
+                                        <td>Nguyễn Văn A</td>
+                                        <td>Lập trình Frontend</td>
+                                        <td>8.5</td>
+                                        <td>9.0</td>
+                                        <td><strong>8.8</strong></td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Trần Thị B</td>
+                                        <td>Hệ quản trị CSDL</td>
+                                        <td>7.0</td>
+                                        <td>8.5</td>
+                                        <td><strong>8.0</strong></td>
+                                        <td><button class="btn-odoo-delete" title="Xoá"><i
+                                                    class="fa-solid fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Dashboard Modal -->
+    <div id="weather-modal" class="modal-overlay hidden">
+        <div class="modal-container glass-panel weather-modal-container">
+            <button class="modal-close" id="weather-modal-close" aria-label="Đóng">&times;</button>
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-cloud-sun-rain"></i> Bảng Dự Báo Thời Tiết</h3>
+                <p>Dữ liệu thực từ Open-Meteo &amp; OpenStreetMap — Không cần API key</p>
+            </div>
+            <div class="modal-body weather-modal-body">
+
+                <!-- Search Bar -->
+                <div class="weather-search-bar">
+                    <i class="fa-solid fa-magnifying-glass weather-search-icon"></i>
+                    <input type="text" id="weather-city-input"
+                        placeholder="Nhập tên thành phố... (VD: Hà Nội, Đà Nẵng, TP. Hồ Chí Minh, Tokyo, Paris)"
+                        autocomplete="off">
+                    <button id="weather-search-btn" class="btn-weather-search">
+                        <i class="fa-solid fa-paper-plane"></i> Tìm
+                    </button>
+                </div>
+
+                <!-- Quick City Buttons -->
+                <div class="weather-quick-cities">
+                    <span class="quick-city-label">Nhanh:</span>
+                    <button class="btn-quick-city" data-city="Hà Nội">🇻🇳 Hà Nội</button>
+                    <button class="btn-quick-city" data-city="TP. Hồ Chí Minh">🌆 TP.HCM</button>
+                    <button class="btn-quick-city" data-city="Đà Nẵng">🏖️ Đà Nẵng</button>
+                    <button class="btn-quick-city" data-city="Tokyo">🗼 Tokyo</button>
+                    <button class="btn-quick-city" data-city="London">🎡 London</button>
+                    <button class="btn-quick-city" data-city="New York">🗽 New York</button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="weather-loading" class="weather-loading hidden">
+                    <div class="weather-spinner"></div>
+                    <span>Đang tải dữ liệu thời tiết...</span>
+                </div>
+
+                <!-- Error State -->
+                <div id="weather-error" class="weather-error hidden">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="weather-error-msg">Không tìm thấy thành phố.</span>
+                </div>
+
+                <!-- Weather Display -->
+                <div id="weather-display" class="weather-display hidden">
+
+                    <!-- Current Weather Header -->
+                    <div class="weather-current-card">
+                        <div class="weather-location-row">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span id="w-city-name" class="w-city-name">--</span>
+                            <span id="w-country" class="w-country"></span>
+                            <span id="w-local-time" class="w-local-time"></span>
+                        </div>
+                        <div class="weather-main-row">
+                            <div id="w-icon-main" class="w-icon-main">🌤️</div>
+                            <div class="w-temp-block">
+                                <div id="w-temp" class="w-temp">--°C</div>
+                                <div id="w-feels" class="w-feels">Cảm giác như --°C</div>
+                                <div id="w-desc" class="w-desc">--</div>
+                            </div>
+                            <div class="w-divider"></div>
+                            <div class="w-stats-inline">
+                                <div class="w-stat-inline">
+                                    <i class="fa-solid fa-droplet" style="color:#60a5fa"></i>
+                                    <span>Độ ẩm</span>
+                                    <strong id="w-humidity">--%</strong>
+                                </div>
+                                <div class="w-stat-inline">
+                                    <i class="fa-solid fa-wind" style="color:#34d399"></i>
+                                    <span>Gió</span>
+                                    <strong id="w-wind">-- km/h</strong>
+                                </div>
+                                <div class="w-stat-inline">
+                                    <i class="fa-solid fa-umbrella" style="color:#a78bfa"></i>
+                                    <span>Mưa</span>
+                                    <strong id="w-rain">--%</strong>
+                                </div>
+                                <div class="w-stat-inline">
+                                    <i class="fa-solid fa-temperature-arrow-up" style="color:#fb923c"></i>
+                                    <span>Max/Min</span>
+                                    <strong id="w-minmax">--/--°</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hourly Forecast Chart -->
+                    <div class="weather-section-title"><i class="fa-solid fa-clock"></i> Nhiệt độ 24 giờ tới</div>
+                    <div class="weather-hourly-chart" id="w-hourly-chart">
+                        <!-- Bars inserted by JS -->
+                    </div>
+
+                    <!-- 7-day Forecast -->
+                    <div class="weather-section-title"><i class="fa-solid fa-calendar-days"></i> Dự báo 7 ngày</div>
+                    <div class="weather-forecast-grid" id="w-forecast-grid">
+                        <!-- Cards inserted by JS -->
+                    </div>
+
+                    <!-- Suggestion -->
+                    <div id="w-suggestion" class="w-suggestion hidden">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <span id="w-suggestion-text"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>
