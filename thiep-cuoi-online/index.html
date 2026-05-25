@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Mời Đám Cưới | Hiến & Trang</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">H & T</div>
+        <ul class="nav-links">
+            <li><a href="#home">Trang chủ</a></li>
+            <li><a href="#story">Chuyện Tình</a></li>
+            <li><a href="#event">Sự Kiện</a></li>
+            <li><a href="#gallery">Album</a></li>
+            <li><a href="#rsvp" class="btn-nav-rsvp">Tham dự</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-subtitle">Save the Date</span>
+            <h1 class="hero-title">Đàm Hiến & Đặng Trang</h1>
+            <p class="hero-date">Chủ Nhật, 25 Tháng 10, 2026</p>
+            <p class="hero-location">Nam Tiên Hưng , Hưng Yên</p>
+
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <span class="count" id="days">00</span>
+                    <span class="label">Ngày</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="count" id="hours">00</span>
+                    <span class="label">Giờ</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="count" id="minutes">00</span>
+                    <span class="label">Phút</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="count" id="seconds">00</span>
+                    <span class="label">Giây</span>
+                </div>
+            </div>
+
+            <a href="#rsvp" class="btn btn-primary">Xác Nhận Tham Dự</a>
+        </div>
+    </header>
+
+    <!-- Love Story -->
+    <section id="story" class="section story-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Chuyện Tình Yêu</h2>
+                <div class="flower-divider">❀</div>
+            </div>
+
+            <div class="story-content">
+                <p class="story-text">
+                    "Tình yêu không phải là nhìn chằm chằm vào nhau, mà là cùng nhau nhìn về một hướng."
+                    <br><br>
+                    Quen nhau tình cờ qua một người bạn chung, chúng mình không ngờ rằng cuộc gặp gỡ đó lại là định
+                    mệnh. Trải qua 5 năm gắn bó với biết bao buồn vui, giờ đây, chúng mình đã sẵn sàng nắm tay nhau bước
+                    sang một trang mới của cuộc đời.
+                    Cảm ơn tất cả mọi người đã luôn đồng hành và chứng kiến tình yêu này.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Info -->
+    <section id="event" class="section event-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Thời Gian & Địa Điểm</h2>
+                <div class="flower-divider">❀</div>
+            </div>
+
+            <div class="event-cards">
+                <!-- Lễ Gia Tiên -->
+                <div class="event-card">
+                    <div class="event-icon"><i class="fa-solid fa-ring"></i></div>
+                    <h3>Lễ Gia Tiên</h3>
+                    <p class="event-time">08:00 Sáng - 25/10/2026</p>
+                    <p class="event-address">Nam Tiên Hưng , Hưng Yên</p>
+                    <a href="https://maps.google.com" target="_blank" class="btn btn-outline">Xem Bản Đồ</a>
+                </div>
+
+                <!-- Tiệc Cưới -->
+                <div class="event-card highlight">
+                    <div class="event-icon"><i class="fa-solid fa-champagne-glasses"></i></div>
+                    <h3>Tiệc Cưới</h3>
+                    <p class="event-time">18:00 Tối - 25/10/2026</p>
+                    <p class="event-address">Nam Tiên Hưng , Hưng Yên</p>
+                    <p class="event-dresscode"><strong>Dresscode:</strong> Trắng, Hồng Pastel</p>
+                    <a href="https://maps.google.com" target="_blank" class="btn btn-primary">Xem Bản Đồ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="gallery" class="section gallery-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Album Cưới</h2>
+                <div class="flower-divider">❀</div>
+            </div>
+
+            <div class="gallery-grid">
+                <!-- Using placeholder images for demonstration -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Wedding Photo 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Wedding Photo 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Wedding Photo 3">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Wedding Photo 4">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Wedding Photo 5">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Wedding Photo 6">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP Section -->
+    <section id="rsvp" class="section rsvp-section">
+        <div class="container">
+            <div class="rsvp-container">
+                <div class="section-title">
+                    <h2>Xác Nhận Tham Dự</h2>
+                    <p>Sự hiện diện của bạn là niềm vinh hạnh cho gia đình chúng tôi.</p>
+                </div>
+
+                <form id="rsvp-form" class="rsvp-form" action="https://formspree.io/f/your_form_id" method="POST">
+                    <div class="form-group">
+                        <label for="name">Họ và Tên khách mời</label>
+                        <input type="text" id="name" name="name" required placeholder="Nhập tên của bạn...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attendance">Bạn sẽ đến dự chứ?</label>
+                        <select id="attendance" name="attendance" required>
+                            <option value="yes">Vâng, tôi sẽ đến!</option>
+                            <option value="no">Rất tiếc, tôi không thể đến</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guests">Số người tham dự</label>
+                        <input type="number" id="guests" name="guests" min="1" max="10" value="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Lời chúc gửi đến cô dâu chú rể</label>
+                        <textarea id="message" name="message" rows="4"
+                            placeholder="Nhập lời chúc của bạn..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-submit">Gửi Xác Nhận</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h2 class="footer-names"> Đàm Hiến & Đặng Trang</h2>
+            <p>25 . 10 . 2026</p>
+            <p class="thank-you">Cảm ơn bạn đã chung vui cùng chúng tôi!</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>
