@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cửa hàng – Thanhcong.shop</title>
+  <meta name="description" content="Khám phá hàng nghìn sản phẩm chất lượng tại Thanhcong.shop." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ===== SHOP PAGE SPECIFIC ===== */
+    .shop-section { padding: 40px 0 72px; }
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      background: var(--bg-light);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 24px;
+      position: sticky;
+      top: 88px;
+    }
+    .sidebar-section { margin-bottom: 28px; }
+    .sidebar-section:last-child { margin-bottom: 0; }
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-list { display: flex; flex-direction: column; gap: 4px; }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--ease);
+      color: #374151;
+      font-size: 14px;
+    }
+    .filter-item:hover { background: var(--blue-soft); color: var(--navy); }
+    .filter-item.active {
+      background: var(--blue-accent);
+      color: var(--navy);
+      font-weight: 600;
+    }
+    .filter-item .count {
+      font-size: 12px;
+      background: var(--white);
+      color: var(--text-muted);
+      padding: 2px 7px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .filter-item.active .count { border-color: var(--navy); color: var(--navy); }
+
+    /* Price range */
+    .price-range { display: flex; flex-direction: column; gap: 10px; }
+    .price-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .price-input {
+      padding: 8px 10px;
+      border: 1.5px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-dark);
+      outline: none;
+      width: 100%;
+      transition: var(--ease);
+    }
+    .price-input:focus { border-color: var(--navy); }
+
+    /* Color filter */
+    .color-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .color-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: var(--ease);
+      position: relative;
+    }
+    .color-dot:hover, .color-dot.active {
+      border-color: var(--navy);
+      transform: scale(1.15);
+    }
+    .color-dot.active::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    /* --- SHOP MAIN AREA --- */
+    .shop-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding: 14px 18px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .shop-result-count { font-size: 14px; color: var(--text-gray); }
+    .shop-result-count strong { color: var(--text-dark); }
+    .toolbar-right { display: flex; align-items: center; gap: 12px; }
+    .sort-select {
+      padding: 7px 32px 7px 12px;
+      border: 1.5px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-dark);
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%236B7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      transition: var(--ease);
+    }
+    .sort-select:focus { border-color: var(--navy); }
+    .view-toggle { display: flex; gap: 4px; }
+    .view-btn {
+      width: 34px; height: 34px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: var(--ease);
+    }
+    .view-btn.active, .view-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--blue-soft); }
+
+    /* Products grid */
+    .shop-products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .shop-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .shop-products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .shop-products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav-inner">
+        <a href="index.html" class="logo">Thanhcong<span>.shop</span></a>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+          <li><a href="shop.html" class="nav-link active">Cửa hàng</a></li>
+          <li><a href="#" class="nav-link">Khuyến mãi</a></li>
+          <li><a href="#" class="nav-link">Blog</a></li>
+          <li><a href="#" class="nav-link">Liên hệ</a></li>
+        </ul>
+        <div class="nav-right">
+          <div class="nav-search">
+            <input type="text" placeholder="Tìm kiếm sản phẩm..." />
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+          </div>
+          <a href="cart.html" class="btn-cart" id="nav-cart">
+            <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
+            <span class="cart-badge" id="cart-count">0</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="index.html">Trang chủ</a><span class="sep">/</span>
+      <span class="current">Cửa hàng</span>
+    </nav>
+  </div>
+
+  <!-- SHOP -->
+  <section class="shop-section">
+    <div class="container">
+      <div class="shop-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="shop-sidebar">
+          <div class="sidebar-section">
+            <div class="sidebar-title">Danh mục</div>
+            <ul class="filter-list">
+              <li class="filter-item active" data-filter="all" id="filter-all">
+                <span><i class="fa-solid fa-border-all"></i> &nbsp;Tất cả</span>
+                <span class="count">3.532</span>
+              </li>
+              <li class="filter-item" data-filter="thoi-trang" id="filter-fashion">
+                <span><i class="fa-solid fa-shirt"></i> &nbsp;Thời trang</span>
+                <span class="count">1.240</span>
+              </li>
+              <li class="filter-item" data-filter="dien-tu" id="filter-electronics">
+                <span><i class="fa-solid fa-mobile-screen"></i> &nbsp;Điện tử</span>
+                <span class="count">860</span>
+              </li>
+              <li class="filter-item" data-filter="the-thao" id="filter-sports">
+                <span><i class="fa-solid fa-dumbbell"></i> &nbsp;Thể thao</span>
+                <span class="count">430</span>
+              </li>
+              <li class="filter-item" data-filter="nha-cua" id="filter-home">
+                <span><i class="fa-solid fa-house"></i> &nbsp;Nhà cửa</span>
+                <span class="count">680</span>
+              </li>
+              <li class="filter-item" data-filter="sach" id="filter-books">
+                <span><i class="fa-solid fa-book"></i> &nbsp;Sách</span>
+                <span class="count">320</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-title">Khoảng giá</div>
+            <div class="price-range">
+              <div class="price-inputs">
+                <input type="number" class="price-input" id="price-min" placeholder="Từ" min="0" />
+                <input type="number" class="price-input" id="price-max" placeholder="Đến" />
+              </div>
+              <button class="btn btn-navy btn-sm btn-block" id="apply-price">Áp dụng</button>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-title">Màu sắc</div>
+            <div class="color-filters">
+              <div class="color-dot active" style="background:#111827" title="Đen" id="color-black"></div>
+              <div class="color-dot" style="background:#FFFFFF;border-color:#D1D5DB" title="Trắng" id="color-white"></div>
+              <div class="color-dot" style="background:#1E3A8A" title="Xanh navy" id="color-navy"></div>
+              <div class="color-dot" style="background:#EF4444" title="Đỏ" id="color-red"></div>
+              <div class="color-dot" style="background:#10B981" title="Xanh lá" id="color-green"></div>
+              <div class="color-dot" style="background:#F97316" title="Cam" id="color-orange"></div>
+              <div class="color-dot" style="background:#F59E0B" title="Vàng" id="color-yellow"></div>
+              <div class="color-dot" style="background:#8B5CF6" title="Tím" id="color-purple"></div>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-title">Đánh giá</div>
+            <div class="filter-list">
+              <div class="filter-item" id="rating-5">
+                <span style="color:#F59E0B">★★★★★</span>&nbsp;<span style="font-size:13px">5 sao</span>
+              </div>
+              <div class="filter-item" id="rating-4">
+                <span style="color:#F59E0B">★★★★</span><span style="color:#D1D5DB">★</span>&nbsp;<span style="font-size:13px">4+ sao</span>
+              </div>
+              <div class="filter-item" id="rating-3">
+                <span style="color:#F59E0B">★★★</span><span style="color:#D1D5DB">★★</span>&nbsp;<span style="font-size:13px">3+ sao</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-outline btn-sm btn-block" id="clear-filters" style="margin-top:4px">
+            <i class="fa-solid fa-rotate-right"></i> Xóa bộ lọc
+          </button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div>
+          <div class="shop-toolbar">
+            <div class="shop-result-count">Hiển thị <strong>12</strong> / <strong>860</strong> sản phẩm</div>
+            <div class="toolbar-right">
+              <select class="sort-select" id="sort-select">
+                <option value="default">Sắp xếp: Mặc định</option>
+                <option value="price-asc">Giá: Thấp đến cao</option>
+                <option value="price-desc">Giá: Cao đến thấp</option>
+                <option value="newest">Mới nhất</option>
+                <option value="rating">Đánh giá cao</option>
+              </select>
+              <div class="view-toggle">
+                <button class="view-btn active" id="view-grid" title="Lưới"><i class="fa-solid fa-grip"></i></button>
+                <button class="view-btn" id="view-list" title="Danh sách"><i class="fa-solid fa-list"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="shop-products-grid">
+            <!-- Products (6 items shown) -->
+            <div class="product-card">
+              <div class="product-card-img">
+                <div style="font-size:64px;display:flex;align-items:center;justify-content:center;height:100%;background:#F9FAFB;">👟</div>
+                <span class="product-badge">-20%</span>
+                <div class="product-card-actions">
+                  <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                  <a href="product.html" class="action-btn"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-category">Giày dép</div>
+                <a href="product.html"><div class="product-name">Giày thể thao nam Nike Air Max</div></a>
+                <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(128)</span></div>
+                <div class="product-price-row">
+                  <div><div class="price-current">850.000₫</div><div class="price-old">1.060.000₫</div></div>
+                  <button class="btn-add-cart" onclick="addToCart('Nike Air Max', 850000)"><i class="fa-solid fa-cart-plus"></i> Thêm</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-card-img">
+                <div style="font-size:64px;display:flex;align-items:center;justify-content:center;height:100%;background:#F9FAFB;">📱</div>
+                <span class="product-badge new">Mới</span>
+                <div class="product-card-actions">
+                  <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                  <a href="product.html" class="action-btn"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-category">Điện tử</div>
+                <a href="product.html"><div class="product-name">iPhone 16 Pro Max 256GB</div></a>
+                <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(97)</span></div>
+                <div class="product-price-row">
+                  <div><div class="price-current">29.990.000₫</div><div class="price-old">33.000.000₫</div></div>
+                  <button class="btn-add-cart" onclick="addToCart('iPhone 16 Pro Max', 29990000)"><i class="fa-solid fa-cart-plus"></i> Thêm</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-card-img">
+                <div style="font-size:64px;display:flex;align-items:center;justify-content:center;height:100%;background:#F9FAFB;">⌚</div>
+                <span class="product-badge">-15%</span>
+                <div class="product-card-actions">
+                  <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                  <a href="product.html" class="action-btn"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-category">Đồng hồ</div>
+                <a href="product.html"><div class="product-name">Apple Watch Series 9 GPS</div></a>
+                <div class="product-rating"><span class="stars">★★★★☆</span><span class="rating-count">(64)</span></div>
+                <div class="product-price-row">
+                  <div><div class="price-current">9.490.000₫</div><div class="price-old">11.200.000₫</div></div>
+                  <button class="btn-add-cart" onclick="addToCart('Apple Watch Series 9', 9490000)"><i class="fa-solid fa-cart-plus"></i> Thêm</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-card-img">
+                <div style="font-size:64px;display:flex;align-items:center;justify-content:center;height:100%;background:#F9FAFB;">👗</div>
+                <span class="product-badge">-30%</span>
+                <div class="product-card-actions">
+                  <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                  <a href="product.html" class="action-btn"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-category">Thời trang</div>
+                <a href="product.html"><div class="product-name">Váy maxi lụa dáng dài cao cấp</div></a>
+                <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(203)</span></div>
+                <div class="product-price-row">
+                  <div><div class="price-current">420.000₫</div><div class="price-old">600.000₫</div></div>
+                  <button class="btn-add-cart" onclick="addToCart('Váy maxi lụa', 420000)"><i class="fa-solid fa-cart-plus"></i> Thêm</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-card-img">
+                <div style="font-size:64px;display:flex;align-items:center;justify-content:center;height:100%;background:#F9FAFB;">💻</div>
+                <span class="product-badge new">Mới</span>
+                <div class="product-card-actions">
+                  <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                  <a href="product.html" class="action-btn"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-category">Điện tử</div>
+                <a href="product.html"><div class="product-name">MacBook Air M3 13-inch 2024</div></a>
+                <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(45)</span></div>
+                <div class="product-price-row">
+                  <div><div class="price-current">28.990.000₫</div><div class="price-old">32.000.000₫</div></div>
+                  <button class="btn-add-cart" onclick="addToCart('MacBook Air M3', 28990000)"><i class="fa-solid fa-cart-plus"></i> Thêm</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-card-img">
+                <div style="font-size:64px;display:flex;align-items:center;justify-content:center;height:100%;background:#F9FAFB;">🎧</div>
+                <span class="product-badge">-25%</span>
+                <div class="product-card-actions">
+                  <button class="action-btn"><i class="fa-regular fa-heart"></i></button>
+                  <a href="product.html" class="action-btn"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-category">Âm thanh</div>
+                <a href="product.html"><div class="product-name">Sony WH-1000XM5 Chống ồn</div></a>
+                <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(189)</span></div>
+                <div class="product-price-row">
+                  <div><div class="price-current">6.990.000₫</div><div class="price-old">9.290.000₫</div></div>
+                  <button class="btn-add-cart" onclick="addToCart('Sony WH-1000XM5', 6990000)"><i class="fa-solid fa-cart-plus"></i> Thêm</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAGINATION -->
+          <div class="pagination">
+            <button class="page-btn" id="page-prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="page-btn active" id="page-1">1</button>
+            <button class="page-btn" id="page-2">2</button>
+            <button class="page-btn" id="page-3">3</button>
+            <button class="page-btn" id="page-4">4</button>
+            <span style="color:var(--text-muted);padding:0 4px">...</span>
+            <button class="page-btn" id="page-last">72</button>
+            <button class="page-btn" id="page-next"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">Thanhcong<span>.shop</span></div>
+          <p>Mua sắm trực tuyến uy tín, hàng chính hãng 100%, giao hàng nhanh toàn quốc.</p>
+        </div>
+        <div class="footer-col"><h4>Cửa hàng</h4><ul><li><a href="shop.html">Tất cả sản phẩm</a></li><li><a href="#">Khuyến mãi</a></li><li><a href="#">Hàng mới về</a></li></ul></div>
+        <div class="footer-col"><h4>Hỗ trợ</h4><ul><li><a href="#">Chính sách đổi trả</a></li><li><a href="#">Hướng dẫn mua hàng</a></li><li><a href="#">Liên hệ</a></li></ul></div>
+        <div class="footer-col"><h4>Liên hệ</h4><ul><li><a href="tel:0383903467"><i class="fa-solid fa-phone"></i> 0383 903 467</a></li><li><a href="mailto:dangthanhcong345@gmail.com"><i class="fa-brands fa-google"></i> dangthanhcong345@gmail.com</a></li><li><a href="https://zalo.me/0383903467" target="_blank" rel="noopener"><i class="fa-solid fa-comment-dots"></i> Zalo: 0383 903 467</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">&copy; 2026 Thanhcong.shop. Tất cả quyền được bảo lưu.</div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="script.js"></script>
+  <script>
+    // Sidebar filter tabs
+    document.querySelectorAll('.filter-item[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-item[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+    // Color dots
+    document.querySelectorAll('.color-dot').forEach(dot => {
+      dot.addEventListener('click', () => dot.classList.toggle('active'));
+    });
+    // View toggle
+    document.getElementById('view-grid').addEventListener('click', () => {
+      document.getElementById('view-grid').classList.add('active');
+      document.getElementById('view-list').classList.remove('active');
+    });
+    document.getElementById('view-list').addEventListener('click', () => {
+      document.getElementById('view-list').classList.add('active');
+      document.getElementById('view-grid').classList.remove('active');
+    });
+    // Pagination
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
