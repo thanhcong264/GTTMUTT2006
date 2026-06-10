@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ứng dụng phân tích và theo dõi vết nứt mặt đường trên bản đồ Việt Nam">
+    <title>🛣️ Phân tích Vết nứt Mặt đường Việt Nam</title>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0f1117;
+            --bg-card: rgba(22, 27, 45, 0.85);
+            --bg-card-solid: #161b2d;
+            --border-glow: rgba(99, 102, 241, 0.25);
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --orange: #f97316;
+            --radius: 14px;
+            --sidebar-width: 340px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #0f1117 0%, #1a1f35 100%);
+            border-right: 1px solid var(--border-glow);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+        .sidebar-header {
+            padding: 20px 22px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .sidebar-header h1 {
+            font-size: 17px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-header p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===== TAB NAVIGATION ===== */
+        .tab-nav {
+            display: flex;
+            padding: 12px 22px 0;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            background: rgba(99, 102, 241, 0.06);
+            color: var(--text-secondary);
+        }
+
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: var(--border-glow);
+            color: var(--accent-light);
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content::-webkit-scrollbar { width: 4px; }
+        .tab-content::-webkit-scrollbar-track { background: transparent; }
+        .tab-content::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+        /* ===== FILTER SECTIONS (map tab) ===== */
+        .filter-section {
+            padding: 16px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .filter-section h3, .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        /* Custom Checkbox */
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--border-glow);
+        }
+
+        .checkbox-item input[type="checkbox"] { display: none; }
+
+        .checkbox-custom {
+            width: 20px; height: 20px; min-width: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item input:checked ~ .checkbox-custom {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .checkbox-custom::after {
+            content: '✓'; color: white; font-size: 12px; font-weight: 700;
+            opacity: 0; transition: opacity 0.15s ease;
+        }
+
+        .checkbox-item input:checked ~ .checkbox-custom::after { opacity: 1; }
+
+        .checkbox-label {
+            font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.3;
+        }
+
+        .checkbox-label small {
+            display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px;
+        }
+
+        /* Slider */
+        .slider-container { margin-top: 12px; }
+
+        .slider-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+
+        .slider-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+        .slider-value {
+            font-size: 13px; font-weight: 700; color: var(--accent-light);
+            background: rgba(99, 102, 241, 0.12); padding: 3px 10px; border-radius: 6px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 6px; border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, rgba(255,255,255,0.08) 0%);
+            outline: none; cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--accent); border: 3px solid var(--bg-dark);
+            box-shadow: 0 0 10px var(--accent-glow);
+            cursor: grab; transition: transform 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.1); }
+
+        /* Stats */
+        .stats-section {
+            padding: 16px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.06));
+            border: 1px solid var(--border-glow); border-radius: 12px;
+            padding: 14px 16px; text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px;
+        }
+
+        /* Legend */
+        .legend-section { padding: 16px 22px; }
+        .legend-items { display: flex; flex-direction: column; gap: 5px; }
+
+        .legend-item {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 12px; color: var(--text-secondary); padding: 4px 0;
+        }
+
+        .legend-dot {
+            width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+            box-shadow: 0 0 6px rgba(0,0,0,0.3);
+        }
+
+        /* Road list */
+        .data-section {
+            padding: 16px 22px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .data-section h3 {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1.2px; color: var(--text-muted); margin-bottom: 12px;
+        }
+
+        .road-list { display: flex; flex-direction: column; gap: 5px; }
+
+        .road-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 9px 12px; background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+
+        .road-item:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--border-glow); transform: translateX(3px);
+        }
+
+        .road-item-name {
+            font-size: 12px; font-weight: 500; color: var(--text-primary);
+            flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px;
+        }
+
+        .road-item-badge {
+            font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+        }
+
+        /* ===== ANALYSIS TAB SIDEBAR ===== */
+        .analysis-section {
+            padding: 16px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            padding: 28px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(99, 102, 241, 0.04);
+            position: relative;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--accent-light);
+            background: rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            font-size: 13px; font-weight: 600; color: var(--text-primary);
+        }
+
+        .upload-hint {
+            font-size: 11px; color: var(--text-muted); margin-top: 4px;
+        }
+
+        /* Preview */
+        .preview-container {
+            display: none;
+            margin-top: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+
+        .preview-container img {
+            width: 100%;
+            display: block;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: 8px; right: 8px;
+            width: 28px; height: 28px;
+            background: rgba(239, 68, 68, 0.9);
+            border: none; border-radius: 50%;
+            color: white; font-size: 14px; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.15s ease;
+        }
+
+        .preview-remove:hover { transform: scale(1.15); }
+
+        /* Analyze Button */
+        .analyze-btn {
+            display: none;
+            width: 100%;
+            margin-top: 14px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--accent-glow);
+        }
+
+        .analyze-btn:active { transform: translateY(0); }
+
+        .analyze-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Result Cards */
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .result-card-title {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 10px;
+        }
+
+        .result-metric {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .result-metric:last-child { border-bottom: none; }
+
+        .result-metric-label {
+            font-size: 12px; color: var(--text-secondary); font-weight: 500;
+        }
+
+        .result-metric-value {
+            font-size: 13px; font-weight: 700; color: var(--text-primary);
+        }
+
+        /* PCI Gauge */
+        .pci-gauge-container {
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .pci-score-display {
+            position: relative;
+            width: 160px; height: 160px;
+            margin: 0 auto 12px;
+        }
+
+        .pci-score-ring {
+            width: 100%; height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .pci-score-ring circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+
+        .pci-ring-bg { stroke: rgba(255,255,255,0.06); }
+
+        .pci-ring-fill {
+            stroke-dasharray: 408;
+            stroke-dashoffset: 408;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pci-score-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .pci-score-number {
+            font-size: 36px; font-weight: 900;
+            line-height: 1;
+        }
+
+        .pci-score-label {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); margin-top: 4px;
+        }
+
+        .pci-condition {
+            font-size: 16px; font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .pci-description {
+            font-size: 11px; color: var(--text-muted); line-height: 1.5;
+        }
+
+        /* PCI Scale Bar */
+        .pci-scale {
+            margin-top: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .pci-scale-row {
+            display: flex; align-items: center;
+            padding: 7px 12px;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+
+        .pci-scale-row.active-row {
+            box-shadow: inset 3px 0 0 currentColor;
+        }
+
+        .pci-scale-range {
+            width: 62px; font-weight: 700; flex-shrink: 0;
+        }
+
+        .pci-scale-bar {
+            flex: 1; height: 10px; border-radius: 5px; margin: 0 10px;
+            position: relative; overflow: hidden;
+        }
+
+        .pci-scale-bar-fill {
+            position: absolute; top: 0; left: 0; height: 100%; border-radius: 5px;
+            transition: width 0.8s ease;
+        }
+
+        .pci-scale-condition {
+            width: 80px; font-weight: 600; text-align: right; flex-shrink: 0;
+        }
+
+        .pci-scale-indicator {
+            position: absolute; top: -2px; width: 4px; height: 14px;
+            background: white; border-radius: 2px;
+            box-shadow: 0 0 6px rgba(255,255,255,0.5);
+            transition: left 0.8s ease;
+            display: none;
+        }
+
+        /* Binary Image */
+        .binary-preview {
+            margin-top: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .binary-preview canvas {
+            width: 100%;
+            display: block;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1; position: relative; display: flex; flex-direction: column;
+        }
+
+        /* Top bar */
+        .topbar {
+            height: 52px;
+            background: rgba(15, 17, 23, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; z-index: 500;
+        }
+
+        .topbar-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .topbar-info { display: flex; align-items: center; gap: 16px; }
+
+        .topbar-badge {
+            font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+            background: rgba(34, 197, 94, 0.12); color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Map & Analysis panels */
+        .main-panel { display: none; flex: 1; width: 100%; }
+        .main-panel.active { display: flex; flex-direction: column; }
+
+        #map { flex: 1; width: 100%; }
+
+        /* Analysis Main Panel */
+        .analysis-main {
+            flex: 1; overflow-y: auto;
+            background: radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(139,92,246,0.04) 0%, transparent 50%),
+                        var(--bg-dark);
+            padding: 40px;
+        }
+
+        .analysis-main::-webkit-scrollbar { width: 6px; }
+        .analysis-main::-webkit-scrollbar-track { background: transparent; }
+        .analysis-main::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+        .analysis-hero {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .analysis-hero h2 {
+            font-size: 28px; font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .analysis-hero p {
+            font-size: 14px; color: var(--text-muted); line-height: 1.6;
+        }
+
+        /* PCI Reference Table */
+        .pci-ref-table {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .pci-ref-header {
+            padding: 24px 28px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .pci-ref-header h3 {
+            font-size: 16px; font-weight: 700; color: var(--text-primary);
+        }
+
+        .pci-ref-header p {
+            font-size: 12px; color: var(--text-muted); margin-top: 4px;
+        }
+
+        .pci-ref-body {
+            display: flex;
+            gap: 0;
+        }
+
+        .pci-ref-left {
+            flex: 1;
+            padding: 0;
+        }
+
+        .pci-ref-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: background 0.2s ease;
+        }
+
+        .pci-ref-row:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .pci-ref-row:last-child { border-bottom: none; }
+
+        .pci-ref-range {
+            width: 90px; font-size: 13px; font-weight: 700; color: var(--text-primary);
+        }
+
+        .pci-ref-condition {
+            flex: 1; font-size: 13px; font-weight: 500; color: var(--text-secondary);
+        }
+
+        .pci-ref-color {
+            width: 60px; height: 22px; border-radius: 6px; flex-shrink: 0;
+        }
+
+        /* PCI Visual Scale Bar (right side) */
+        .pci-ref-right {
+            width: 100px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .pci-bar-segment {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(0,0,0,0.7);
+            min-height: 48px;
+        }
+
+        .pci-bar-number {
+            position: absolute;
+            right: 105%;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Leaflet popup */
+        .leaflet-popup-content-wrapper {
+            background: var(--bg-card-solid) !important;
+            border: 1px solid var(--border-glow) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5) !important;
+            color: var(--text-primary) !important; padding: 0 !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 0 !important; font-family: 'Inter', sans-serif !important; min-width: 260px !important;
+        }
+
+        .leaflet-popup-tip {
+            background: var(--bg-card-solid) !important;
+            border: 1px solid var(--border-glow) !important; box-shadow: none !important;
+        }
+
+        .leaflet-popup-close-button {
+            color: var(--text-muted) !important; font-size: 20px !important;
+            top: 8px !important; right: 10px !important;
+        }
+
+        .leaflet-popup-close-button:hover { color: var(--text-primary) !important; }
+
+        .popup-card { padding: 18px 20px; }
+
+        .popup-card-header {
+            display: flex; align-items: flex-start; gap: 10px;
+            margin-bottom: 14px; padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .popup-card-icon { font-size: 20px; }
+        .popup-card-title { font-size: 14px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+
+        .popup-card-body { display: flex; flex-direction: column; gap: 8px; }
+
+        .popup-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 6px 10px; border-radius: 8px;
+        }
+
+        .popup-row:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+        .popup-row-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .popup-row-value { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .popup-crack-value { font-size: 18px; font-weight: 800; }
+
+        .popup-level-badge {
+            font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+        }
+
+        /* Leaflet dark theme */
+        .leaflet-control-zoom a {
+            background: var(--bg-card-solid) !important; color: var(--text-primary) !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        .leaflet-control-zoom a:hover { background: rgba(99, 102, 241, 0.2) !important; }
+
+        .leaflet-control-layers {
+            background: var(--bg-card-solid) !important;
+            border: 1px solid var(--border-glow) !important;
+            border-radius: 12px !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .leaflet-control-layers-expanded {
+            padding: 10px 14px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+        }
+
+        .leaflet-control-attribution {
+            background: rgba(15,17,23,0.8) !important; color: var(--text-muted) !important; font-size: 10px !important;
+        }
+        .leaflet-control-attribution a { color: var(--accent-light) !important; }
+
+        .leaflet-tooltip {
+            background: var(--bg-card-solid) !important; color: var(--text-primary) !important;
+            border: 1px solid var(--border-glow) !important; border-radius: 8px !important;
+            font-family: 'Inter', sans-serif !important; font-size: 12px !important;
+            font-weight: 500 !important; padding: 6px 12px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+        }
+
+        .leaflet-tooltip-top:before,
+        .leaflet-tooltip-bottom:before,
+        .leaflet-tooltip-left:before,
+        .leaflet-tooltip-right:before {
+            border-top-color: var(--bg-card-solid) !important;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .filter-section, .stats-section, .legend-section, .data-section, .analysis-section {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .result-appear { animation: slideUp 0.5s ease forwards; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 280px; min-width: 280px; }
+            .analysis-main { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>🛣️ Vết nứt Mặt đường</h1>
+            <p>Phân tích & theo dõi tình trạng mặt đường</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="map" id="btn-tab-map">🗺️ Bản đồ</button>
+            <button class="tab-btn" data-tab="analysis" id="btn-tab-analysis">📸 Phân tích</button>
+        </div>
+
+        <!-- ===== TAB: BẢN ĐỒ ===== -->
+        <div class="tab-content active" id="tab-map">
+
+            <div class="filter-section">
+                <h3>🏗️ Loại mặt đường</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-item" for="filter-asphalt">
+                        <input type="checkbox" id="filter-asphalt">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-label">
+                            Chỉ hiển thị đường Nhựa
+                            <small>Ẩn đường Bê tông và các loại khác</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>📏 Chiều dài đoạn đường</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-item" for="filter-length">
+                        <input type="checkbox" id="filter-length">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-label">
+                            Chỉ hiển thị đường dài &gt; 1 km
+                            <small>Ẩn các đoạn đường ngắn</small>
+                        </span>
+                    </label>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span class="slider-label">Chiều dài tối thiểu</span>
+                        <span class="slider-value" id="slider-display">0.0 km</span>
+                    </div>
+                    <input type="range" id="slider-length" min="0" max="15" step="0.1" value="0">
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-count">6</div>
+                    <div class="stat-label">Đoạn đường hiển thị</div>
+                </div>
+            </div>
+
+            <div class="legend-section">
+                <h3 class="section-title">📊 Mức độ nứt</h3>
+                <div class="legend-items">
+                    <div class="legend-item"><span class="legend-dot" style="background: #22c55e;"></span> Tốt — dưới 4%</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> Nhẹ — 4% đến 8%</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #f97316;"></span> Trung bình — 8% đến 15%</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span> Nghiêm trọng — từ 15% trở lên</div>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <h3>📋 Danh sách tuyến đường</h3>
+                <div class="road-list" id="road-list"></div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: PHÂN TÍCH ẢNH ===== -->
+        <div class="tab-content" id="tab-analysis">
+
+            <div class="analysis-section">
+                <h3 class="section-title">📤 Tải ảnh mặt đường</h3>
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp, video/mp4, video/webm, video/ogg">
+                    <div class="upload-icon">📷 🎥</div>
+                    <div class="upload-text">Nhấn hoặc kéo thả ảnh / video vào đây</div>
+                    <div class="upload-hint">Hỗ trợ JPG, PNG, MP4, WEBM</div>
+                </div>
+
+                <div class="preview-container" id="preview-container">
+                    <img id="preview-img" src="" alt="Preview">
+                    <video id="preview-video" style="width: 100%; display: none;" controls muted loop></video>
+                    <button class="preview-remove" id="preview-remove" title="Xóa tệp">✕</button>
+                </div>
+
+                <button class="analyze-btn" id="analyze-btn">🔍 Phân tích mặt đường</button>
+            </div>
+
+            <!-- Kết quả phân tích -->
+            <div id="analysis-results" style="display:none;">
+
+                <div class="analysis-section result-appear">
+                    <h3 class="section-title">📊 Kết quả phân tích</h3>
+                    <div class="result-card">
+                        <div class="result-metric">
+                            <span class="result-metric-label">Tổng số pixel</span>
+                            <span class="result-metric-value" id="res-total-pixels">—</span>
+                        </div>
+                        <div class="result-metric">
+                            <span class="result-metric-label">Pixel vết nứt (đen)</span>
+                            <span class="result-metric-value" id="res-crack-pixels">—</span>
+                        </div>
+                        <div class="result-metric">
+                            <span class="result-metric-label">Pixel bình thường (trắng)</span>
+                            <span class="result-metric-value" id="res-normal-pixels">—</span>
+                        </div>
+                        <div class="result-metric">
+                            <span class="result-metric-label">Tỷ lệ diện tích vết nứt</span>
+                            <span class="result-metric-value" id="res-crack-percent" style="font-size: 16px;">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-section result-appear" style="animation-delay: 0.15s;">
+                    <h3 class="section-title">🏆 Chỉ số PCI (ASTM D6433)</h3>
+                    <!-- PCI Gauge -->
+                    <div class="pci-gauge-container">
+                        <div class="pci-score-display">
+                            <svg class="pci-score-ring" viewBox="0 0 140 140">
+                                <circle class="pci-ring-bg" cx="70" cy="70" r="65"></circle>
+                                <circle class="pci-ring-fill" id="pci-ring" cx="70" cy="70" r="65"></circle>
+                            </svg>
+                            <div class="pci-score-text">
+                                <div class="pci-score-number" id="pci-score-num">—</div>
+                                <div class="pci-score-label">PCI Score</div>
+                            </div>
+                        </div>
+                        <div class="pci-condition" id="pci-condition-text">—</div>
+                        <div class="pci-description" id="pci-description">Tải ảnh lên để phân tích</div>
+                    </div>
+
+                    <!-- PCI Scale -->
+                    <div class="pci-scale" id="pci-scale">
+                        <div class="pci-scale-row" data-min="85" data-max="100" style="background: rgba(0,100,0,0.12); color: #22c55e;">
+                            <span class="pci-scale-range">85 – 100</span>
+                            <div class="pci-scale-bar" style="background: rgba(0,100,0,0.15);">
+                                <div class="pci-scale-bar-fill" style="background: #166534; width: 0%;"></div>
+                                <div class="pci-scale-indicator"></div>
+                            </div>
+                            <span class="pci-scale-condition">Rất tốt</span>
+                        </div>
+                        <div class="pci-scale-row" data-min="65" data-max="85" style="background: rgba(74,222,128,0.08); color: #4ade80;">
+                            <span class="pci-scale-range">65 – 85</span>
+                            <div class="pci-scale-bar" style="background: rgba(74,222,128,0.12);">
+                                <div class="pci-scale-bar-fill" style="background: #22c55e; width: 0%;"></div>
+                                <div class="pci-scale-indicator"></div>
+                            </div>
+                            <span class="pci-scale-condition">Tốt</span>
+                        </div>
+                        <div class="pci-scale-row" data-min="50" data-max="65" style="background: rgba(234,179,8,0.08); color: #eab308;">
+                            <span class="pci-scale-range">50 – 65</span>
+                            <div class="pci-scale-bar" style="background: rgba(234,179,8,0.12);">
+                                <div class="pci-scale-bar-fill" style="background: #eab308; width: 0%;"></div>
+                                <div class="pci-scale-indicator"></div>
+                            </div>
+                            <span class="pci-scale-condition">Trung bình</span>
+                        </div>
+                        <div class="pci-scale-row" data-min="40" data-max="50" style="background: rgba(249,115,22,0.08); color: #f97316;">
+                            <span class="pci-scale-range">40 – 50</span>
+                            <div class="pci-scale-bar" style="background: rgba(249,115,22,0.12);">
+                                <div class="pci-scale-bar-fill" style="background: #f97316; width: 0%;"></div>
+                                <div class="pci-scale-indicator"></div>
+                            </div>
+                            <span class="pci-scale-condition">Kém</span>
+                        </div>
+                        <div class="pci-scale-row" data-min="20" data-max="40" style="background: rgba(239,68,68,0.08); color: #ef4444;">
+                            <span class="pci-scale-range">20 – 40</span>
+                            <div class="pci-scale-bar" style="background: rgba(239,68,68,0.12);">
+                                <div class="pci-scale-bar-fill" style="background: #ef4444; width: 0%;"></div>
+                                <div class="pci-scale-indicator"></div>
+                            </div>
+                            <span class="pci-scale-condition">Rất kém</span>
+                        </div>
+                        <div class="pci-scale-row" data-min="0" data-max="20" style="background: rgba(107,114,128,0.1); color: #9ca3af;">
+                            <span class="pci-scale-range">0 – 20</span>
+                            <div class="pci-scale-bar" style="background: rgba(107,114,128,0.12);">
+                                <div class="pci-scale-bar-fill" style="background: #6b7280; width: 0%;"></div>
+                                <div class="pci-scale-indicator"></div>
+                            </div>
+                            <span class="pci-scale-condition">Hỏng</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-section result-appear" style="animation-delay: 0.3s;">
+                    <h3 class="section-title">🖼️ Ảnh nhị phân (Phát hiện nứt)</h3>
+                    <div class="binary-preview">
+                        <canvas id="binary-canvas"></canvas>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted); text-align: center;">
+                        Đen = Vết nứt &nbsp;|&nbsp; Trắng = Bình thường
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+        <div class="topbar">
+            <span class="topbar-title" id="topbar-title">🗺️ Bản đồ trực quan</span>
+            <div class="topbar-info">
+                <span class="topbar-badge" id="topbar-badge">● Đang hiển thị 6 / 6 đoạn đường</span>
+            </div>
+        </div>
+
+        <!-- Main Panel: Map -->
+        <div class="main-panel active" id="panel-map">
+            <div id="map"></div>
+        </div>
+
+        <!-- Main Panel: Analysis -->
+        <div class="main-panel" id="panel-analysis">
+            <div class="analysis-main">
+                <div class="analysis-hero">
+                    <h2>Chỉ số Tình trạng Mặt đường (PCI)</h2>
+                    <p>Pavement Condition Index — Theo tiêu chuẩn ASTM D6433 của U.S. Army Corps of Engineers. Thang điểm từ 0 đến 100 đánh giá chất lượng mặt đường.</p>
+                </div>
+
+                <!-- PCI Reference Table -->
+                <div class="pci-ref-table">
+                    <div class="pci-ref-header">
+                        <h3>📏 Bảng Chỉ số PCI — ASTM D6433</h3>
+                        <p>U.S. Army Corps of Engineers — Standard PCI™ Rating Scale</p>
+                    </div>
+                    <div class="pci-ref-body">
+                        <div class="pci-ref-left">
+                            <div class="pci-ref-row">
+                                <span class="pci-ref-range">85 – 100</span>
+                                <span class="pci-ref-condition">Very Good (Rất tốt)</span>
+                                <span class="pci-ref-color" style="background: #166534;"></span>
+                            </div>
+                            <div class="pci-ref-row">
+                                <span class="pci-ref-range">65 – 85</span>
+                                <span class="pci-ref-condition">Satisfactory (Tốt)</span>
+                                <span class="pci-ref-color" style="background: #22c55e;"></span>
+                            </div>
+                            <div class="pci-ref-row">
+                                <span class="pci-ref-range">50 – 65</span>
+                                <span class="pci-ref-condition">Fair (Trung bình)</span>
+                                <span class="pci-ref-color" style="background: #eab308;"></span>
+                            </div>
+                            <div class="pci-ref-row">
+                                <span class="pci-ref-range">40 – 50</span>
+                                <span class="pci-ref-condition">Poor (Kém)</span>
+                                <span class="pci-ref-color" style="background: #f97316;"></span>
+                            </div>
+                            <div class="pci-ref-row">
+                                <span class="pci-ref-range">20 – 40</span>
+                                <span class="pci-ref-condition">Very Poor (Rất kém)</span>
+                                <span class="pci-ref-color" style="background: #ef4444;"></span>
+                            </div>
+                            <div class="pci-ref-row">
+                                <span class="pci-ref-range">0 – 20</span>
+                                <span class="pci-ref-condition">Failed (Hỏng)</span>
+                                <span class="pci-ref-color" style="background: #6b7280;"></span>
+                            </div>
+                        </div>
+                        <div class="pci-ref-right">
+                            <div class="pci-bar-segment" style="background: #166534;">Good</div>
+                            <div class="pci-bar-segment" style="background: #22c55e;">Satisfactory</div>
+                            <div class="pci-bar-segment" style="background: #eab308;">Fair</div>
+                            <div class="pci-bar-segment" style="background: #f97316;">Poor</div>
+                            <div class="pci-bar-segment" style="background: #ef4444;">Very Poor</div>
+                            <div class="pci-bar-segment" style="background: #9ca3af; color: rgba(0,0,0,0.5);">Serious</div>
+                            <div class="pci-bar-segment" style="background: #6b7280;">Failed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Hidden canvas for processing -->
+    <canvas id="process-canvas" style="display:none;"></canvas>
+
+    <script>
+        // ===========================
+        // DỮ LIỆU ĐƯỜNG
+        // ===========================
+        const roadData = [
+            // Cập nhật tọa độ chính xác nằm ngay trên mặt đường để Google Street View có thể nhận diện
+            { name: "Quốc lộ 1A (Đoạn qua Hà Nội)", latStart: 20.887648, lonStart: 105.856950, latEnd: 20.8500, lonEnd: 105.8600, surfaceType: "Nhựa", lengthKm: 5.5, crackPercent: 12.5, image: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường Nguyễn Trãi (Hà Nội)", latStart: 20.995400, lonStart: 105.807800, latEnd: 20.9850, lonEnd: 105.7950, surfaceType: "Nhựa", lengthKm: 2.3, crackPercent: 5.0, image: "https://images.unsplash.com/photo-1584351583369-6baf055b51a7?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường Liên Thôn (Đan Phượng)", latStart: 21.0950, lonStart: 105.7000, latEnd: 21.0960, lonEnd: 105.7050, surfaceType: "Bê tông", lengthKm: 0.8, crackPercent: 20.0, image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường cao tốc Bắc - Nam", latStart: 19.8000, lonStart: 105.9000, latEnd: 19.7000, lonEnd: 105.9500, surfaceType: "Nhựa", lengthKm: 15.0, crackPercent: 2.1, image: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=400&q=80" },
+            { name: "Hẻm 123 (Quận 1, TP.HCM)", latStart: 10.7760, lonStart: 106.7010, latEnd: 10.7770, lonEnd: 106.7020, surfaceType: "Bê tông", lengthKm: 0.3, crackPercent: 15.0, image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường ven biển (Đà Nẵng)", latStart: 16.0500, lonStart: 108.2300, latEnd: 16.0300, lonEnd: 108.2400, surfaceType: "Nhựa", lengthKm: 1.2, crackPercent: 8.4, image: "https://images.unsplash.com/photo-1468818438311-4bab781ab9b8?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường Phạm Văn Đồng (Hà Nội)", latStart: 21.050600, lonStart: 105.780800, latEnd: 21.0660, lonEnd: 105.7820, surfaceType: "Nhựa", lengthKm: 3.2, crackPercent: 3.5, image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường Giải Phóng (Hà Nội)", latStart: 20.985600, lonStart: 105.841500, latEnd: 20.9650, lonEnd: 105.8450, surfaceType: "Nhựa", lengthKm: 4.1, crackPercent: 7.2, image: "https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80" },
+            { name: "Đường Vành đai 3 (Hà Nội)", latStart: 21.006800, lonStart: 105.797700, latEnd: 20.9800, lonEnd: 105.8150, surfaceType: "Nhựa", lengthKm: 6.8, crackPercent: 4.8, image: "https://images.unsplash.com/photo-1512401763783-f8a45e998634?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        // ===========================
+        // TIỆN ÍCH MÀU
+        // ===========================
+        function getCrackColor(pct) {
+            if (pct >= 15) return '#ef4444';
+            if (pct >= 8) return '#f97316';
+            if (pct >= 4) return '#eab308';
+            return '#22c55e';
+        }
+
+        function getCrackLevel(pct) {
+            if (pct >= 15) return { text: 'Nghiêm trọng', emoji: '🔴', bg: 'rgba(239,68,68,0.15)', color: '#ef4444' };
+            if (pct >= 8) return { text: 'Trung bình', emoji: '🟠', bg: 'rgba(249,115,22,0.15)', color: '#f97316' };
+            if (pct >= 4) return { text: 'Nhẹ', emoji: '🟡', bg: 'rgba(234,179,8,0.15)', color: '#eab308' };
+            return { text: 'Tốt', emoji: '🟢', bg: 'rgba(34,197,94,0.15)', color: '#22c55e' };
+        }
+
+        function getBadgeStyle(pct) {
+            const c = getCrackColor(pct);
+            return `background: ${c}22; color: ${c}; border: 1px solid ${c}44;`;
+        }
+
+        // ===========================
+        // PCI SCORING (ASTM D6433)
+        // ===========================
+        function crackPercentToPCI(crackPct) {
+            // Mapping: 0% crack → PCI 100, 50%+ crack → PCI 0
+            // Non-linear curve simulating deduct value behavior
+            if (crackPct <= 0) return 100;
+            if (crackPct >= 50) return 0;
+
+            // Exponential decay: small crack % → big PCI drop initially
+            const pci = 100 * Math.pow(1 - crackPct / 50, 1.3);
+            return Math.round(Math.max(0, Math.min(100, pci)));
+        }
+
+        function getPCIInfo(pci) {
+            if (pci >= 85) return { condition: 'Very Good', conditionVi: 'Rất tốt', color: '#166534', colorLight: '#22c55e', emoji: '🟢', desc: 'Mặt đường trong tình trạng rất tốt. Chỉ cần bảo trì định kỳ.' };
+            if (pci >= 65) return { condition: 'Satisfactory', conditionVi: 'Tốt', color: '#22c55e', colorLight: '#4ade80', emoji: '🟢', desc: 'Mặt đường tốt, có ít hư hỏng nhẹ. Nên lên kế hoạch bảo trì phòng ngừa.' };
+            if (pci >= 50) return { condition: 'Fair', conditionVi: 'Trung bình', color: '#eab308', colorLight: '#fde047', emoji: '🟡', desc: 'Mặt đường trung bình. Cần bảo trì sửa chữa kịp thời để tránh xuống cấp.' };
+            if (pci >= 40) return { condition: 'Poor', conditionVi: 'Kém', color: '#f97316', colorLight: '#fb923c', emoji: '🟠', desc: 'Mặt đường kém. Cần sửa chữa lớn hoặc tái tạo bề mặt.' };
+            if (pci >= 20) return { condition: 'Very Poor', conditionVi: 'Rất kém', color: '#ef4444', colorLight: '#f87171', emoji: '🔴', desc: 'Mặt đường rất kém. Cần tái xây dựng hoặc sửa chữa khẩn cấp.' };
+            return { condition: 'Failed', conditionVi: 'Hỏng', color: '#6b7280', colorLight: '#9ca3af', emoji: '⚫', desc: 'Mặt đường đã hỏng hoàn toàn. Cần xây dựng lại ngay lập tức.' };
+        }
+
+        // ===========================
+        // TAB SWITCHING
+        // ===========================
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const mainPanels = document.querySelectorAll('.main-panel');
+        let mapInstance = null;
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                tabContents.forEach(c => c.classList.remove('active'));
+                document.getElementById('tab-' + tab).classList.add('active');
+
+                mainPanels.forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-' + tab).classList.add('active');
+
+                if (tab === 'map') {
+                    document.getElementById('topbar-title').textContent = '🗺️ Bản đồ trực quan';
+                    document.getElementById('topbar-badge').style.display = '';
+                    if (mapInstance) mapInstance.invalidateSize();
+                } else {
+                    document.getElementById('topbar-title').textContent = '📸 Phân tích Vết nứt Mặt đường';
+                    document.getElementById('topbar-badge').style.display = 'none';
+                }
+            });
+        });
+
+        // ===========================
+        // KHỞI TẠO BẢN ĐỒ
+        // ===========================
+        mapInstance = L.map('map', { zoomControl: true, attributionControl: true }).setView([16.05, 107.0], 6);
+
+        // Các lớp bản đồ nền (Base layers)
+        const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OSM &copy; CARTO', maxZoom: 19
+        });
+        
+        const streetMap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            attribution: '&copy; Google Maps', maxZoom: 19
+        });
+        
+        const satelliteMap = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            attribution: '&copy; Google Maps', maxZoom: 19
+        });
+
+        // Mặc định sử dụng bản đồ đường phố (Street View) theo yêu cầu
+        streetMap.addTo(mapInstance);
+
+        // Trình điều khiển chuyển đổi bản đồ
+        const baseMaps = {
+            "🏙️ Xem Phố (Streets)": streetMap,
+            "🌙 Bản đồ Tối": darkMap,
+            "🌍 Vệ Tinh (Satellite)": satelliteMap
+        };
+        L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(mapInstance);
+
+        // Định vị vị trí thực của người dùng qua GPS trình duyệt
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Di chuyển bản đồ đến vị trí của người dùng
+                    mapInstance.flyTo([lat, lng], 14, { duration: 1.5 });
+                    
+                    // Thêm marker vị trí hiện tại
+                    const userMarker = L.circleMarker([lat, lng], {
+                        radius: 8,
+                        fillColor: "#3b82f6", // Màu xanh dương
+                        color: "#ffffff",
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 1
+                    }).addTo(mapInstance);
+                    
+                    userMarker.bindTooltip("📍 Vị trí của bạn", { direction: 'top', offset: [0, -5] }).openTooltip();
+                },
+                (error) => {
+                    console.log("Không thể lấy vị trí do thiết bị từ chối hoặc lỗi:", error.message);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        let roadLayers = [];
+
+        function createPopupHTML(road) {
+            const level = getCrackLevel(road.crackPercent);
+            const color = getCrackColor(road.crackPercent);
+            return `
+                <div class="popup-card" style="padding: 16px; width: 280px;">
+                    <div class="popup-card-header" style="border-bottom-color: ${color};">
+                        <span class="popup-card-icon">🛣️</span>
+                        <span class="popup-card-title">${road.name}</span>
+                    </div>
+                    <div class="popup-card-body">
+                        <div class="popup-row">
+                            <span class="popup-row-label">Loại mặt đường</span>
+                            <span class="popup-row-value">${road.surfaceType}</span>
+                        </div>
+                        <div class="popup-row">
+                            <span class="popup-row-label">Chiều dài</span>
+                            <span class="popup-row-value">${road.lengthKm} km</span>
+                        </div>
+                        <div class="popup-row">
+                            <span class="popup-row-label">Tỷ lệ vết nứt</span>
+                            <span class="popup-row-value popup-crack-value" style="color: ${color};">${road.crackPercent}%</span>
+                        </div>
+                        <div class="popup-row">
+                            <span class="popup-row-label">Đánh giá</span>
+                            <span class="popup-level-badge" style="background: ${level.bg}; color: ${level.color};">
+                                ${level.emoji} ${level.text}
+                            </span>
+                        </div>
+                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                            <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${road.latStart},${road.lonStart}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; gap: 6px; background: rgba(255,255,255,0.05); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                <span>🛣️</span> Xem Street View 360°
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRoads(data) {
+            roadLayers.forEach(l => mapInstance.removeLayer(l));
+            roadLayers = [];
+
+            data.forEach(road => {
+                const color = getCrackColor(road.crackPercent);
+                const coords = [[road.latStart, road.lonStart], [road.latEnd, road.lonEnd]];
+
+                const polyline = L.polyline(coords, { color, weight: 6, opacity: 0.85, lineCap: 'round', lineJoin: 'round' });
+                polyline.bindPopup(createPopupHTML(road), { maxWidth: 320 });
+                polyline.bindTooltip(`📍 ${road.name} — Nứt: ${road.crackPercent}%`, { sticky: true });
+                polyline.on('mouseover', function() { this.setStyle({ weight: 10, opacity: 1 }); });
+                polyline.on('mouseout', function() { this.setStyle({ weight: 6, opacity: 0.85 }); });
+                polyline.addTo(mapInstance);
+                roadLayers.push(polyline);
+
+                const mid = [(road.latStart + road.latEnd)/2, (road.lonStart + road.lonEnd)/2];
+                const marker = L.circleMarker(mid, { radius: 6, color: '#0f1117', weight: 2, fillColor: color, fillOpacity: 1 });
+                marker.bindPopup(createPopupHTML(road), { maxWidth: 320 });
+                marker.bindTooltip(road.name);
+                marker.addTo(mapInstance);
+                roadLayers.push(marker);
+            });
+        }
+
+        function renderRoadList(data) {
+            const list = document.getElementById('road-list');
+            list.innerHTML = '';
+            data.forEach((road, idx) => {
+                const item = document.createElement('div');
+                item.className = 'road-item';
+                item.innerHTML = `
+                    <span class="road-item-name">${road.name}</span>
+                    <span class="road-item-badge" style="${getBadgeStyle(road.crackPercent)}">${road.crackPercent}%</span>
+                `;
+                item.addEventListener('click', () => {
+                    // Switch to map tab
+                    document.getElementById('btn-tab-map').click();
+                    const mid = [(road.latStart + road.latEnd)/2, (road.lonStart + road.lonEnd)/2];
+                    mapInstance.flyTo(mid, 14, { duration: 1.2 });
+                    const pi = idx * 2;
+                    if (roadLayers[pi]) setTimeout(() => roadLayers[pi].openPopup(), 1300);
+                });
+                list.appendChild(item);
+            });
+        }
+
+        // ===========================
+        // BỘ LỌC
+        // ===========================
+        function getFilteredData() {
+            const onlyAsphalt = document.getElementById('filter-asphalt').checked;
+            const onlyLong = document.getElementById('filter-length').checked;
+            const sliderVal = parseFloat(document.getElementById('slider-length').value);
+
+            let filtered = [...roadData];
+            if (onlyAsphalt) filtered = filtered.filter(r => r.surfaceType === 'Nhựa');
+            let minLen = sliderVal;
+            if (onlyLong && minLen < 1) minLen = 1;
+            filtered = filtered.filter(r => r.lengthKm >= minLen);
+            return filtered;
+        }
+
+        function updateAll() {
+            const filtered = getFilteredData();
+            renderRoads(filtered);
+            renderRoadList(filtered);
+            document.getElementById('stat-count').textContent = filtered.length;
+            document.getElementById('topbar-badge').textContent = `● Đang hiển thị ${filtered.length} / ${roadData.length} đoạn đường`;
+        }
+
+        const slider = document.getElementById('slider-length');
+        const sliderDisplay = document.getElementById('slider-display');
+
+        function updateSlider() {
+            const val = parseFloat(slider.value);
+            sliderDisplay.textContent = val.toFixed(1) + ' km';
+            const pct = ((val - parseFloat(slider.min)) / (parseFloat(slider.max) - parseFloat(slider.min))) * 100;
+            slider.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
+            updateAll();
+        }
+
+        slider.addEventListener('input', updateSlider);
+
+        document.getElementById('filter-length').addEventListener('change', function() {
+            if (this.checked && parseFloat(slider.value) < 1) {
+                slider.value = 1;
+                updateSlider();
+            } else { updateAll(); }
+        });
+
+        document.getElementById('filter-asphalt').addEventListener('change', updateAll);
+
+        // ===========================
+        // UPLOAD & PHÂN TÍCH ẢNH
+        // ===========================
+        const fileInput = document.getElementById('file-input');
+        const uploadZone = document.getElementById('upload-zone');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImg = document.getElementById('preview-img');
+        const previewRemove = document.getElementById('preview-remove');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const analysisResults = document.getElementById('analysis-results');
+
+        let currentFileData = null;
+        let isVideoFile = false;
+        let videoRafId = null;
+
+        const previewVideo = document.getElementById('preview-video');
+
+        // Drag & drop
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+        uploadZone.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', e => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            const isImage = file.type.startsWith('image/');
+            const isVideo = file.type.startsWith('video/');
+            if (!isImage && !isVideo) return;
+
+            isVideoFile = isVideo;
+            
+            // Dừng xử lý video cũ
+            if (videoRafId) { cancelAnimationFrame(videoRafId); videoRafId = null; }
+            previewVideo.pause();
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                if (isImage) {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                    previewVideo.style.display = 'none';
+                } else {
+                    previewVideo.src = e.target.result;
+                    previewVideo.style.display = 'block';
+                    previewImg.style.display = 'none';
+                }
+                
+                previewContainer.style.display = 'block';
+                analyzeBtn.style.display = 'block';
+                analysisResults.style.display = 'none';
+                currentFileData = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        previewRemove.addEventListener('click', () => {
+            previewContainer.style.display = 'none';
+            analyzeBtn.style.display = 'none';
+            analysisResults.style.display = 'none';
+            fileInput.value = '';
+            currentFileData = null;
+            if (videoRafId) { cancelAnimationFrame(videoRafId); videoRafId = null; }
+            previewVideo.pause();
+            previewVideo.removeAttribute('src');
+            previewImg.removeAttribute('src');
+        });
+
+        // ===========================
+        // PHÂN TÍCH ẢNH & VIDEO BẰNG CANVAS
+        // ===========================
+        analyzeBtn.addEventListener('click', () => {
+            if (!currentFileData) return;
+
+            analysisResults.style.display = 'block';
+
+            if (isVideoFile) {
+                analyzeBtn.textContent = '🎥 Đang phân tích video...';
+                analyzeBtn.classList.add('loading');
+                previewVideo.play();
+                videoRafId = 1; // Khởi tạo để vòng lặp có thể chạy
+                processVideoFrame();
+            } else {
+                analyzeBtn.textContent = '⏳ Đang phân tích...';
+                analyzeBtn.classList.add('loading');
+
+                setTimeout(() => {
+                    const img = new Image();
+                    img.onload = () => performAnalysis(img);
+                    img.src = currentFileData;
+                    analyzeBtn.textContent = '🔍 Phân tích mặt đường';
+                    analyzeBtn.classList.remove('loading');
+                }, 600);
+            }
+        });
+
+        function processVideoFrame() {
+            if (previewVideo.paused || previewVideo.ended) {
+                analyzeBtn.textContent = '🔍 Phân tích lại video';
+                analyzeBtn.classList.remove('loading');
+                return;
+            }
+            performAnalysis(previewVideo);
+        }
+
+        function performAnalysis(source) {
+            const canvas = document.getElementById('process-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Resize for performance (max 800px)
+            const maxDim = 800;
+            let w = source.videoWidth || source.width;
+            let h = source.videoHeight || source.height;
+            
+            if (!w || !h) {
+                return; // Wait for metadata
+            }
+
+            if (w > maxDim || h > maxDim) {
+                const ratio = Math.min(maxDim / w, maxDim / h);
+                w = Math.round(w * ratio);
+                h = Math.round(h * ratio);
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+            ctx.drawImage(source, 0, 0, w, h);
+
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                const totalPixels = w * h;
+
+                // Step 1: Convert to grayscale
+                const gray = new Uint8Array(totalPixels);
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    gray[i] = Math.round(0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2]);
+                }
+
+                // Step 2: Adaptive thresholding (simulated)
+                // Use Otsu's method to find optimal threshold
+                const histogram = new Array(256).fill(0);
+                for (let i = 0; i < totalPixels; i++) histogram[gray[i]]++;
+
+                let sum = 0;
+                for (let i = 0; i < 256; i++) sum += i * histogram[i];
+
+                let sumB = 0, wB = 0, wF = 0, maxVariance = 0, threshold = 127;
+                for (let t = 0; t < 256; t++) {
+                    wB += histogram[t];
+                    if (wB === 0) continue;
+                    wF = totalPixels - wB;
+                    if (wF === 0) break;
+
+                    sumB += t * histogram[t];
+                    const mB = sumB / wB;
+                    const mF = (sum - sumB) / wF;
+                    const variance = wB * wF * (mB - mF) * (mB - mF);
+
+                    if (variance > maxVariance) {
+                        maxVariance = variance;
+                        threshold = t;
+                    }
+                }
+
+                // Step 3: Apply threshold & count
+                let crackPixels = 0;
+                const binaryCanvas = document.getElementById('binary-canvas');
+                const bCtx = binaryCanvas.getContext('2d');
+                binaryCanvas.width = w;
+                binaryCanvas.height = h;
+                const binaryData = bCtx.createImageData(w, h);
+
+                for (let i = 0; i < totalPixels; i++) {
+                    const isBelowThreshold = gray[i] < threshold;
+                    if (isBelowThreshold) crackPixels++;
+
+                    const val = isBelowThreshold ? 0 : 255;
+                    const idx = i * 4;
+                    binaryData.data[idx] = val;
+                    binaryData.data[idx + 1] = val;
+                    binaryData.data[idx + 2] = val;
+                    binaryData.data[idx + 3] = 255;
+                }
+
+                bCtx.putImageData(binaryData, 0, 0);
+
+                // Step 4: Calculate results
+                const normalPixels = totalPixels - crackPixels;
+                const crackPercent = (crackPixels / totalPixels * 100);
+                const pciScore = crackPercentToPCI(crackPercent);
+                const pciInfo = getPCIInfo(pciScore);
+
+                // Display results
+                document.getElementById('res-total-pixels').textContent = totalPixels.toLocaleString();
+                document.getElementById('res-crack-pixels').textContent = crackPixels.toLocaleString();
+                document.getElementById('res-normal-pixels').textContent = normalPixels.toLocaleString();
+                document.getElementById('res-crack-percent').textContent = crackPercent.toFixed(2) + '%';
+                document.getElementById('res-crack-percent').style.color = getCrackColor(crackPercent);
+
+                // PCI Gauge
+                const pciScoreNum = document.getElementById('pci-score-num');
+                pciScoreNum.textContent = pciScore;
+                pciScoreNum.style.color = pciInfo.color;
+
+                const ring = document.getElementById('pci-ring');
+                const circumference = 2 * Math.PI * 65; // ~408
+                ring.style.stroke = pciInfo.color;
+                ring.style.strokeDasharray = circumference;
+                // Animate
+                requestAnimationFrame(() => {
+                    ring.style.strokeDashoffset = circumference - (circumference * pciScore / 100);
+                });
+
+                const conditionEl = document.getElementById('pci-condition-text');
+                conditionEl.textContent = `${pciInfo.emoji} ${pciInfo.conditionVi} (${pciInfo.condition})`;
+                conditionEl.style.color = pciInfo.color;
+
+                document.getElementById('pci-description').textContent = pciInfo.desc;
+
+                // PCI Scale highlight
+                const scaleRows = document.querySelectorAll('.pci-scale-row');
+                scaleRows.forEach(row => {
+                    const min = parseInt(row.dataset.min);
+                    const max = parseInt(row.dataset.max);
+                    const fill = row.querySelector('.pci-scale-bar-fill');
+                    const indicator = row.querySelector('.pci-scale-indicator');
+
+                    row.classList.remove('active-row');
+                    row.style.fontWeight = '';
+                    fill.style.width = '0%';
+                    indicator.style.display = 'none';
+
+                    if (pciScore >= min && pciScore < max || (max === 100 && pciScore === 100)) {
+                        row.classList.add('active-row');
+                        row.style.fontWeight = '700';
+                        const posInRange = (pciScore - min) / (max - min) * 100;
+                        fill.style.width = posInRange + '%';
+                        indicator.style.display = 'block';
+                        indicator.style.left = posInRange + '%';
+                    }
+                });
+
+                // Show results
+                analysisResults.style.display = 'block';
+
+                // Schedule next frame if it is video
+                if (isVideoFile && videoRafId) {
+                    videoRafId = requestAnimationFrame(processVideoFrame);
+                }
+        }
+
+        // ===========================
+        // KHỞI CHẠY
+        // ===========================
+        updateSlider();
+    </script>
+</body>
+</html>
