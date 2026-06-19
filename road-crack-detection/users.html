@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bảng quản lý người dùng hệ thống AI Phân tích Vết nứt Mặt đường">
+    <title>👥 Quản lý Người dùng — AI Road Crack Detection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0a0d14;
+            --bg-card: rgba(16, 20, 35, 0.95);
+            --bg-card-solid: #10141f;
+            --bg-row: rgba(255,255,255,0.02);
+            --border: rgba(99, 102, 241, 0.2);
+            --border-subtle: rgba(255,255,255,0.05);
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.35);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --success: #22c55e;
+            --success-bg: rgba(34,197,94,0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245,158,11,0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239,68,68,0.1);
+            --info: #38bdf8;
+            --info-bg: rgba(56,189,248,0.1);
+            --orange: #f97316;
+            --radius: 14px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 20% 10%, rgba(99,102,241,0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 90%, rgba(139,92,246,0.05) 0%, transparent 50%);
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            height: 56px;
+            background: rgba(10,13,20,0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 28px;
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+
+        .topbar-logo {
+            font-size: 14px; font-weight: 800;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .topbar-sep { width: 1px; height: 20px; background: var(--border-subtle); }
+
+        .topbar-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+
+        .back-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--accent-light);
+            font-family: inherit; font-size: 12px; font-weight: 600;
+            cursor: pointer; text-decoration: none;
+            transition: all 0.2s;
+        }
+        .back-btn:hover { background: rgba(99,102,241,0.2); transform: translateX(-2px); }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main { max-width: 1400px; margin: 0 auto; padding: 32px 28px; }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            margin-bottom: 28px; gap: 20px; flex-wrap: wrap;
+        }
+
+        .page-header-left h1 {
+            font-size: 26px; font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .page-header-left p { font-size: 13px; color: var(--text-muted); }
+
+        /* ===== KPI CARDS ===== */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            display: flex; align-items: center; gap: 16px;
+            transition: all 0.25s;
+            position: relative; overflow: hidden;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .kpi-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+        .kpi-card:nth-child(2)::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
+        .kpi-card:nth-child(3)::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .kpi-card:nth-child(4)::before { background: linear-gradient(90deg, #38bdf8, #0ea5e9); }
+
+        .kpi-card:hover { border-color: var(--border); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+
+        .kpi-icon { font-size: 28px; min-width: 44px; }
+        .kpi-info {}
+        .kpi-num { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 3px; }
+        .kpi-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; flex-wrap: wrap;
+        }
+
+        .search-wrap { position: relative; flex: 1; min-width: 200px; }
+        .search-wrap input {
+            width: 100%; padding: 9px 14px 9px 38px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary); font-family: inherit; font-size: 13px;
+            transition: all 0.2s; outline: none;
+        }
+        .search-wrap input:focus { border-color: var(--border); background: rgba(255,255,255,0.06); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .search-wrap input::placeholder { color: var(--text-muted); }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+
+        .filter-select {
+            padding: 9px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary); font-family: inherit; font-size: 12px;
+            cursor: pointer; outline: none; transition: all 0.2s;
+        }
+        .filter-select:focus { border-color: var(--border); }
+        .filter-select option { background: #1a1f2e; }
+
+        .add-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 9px 18px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border: none; border-radius: 10px;
+            color: white; font-family: inherit; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.25s; white-space: nowrap;
+        }
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--accent-glow); }
+
+        .send-all-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 9px 18px;
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.25);
+            border-radius: 10px;
+            color: var(--success); font-family: inherit; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.25s; white-space: nowrap;
+        }
+        .send-all-btn:hover { background: rgba(34,197,94,0.2); transform: translateY(-2px); }
+
+        /* ===== TABLE ===== */
+        .table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead tr {
+            background: rgba(99,102,241,0.06);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        thead th {
+            padding: 12px 16px;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.2px;
+            color: var(--text-muted); text-align: left;
+            cursor: pointer; user-select: none;
+            white-space: nowrap;
+        }
+        thead th:hover { color: var(--accent-light); }
+        thead th .sort-icon { margin-left: 4px; opacity: 0.5; }
+        thead th.sorted { color: var(--accent-light); }
+        thead th.sorted .sort-icon { opacity: 1; }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: background 0.15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(99,102,241,0.05); }
+
+        td {
+            padding: 13px 16px;
+            font-size: 13px; color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .td-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .td-user { display: flex; align-items: center; gap: 11px; }
+        .td-user-info {}
+        .td-user-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .td-user-id { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+        .group-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 11px; border-radius: 20px;
+            font-size: 11px; font-weight: 700;
+        }
+
+        .result-bar-wrap { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+        .result-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+        .result-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+        .result-pct { font-size: 12px; font-weight: 700; min-width: 38px; text-align: right; }
+
+        .pci-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 8px;
+            font-size: 12px; font-weight: 800;
+        }
+
+        .status-dot {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 600;
+        }
+        .status-dot::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%;
+        }
+        .status-online::before { background: var(--success); box-shadow: 0 0 6px rgba(34,197,94,0.6); }
+        .status-offline::before { background: var(--text-muted); }
+
+        .gmail-cell { display: flex; align-items: center; gap: 7px; }
+        .gmail-text { font-size: 12px; color: var(--text-secondary); }
+        .gmail-edit { background: none; border: none; cursor: pointer; font-size: 13px; opacity: 0.5; transition: opacity 0.2s; }
+        .gmail-edit:hover { opacity: 1; }
+
+        .action-btns { display: flex; gap: 6px; }
+
+        .btn-icon {
+            width: 30px; height: 30px; border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-icon:hover { background: rgba(99,102,241,0.12); border-color: var(--border); color: var(--accent-light); transform: scale(1.1); }
+        .btn-icon.send:hover { background: var(--success-bg); border-color: rgba(34,197,94,0.3); color: var(--success); }
+        .btn-icon.danger:hover { background: var(--danger-bg); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+
+        .no-data {
+            text-align: center; padding: 60px 20px;
+            color: var(--text-muted); font-size: 13px;
+        }
+        .no-data span { display: block; font-size: 36px; margin-bottom: 10px; }
+
+        /* ===== PAGINATION ===== */
+        .pagination-wrap {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 20px; border-top: 1px solid var(--border-subtle);
+            flex-wrap: wrap; gap: 10px;
+        }
+
+        .pagination-info { font-size: 12px; color: var(--text-muted); }
+
+        .pagination-btns { display: flex; gap: 4px; }
+        .page-btn {
+            width: 32px; height: 32px; border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.02);
+            color: var(--text-secondary); font-family: inherit; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .page-btn:hover { background: rgba(99,102,241,0.1); border-color: var(--border); color: var(--accent-light); }
+        .page-btn.active { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 0 12px var(--accent-glow); }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+        .modal {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            width: 100%; max-width: 520px;
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+        .modal-header h2 { font-size: 17px; font-weight: 800; }
+        .modal-close {
+            width: 32px; height: 32px; border-radius: 8px;
+            border: 1px solid var(--border-subtle); background: none;
+            color: var(--text-muted); font-size: 16px; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:hover { background: var(--danger-bg); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-full { grid-column: 1 / -1; }
+
+        .form-group label {
+            display: block; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%; padding: 10px 13px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary); font-family: inherit; font-size: 13px;
+            outline: none; transition: all 0.2s;
+        }
+        .form-control:focus { border-color: var(--border); background: rgba(255,255,255,0.06); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+        .form-control::placeholder { color: var(--text-muted); }
+        select.form-control option { background: #1a1f2e; }
+
+        .modal-footer {
+            display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px;
+        }
+
+        .btn-cancel {
+            padding: 10px 22px; border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary); font-family: inherit; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-cancel:hover { background: rgba(255,255,255,0.06); }
+
+        .btn-primary {
+            padding: 10px 22px; border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: white; font-family: inherit; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.25s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 18px var(--accent-glow); }
+
+        .btn-success {
+            padding: 10px 22px; border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white; font-family: inherit; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.25s;
+        }
+        .btn-success:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(34,197,94,0.3); }
+
+        /* ===== EMAIL MODAL ===== */
+        .email-preview {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);
+            border-radius: 10px; padding: 16px; margin-top: 14px; font-size: 12px;
+            line-height: 1.7; color: var(--text-secondary);
+        }
+        .email-preview strong { color: var(--text-primary); }
+        .email-preview .pci-highlight {
+            font-size: 22px; font-weight: 900;
+            display: block; margin: 6px 0; text-align: center;
+        }
+
+        /* ===== TOAST ===== */
+        #toast-wrap {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 8px;
+            z-index: 9999;
+        }
+
+        .toast {
+            display: flex; align-items: center; gap: 10px;
+            padding: 13px 18px; border-radius: 12px;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            font-size: 13px; font-weight: 500;
+            animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-width: 260px;
+        }
+        .toast.success { border-color: rgba(34,197,94,0.3); }
+        .toast.error { border-color: rgba(239,68,68,0.3); }
+        .toast-icon { font-size: 18px; }
+
+        @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .form-grid { grid-template-columns: 1fr; }
+            .table-wrap { overflow-x: auto; }
+        }
+        @media (max-width: 600px) {
+            .kpi-row { grid-template-columns: 1fr 1fr; }
+            .main { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+    <div class="topbar-left">
+        <span class="topbar-logo">🛣️ AI Road Crack</span>
+        <div class="topbar-sep"></div>
+        <span class="topbar-title">Quản lý Người dùng</span>
+    </div>
+    <a href="index.html" class="back-btn">← Quay lại Bản đồ</a>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1>👥 Bảng Thông tin Người dùng</h1>
+            <p>Quản lý thành viên, nhóm khảo sát và gửi kết quả phân tích qua Gmail</p>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-icon">👤</div>
+            <div class="kpi-info">
+                <div class="kpi-num" id="kpi-total" style="color:#818cf8;">0</div>
+                <div class="kpi-label">Tổng người dùng</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">🟢</div>
+            <div class="kpi-info">
+                <div class="kpi-num" id="kpi-online" style="color:#22c55e;">0</div>
+                <div class="kpi-label">Đang hoạt động</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">🏷️</div>
+            <div class="kpi-info">
+                <div class="kpi-num" id="kpi-groups" style="color:#f59e0b;">0</div>
+                <div class="kpi-label">Số nhóm khảo sát</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">📧</div>
+            <div class="kpi-info">
+                <div class="kpi-num" id="kpi-sent" style="color:#38bdf8;">0</div>
+                <div class="kpi-label">Email đã gửi</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Tìm kiếm theo tên, nhóm, Gmail...">
+        </div>
+        <select class="filter-select" id="filter-group">
+            <option value="">Tất cả nhóm</option>
+        </select>
+        <select class="filter-select" id="filter-status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="online">Đang online</option>
+            <option value="offline">Offline</option>
+        </select>
+        <button class="send-all-btn" id="send-all-btn" onclick="openSendAllModal()">
+            📤 Gửi tất cả kết quả
+        </button>
+        <button class="add-btn" onclick="openAddModal()">
+            ＋ Thêm người dùng
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('id')">#<span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('name')">Họ và tên<span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('group')">Nhóm<span class="sort-icon">↕</span></th>
+                    <th onclick="sortTable('pci')">Kết quả nhóm (PCI)<span class="sort-icon">↕</span></th>
+                    <th>Tỷ lệ vết nứt</th>
+                    <th onclick="sortTable('status')">Trạng thái<span class="sort-icon">↕</span></th>
+                    <th>Gmail nhóm</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+        <div id="no-data" class="no-data" style="display:none;">
+            <span>🔍</span>
+            Không tìm thấy người dùng nào
+        </div>
+        <div class="pagination-wrap">
+            <div class="pagination-info" id="pagination-info"></div>
+            <div class="pagination-btns" id="pagination-btns"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL THÊM/SỬA NGƯỜI DÙNG ===== -->
+<div class="modal-overlay" id="user-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="modal-title">➕ Thêm người dùng mới</h2>
+            <button class="modal-close" onclick="closeModal('user-modal')">✕</button>
+        </div>
+        <form id="user-form" onsubmit="saveUser(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Họ và Tên *</label>
+                    <input type="text" id="f-name" class="form-control" placeholder="Vd: Nguyễn Văn A" required>
+                </div>
+                <div class="form-group">
+                    <label>Mã sinh viên / ID</label>
+                    <input type="text" id="f-uid" class="form-control" placeholder="Vd: SV2021001">
+                </div>
+                <div class="form-group">
+                    <label>Nhóm *</label>
+                    <select id="f-group" class="form-control" required onchange="autoFillGroupData()">
+                        <option value="">-- Chọn nhóm --</option>
+                        <option value="Nhóm 1">Nhóm 1</option>
+                        <option value="Nhóm 2">Nhóm 2</option>
+                        <option value="Nhóm 3">Nhóm 3</option>
+                        <option value="Nhóm 4">Nhóm 4</option>
+                        <option value="Nhóm 5">Nhóm 5</option>
+                        <option value="Nhóm 6">Nhóm 6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <select id="f-status" class="form-control">
+                        <option value="online">🟢 Đang hoạt động</option>
+                        <option value="offline">⚫ Offline</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Điểm PCI nhóm (0–100)</label>
+                    <input type="number" id="f-pci" class="form-control" placeholder="Vd: 72" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Tỷ lệ vết nứt (%)</label>
+                    <input type="number" id="f-crack" class="form-control" placeholder="Vd: 8.5" step="0.1" min="0" max="100">
+                </div>
+                <div class="form-group form-full">
+                    <label>Gmail nhóm *</label>
+                    <input type="email" id="f-gmail" class="form-control" placeholder="nhom1@gmail.com" required>
+                </div>
+                <div class="form-group form-full">
+                    <label>Khu vực khảo sát</label>
+                    <input type="text" id="f-area" class="form-control" placeholder="Vd: Quận Hoàn Kiếm, Hà Nội">
+                </div>
+                <div class="form-group form-full">
+                    <label>Ghi chú</label>
+                    <input type="text" id="f-note" class="form-control" placeholder="Nhận xét thêm về nhóm...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('user-modal')">Hủy</button>
+                <button type="submit" class="btn-primary" id="modal-save-btn">💾 Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== MODAL GỬI EMAIL ===== -->
+<div class="modal-overlay" id="email-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>📧 Gửi kết quả qua Gmail</h2>
+            <button class="modal-close" onclick="closeModal('email-modal')">✕</button>
+        </div>
+        <div>
+            <div class="form-grid">
+                <div class="form-group form-full">
+                    <label>Gửi đến Gmail</label>
+                    <input type="email" id="email-to" class="form-control" placeholder="Nhập Gmail nhận...">
+                </div>
+                <div class="form-group form-full">
+                    <label>Tiêu đề email</label>
+                    <input type="text" id="email-subject" class="form-control" value="Kết quả phân tích vết nứt mặt đường">
+                </div>
+            </div>
+            <div class="email-preview" id="email-preview-box">
+                <strong>Xem trước nội dung email:</strong><br><br>
+                <span id="ep-greeting">—</span><br><br>
+                📊 <strong>Kết quả phân tích mặt đường của <span id="ep-group">—</span></strong><br>
+                <span id="ep-area-line" style="color:var(--text-muted);font-size:11px;"></span><br>
+                <span class="pci-highlight" id="ep-pci-big">—</span>
+                🔢 Điểm PCI: <strong id="ep-pci">—</strong> / 100<br>
+                📉 Tỷ lệ vết nứt: <strong id="ep-crack">—</strong><br>
+                🏆 Tình trạng: <strong id="ep-condition">—</strong><br><br>
+                <span id="ep-note-line" style="color:var(--text-muted);"></span><br><br>
+                <em style="color:var(--text-muted);font-size:11px;">— Hệ thống AI Phân tích Vết nứt Mặt đường 🛣️</em>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('email-modal')">Hủy</button>
+                <button class="btn-success" onclick="sendEmail()">📤 Gửi Gmail ngay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL GỬI TẤT CẢ ===== -->
+<div class="modal-overlay" id="send-all-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>📤 Gửi kết quả cho tất cả nhóm</h2>
+            <button class="modal-close" onclick="closeModal('send-all-modal')">✕</button>
+        </div>
+        <div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+                Hệ thống sẽ gửi email kết quả phân tích đến Gmail của từng nhóm. Danh sách nhóm có Gmail hợp lệ:
+            </p>
+            <div id="group-email-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('send-all-modal')">Hủy</button>
+                <button class="btn-success" onclick="sendAllEmails()">📤 Gửi tất cả</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-wrap"></div>
+
+<script>
+// ============================================================
+// DỮ LIỆU MẪU
+// ============================================================
+const GROUP_DATA = {
+    'Nhóm 1 - QL1A': { pci: 78, crack: 5.2, area: 'Quốc lộ 1A (Hà Nội)', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
+    'Nhóm 2 - Nguyễn Trãi': { pci: 85, crack: 3.5, area: 'Đường Nguyễn Trãi (Hà Nội)', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+    'Nhóm 3 - Liên Thôn': { pci: 30, crack: 18.5, area: 'Đường Liên Thôn (Đan Phượng)', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
+    'Nhóm 4 - Cao Tốc': { pci: 92, crack: 1.8, area: 'Đường cao tốc Bắc - Nam', color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' },
+    'Nhóm 5 - Vành Đai 3': { pci: 55, crack: 11.2, area: 'Đường Vành đai 3 (Hà Nội)', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+};
+
+let users = [
+    { id: 1, name: 'Nguyễn Văn An', uid: 'SV2021001', group: 'Nhóm 1 - QL1A', status: 'online', gmail: 'nhom1.ql1a@gmail.com', area: 'Quốc lộ 1A (Hà Nội)', note: 'Trưởng nhóm - Đã hoàn thành khảo sát video QL1A' },
+    { id: 2, name: 'Trần Thị Bình', uid: 'SV2021002', group: 'Nhóm 1 - QL1A', status: 'online', gmail: 'nhom1.ql1a@gmail.com', area: 'Quốc lộ 1A (Hà Nội)', note: 'Thành viên' },
+    { id: 3, name: 'Lê Minh Cường', uid: 'SV2021003', group: 'Nhóm 2 - Nguyễn Trãi', status: 'offline', gmail: 'nhom2.nguyentrai@gmail.com', area: 'Đường Nguyễn Trãi (Hà Nội)', note: 'Trưởng nhóm' },
+    { id: 4, name: 'Phạm Thị Dung', uid: 'SV2021004', group: 'Nhóm 2 - Nguyễn Trãi', status: 'online', gmail: 'nhom2.nguyentrai@gmail.com', area: 'Đường Nguyễn Trãi (Hà Nội)', note: 'Thành viên' },
+    { id: 5, name: 'Hoàng Văn Em', uid: 'SV2021005', group: 'Nhóm 3 - Liên Thôn', status: 'online', gmail: 'nhom3.lienthon@gmail.com', area: 'Đường Liên Thôn (Đan Phượng)', note: 'Trưởng nhóm - Đoạn đường hư hỏng nặng (PCI 30)' },
+    { id: 6, name: 'Vũ Quốc Hùng', uid: 'SV2021007', group: 'Nhóm 4 - Cao Tốc', status: 'online', gmail: 'nhom4.caotoc@gmail.com', area: 'Đường cao tốc Bắc - Nam', note: 'Trưởng nhóm - Mặt đường rất tốt' },
+    { id: 7, name: 'Cao Văn Oanh', uid: 'SV2021011', group: 'Nhóm 5 - Vành Đai 3', status: 'online', gmail: 'nhom5.vanndai3@gmail.com', area: 'Đường Vành đai 3 (Hà Nội)', note: 'Trưởng nhóm' },
+];
+
+let nextId = 13;
+let editingId = null;
+let emailSentCount = 0;
+let sortKey = 'id';
+let sortAsc = true;
+let currentPage = 1;
+const PAGE_SIZE = 8;
+
+// ============================================================
+// HELPER
+// ============================================================
+function getPCICondition(pci) {
+    if (pci >= 85) return { label: 'Rất tốt', color: '#166534' };
+    if (pci >= 65) return { label: 'Tốt', color: '#22c55e' };
+    if (pci >= 50) return { label: 'Trung bình', color: '#eab308' };
+    if (pci >= 40) return { label: 'Kém', color: '#f97316' };
+    if (pci >= 20) return { label: 'Rất kém', color: '#ef4444' };
+    return { label: 'Hỏng', color: '#6b7280' };
+}
+
+function getCrackColor(crack) {
+    if (crack < 4) return '#22c55e';
+    if (crack < 8) return '#eab308';
+    if (crack < 15) return '#f97316';
+    return '#ef4444';
+}
+
+function getAvatar(name, group) {
+    const g = GROUP_DATA[group] || { color: '#6366f1', bg: 'rgba(99,102,241,0.12)' };
+    const initials = name.split(' ').map(w => w[0]).slice(-2).join('');
+    return { initials, color: g.color, bg: g.bg };
+}
+
+function showToast(msg, type = 'success') {
+    const wrap = document.getElementById('toast-wrap');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span><span>${msg}</span>`;
+    wrap.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+}
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+function getFilteredUsers() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const gf = document.getElementById('filter-group').value;
+    const sf = document.getElementById('filter-status').value;
+
+    return users.filter(u => {
+        const matchQ = !q || u.name.toLowerCase().includes(q) || u.group.toLowerCase().includes(q) || u.gmail.toLowerCase().includes(q) || (u.uid || '').toLowerCase().includes(q);
+        const matchG = !gf || u.group === gf;
+        const matchS = !sf || u.status === sf;
+        return matchQ && matchG && matchS;
+    }).sort((a, b) => {
+        let av = a[sortKey], bv = b[sortKey];
+        if (sortKey === 'pci') {
+            av = (GROUP_DATA[a.group] || {}).pci || 0;
+            bv = (GROUP_DATA[b.group] || {}).pci || 0;
+        }
+        if (typeof av === 'string') av = av.toLowerCase();
+        if (typeof bv === 'string') bv = bv.toLowerCase();
+        if (av < bv) return sortAsc ? -1 : 1;
+        if (av > bv) return sortAsc ? 1 : -1;
+        return 0;
+    });
+}
+
+function renderTable() {
+    const filtered = getFilteredUsers();
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    currentPage = Math.min(currentPage, totalPages);
+    const sliced = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    const tbody = document.getElementById('table-body');
+    const noData = document.getElementById('no-data');
+
+    if (sliced.length === 0) {
+        tbody.innerHTML = '';
+        noData.style.display = 'block';
+    } else {
+        noData.style.display = 'none';
+        tbody.innerHTML = sliced.map(u => {
+            const g = GROUP_DATA[u.group] || { pci: 0, crack: 0, color: '#6366f1', bg: 'rgba(99,102,241,0.12)' };
+            const cond = getPCICondition(g.pci);
+            const crackColor = getCrackColor(g.crack);
+            const av = getAvatar(u.name, u.group);
+            return `
+            <tr>
+                <td style="color:var(--text-muted);font-size:12px;">${u.id}</td>
+                <td>
+                    <div class="td-user">
+                        <div class="td-avatar" style="background:${av.bg};color:${av.color};">${av.initials}</div>
+                        <div class="td-user-info">
+                            <div class="td-user-name">${u.name}</div>
+                            <div class="td-user-id">${u.uid || '—'}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="group-badge" style="background:${av.bg};color:${av.color};">
+                        🏷️ ${u.group}
+                    </span>
+                </td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="pci-badge" style="background:${cond.color}22;color:${cond.color};">${g.pci}</span>
+                        <span style="font-size:11px;color:${cond.color};font-weight:600;">${cond.label}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="result-bar-wrap">
+                        <div class="result-bar-bg">
+                            <div class="result-bar-fill" style="width:${Math.min(g.crack * 4, 100)}%;background:${crackColor};"></div>
+                        </div>
+                        <span class="result-pct" style="color:${crackColor};">${g.crack}%</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-dot status-${u.status}" style="color:${u.status === 'online' ? 'var(--success)' : 'var(--text-muted)'};">
+                        ${u.status === 'online' ? 'Online' : 'Offline'}
+                    </span>
+                </td>
+                <td>
+                    <div class="gmail-cell">
+                        <span class="gmail-text">${u.gmail || '—'}</span>
+                        <button class="gmail-edit" onclick='openEmailModal(${JSON.stringify(u)})' title="Gửi kết quả qua Gmail">📧</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon send" title="Gửi kết quả" onclick='openEmailModal(${JSON.stringify(u)})'>📤</button>
+                        <button class="btn-icon" title="Chỉnh sửa" onclick="editUser(${u.id})">✏️</button>
+                        <button class="btn-icon danger" title="Xóa" onclick="deleteUser(${u.id})">🗑️</button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    renderPagination(total, totalPages);
+    updateKPIs();
+}
+
+// ============================================================
+// PAGINATION
+// ============================================================
+function renderPagination(total, totalPages) {
+    const start = Math.min((currentPage - 1) * PAGE_SIZE + 1, total);
+    const end = Math.min(currentPage * PAGE_SIZE, total);
+    document.getElementById('pagination-info').textContent = total === 0 ? '' : `Hiển thị ${start}–${end} / ${total} người dùng`;
+
+    const wrap = document.getElementById('pagination-btns');
+    wrap.innerHTML = '';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.textContent = '←';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { currentPage--; renderTable(); };
+    wrap.appendChild(prevBtn);
+
+    const range = [];
+    for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) range.push(i);
+    range.forEach(p => {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+        btn.textContent = p;
+        btn.onclick = () => { currentPage = p; renderTable(); };
+        wrap.appendChild(btn);
+    });
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.textContent = '→';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => { currentPage++; renderTable(); };
+    wrap.appendChild(nextBtn);
+}
+
+// ============================================================
+// KPIs & FILTER
+// ============================================================
+function updateKPIs() {
+    document.getElementById('kpi-total').textContent = users.length;
+    document.getElementById('kpi-online').textContent = users.filter(u => u.status === 'online').length;
+    const groups = [...new Set(users.map(u => u.group))];
+    document.getElementById('kpi-groups').textContent = groups.length;
+    document.getElementById('kpi-sent').textContent = emailSentCount;
+}
+
+function updateGroupFilter() {
+    const sel = document.getElementById('filter-group');
+    const val = sel.value;
+    const groups = [...new Set(users.map(u => u.group))].sort();
+    sel.innerHTML = '<option value="">Tất cả nhóm</option>' + groups.map(g => `<option value="${g}"${g === val ? ' selected' : ''}>${g}</option>`).join('');
+}
+
+// ============================================================
+// SORT
+// ============================================================
+function sortTable(key) {
+    if (sortKey === key) sortAsc = !sortAsc;
+    else { sortKey = key; sortAsc = true; }
+    document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
+    event.currentTarget.classList.add('sorted');
+    renderTable();
+}
+
+// ============================================================
+// MODAL THÊM/SỬA
+// ============================================================
+function openAddModal() {
+    editingId = null;
+    document.getElementById('modal-title').textContent = '➕ Thêm người dùng mới';
+    document.getElementById('modal-save-btn').textContent = '💾 Thêm';
+    document.getElementById('user-form').reset();
+    openModal('user-modal');
+}
+
+function editUser(id) {
+    const u = users.find(x => x.id === id);
+    if (!u) return;
+    editingId = id;
+    document.getElementById('modal-title').textContent = '✏️ Chỉnh sửa người dùng';
+    document.getElementById('modal-save-btn').textContent = '💾 Cập nhật';
+    document.getElementById('f-name').value = u.name;
+    document.getElementById('f-uid').value = u.uid || '';
+    document.getElementById('f-group').value = u.group;
+    const g = GROUP_DATA[u.group] || {};
+    document.getElementById('f-pci').value = g.pci || '';
+    document.getElementById('f-crack').value = g.crack || '';
+    document.getElementById('f-gmail').value = u.gmail;
+    document.getElementById('f-status').value = u.status;
+    document.getElementById('f-area').value = u.area || '';
+    document.getElementById('f-note').value = u.note || '';
+    openModal('user-modal');
+}
+
+function autoFillGroupData() {
+    const group = document.getElementById('f-group').value;
+    const g = GROUP_DATA[group];
+    if (g) {
+        document.getElementById('f-pci').value = g.pci;
+        document.getElementById('f-crack').value = g.crack;
+        document.getElementById('f-area').value = g.area;
+        // Auto-fill gmail based on group number
+        const match = group.match(/\d+/);
+        if (match) document.getElementById('f-gmail').value = `nhom${match[0]}@gmail.com`;
+    }
+}
+
+function saveUser(e) {
+    e.preventDefault();
+    const name = document.getElementById('f-name').value.trim();
+    const uid = document.getElementById('f-uid').value.trim();
+    const group = document.getElementById('f-group').value;
+    const status = document.getElementById('f-status').value;
+    const pci = parseFloat(document.getElementById('f-pci').value) || 0;
+    const crack = parseFloat(document.getElementById('f-crack').value) || 0;
+    const gmail = document.getElementById('f-gmail').value.trim();
+    const area = document.getElementById('f-area').value.trim();
+    const note = document.getElementById('f-note').value.trim();
+
+    // Update group data
+    if (group) GROUP_DATA[group] = { ...(GROUP_DATA[group] || {}), pci, crack, area, color: (GROUP_DATA[group] || {}).color || '#6366f1', bg: (GROUP_DATA[group] || {}).bg || 'rgba(99,102,241,0.12)' };
+
+    if (editingId) {
+        const idx = users.findIndex(u => u.id === editingId);
+        if (idx !== -1) users[idx] = { ...users[idx], name, uid, group, status, gmail, area, note };
+        showToast(`Đã cập nhật thông tin ${name}`);
+    } else {
+        users.push({ id: nextId++, name, uid, group, status, gmail, area, note });
+        showToast(`Đã thêm người dùng ${name}`);
+    }
+
+    closeModal('user-modal');
+    updateGroupFilter();
+    renderTable();
+}
+
+function deleteUser(id) {
+    const u = users.find(x => x.id === id);
+    if (!u) return;
+    if (!confirm(`Xóa người dùng "${u.name}"?`)) return;
+    users = users.filter(x => x.id !== id);
+    showToast(`Đã xóa ${u.name}`, 'error');
+    renderTable();
+    updateGroupFilter();
+}
+
+// ============================================================
+// EMAIL MODAL
+// ============================================================
+let pendingEmailUser = null;
+
+function openEmailModal(user) {
+    pendingEmailUser = user;
+    const g = GROUP_DATA[user.group] || { pci: 0, crack: 0, area: '' };
+    const cond = getPCICondition(g.pci);
+
+    document.getElementById('email-to').value = user.gmail || '';
+    document.getElementById('email-subject').value = `Kết quả phân tích vết nứt — ${user.group}`;
+    document.getElementById('ep-greeting').textContent = `Kính gửi thành viên ${user.group},`;
+    document.getElementById('ep-group').textContent = user.group;
+    document.getElementById('ep-area-line').textContent = g.area ? `📍 Khu vực: ${g.area}` : '';
+    document.getElementById('ep-pci-big').textContent = `PCI ${g.pci}/100`;
+    document.getElementById('ep-pci-big').style.color = cond.color;
+    document.getElementById('ep-pci').textContent = g.pci;
+    document.getElementById('ep-crack').textContent = `${g.crack}%`;
+    document.getElementById('ep-condition').textContent = cond.label;
+    document.getElementById('ep-condition').style.color = cond.color;
+    document.getElementById('ep-note-line').textContent = user.note ? `📝 Ghi chú: ${user.note}` : '';
+    openModal('email-modal');
+}
+
+function sendEmail() {
+    const to = document.getElementById('email-to').value.trim();
+    const subject = document.getElementById('email-subject').value.trim();
+    if (!to) { showToast('Vui lòng nhập Gmail!', 'error'); return; }
+
+    const g = GROUP_DATA[pendingEmailUser?.group] || { pci: 0, crack: 0, area: '' };
+    const cond = getPCICondition(g.pci);
+    const body = `Kính gửi thành viên ${pendingEmailUser?.group},\n\nKết quả phân tích vết nứt mặt đường:\n📍 Khu vực: ${g.area}\n🔢 Điểm PCI: ${g.pci}/100\n📉 Tỷ lệ vết nứt: ${g.crack}%\n🏆 Tình trạng: ${cond.label}\n\n— Hệ thống AI Phân tích Vết nứt Mặt đường`;
+
+    // Mở Gmail compose
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, '_blank');
+
+    emailSentCount++;
+    updateKPIs();
+    showToast(`Đã mở Gmail để gửi đến ${to}`);
+    closeModal('email-modal');
+}
+
+// ============================================================
+// SEND ALL
+// ============================================================
+function openSendAllModal() {
+    const groupEmails = {};
+    users.forEach(u => {
+        if (u.gmail && u.group) groupEmails[u.group] = u.gmail;
+    });
+    const list = document.getElementById('group-email-list');
+    list.innerHTML = Object.entries(groupEmails).map(([group, gmail]) => {
+        const g = GROUP_DATA[group] || { pci: 0, crack: 0 };
+        const cond = getPCICondition(g.pci);
+        const av = GROUP_DATA[group] || { color: '#6366f1', bg: 'rgba(99,102,241,0.12)' };
+        return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${av.bg};border:1px solid ${av.color}33;border-radius:10px;">
+            <span style="font-size:18px;">🏷️</span>
+            <div style="flex:1;">
+                <div style="font-size:13px;font-weight:700;color:${av.color};">${group}</div>
+                <div style="font-size:11px;color:var(--text-muted);">📧 ${gmail}</div>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:${cond.color};">PCI ${g.pci}</span>
+        </div>`;
+    }).join('') || '<div style="color:var(--text-muted);font-size:13px;">Không có nhóm nào có Gmail.</div>';
+    openModal('send-all-modal');
+}
+
+function sendAllEmails() {
+    const groupEmails = {};
+    users.forEach(u => {
+        if (u.gmail && u.group) groupEmails[u.group] = { gmail: u.gmail, group: u.group };
+    });
+
+    let count = 0;
+    Object.values(groupEmails).forEach(({ gmail, group }) => {
+        const g = GROUP_DATA[group] || { pci: 0, crack: 0, area: '' };
+        const cond = getPCICondition(g.pci);
+        const subject = `Kết quả phân tích vết nứt — ${group}`;
+        const body = `Kính gửi ${group},\n\nKết quả phân tích:\n📍 Khu vực: ${g.area}\n🔢 Điểm PCI: ${g.pci}/100\n📉 Tỷ lệ vết nứt: ${g.crack}%\n🏆 Tình trạng: ${cond.label}\n\n— AI Road Crack Detection`;
+        setTimeout(() => {
+            window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(gmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+        }, count * 600);
+        count++;
+    });
+
+    emailSentCount += count;
+    updateKPIs();
+    closeModal('send-all-modal');
+    showToast(`Đã mở ${count} cửa sổ Gmail để gửi kết quả`);
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('open');
+    });
+});
+
+// ============================================================
+// SEARCH & FILTER LISTENERS
+// ============================================================
+document.getElementById('search-input').addEventListener('input', () => { currentPage = 1; renderTable(); });
+document.getElementById('filter-group').addEventListener('change', () => { currentPage = 1; renderTable(); });
+document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; renderTable(); });
+
+// ============================================================
+// INIT
+// ============================================================
+function initUserData() {
+    // Lấy dữ liệu phân tích động lưu trong localStorage
+    let surveyUsers = [];
+    try {
+        surveyUsers = JSON.parse(localStorage.getItem('survey_users')) || [];
+    } catch(e) {
+        surveyUsers = [];
+    }
+
+    // Đăng ký thông tin nhóm khảo sát mới từ localStorage vào GROUP_DATA
+    surveyUsers.forEach(su => {
+        if (su.group && !GROUP_DATA[su.group]) {
+            GROUP_DATA[su.group] = {
+                pci: su.pci,
+                crack: su.crack,
+                area: su.area,
+                color: su.pci >= 65 ? '#22c55e' : (su.pci >= 40 ? '#f59e0b' : '#ef4444'),
+                bg: su.pci >= 65 ? 'rgba(34,197,94,0.12)' : (su.pci >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)')
+            };
+        }
+    });
+
+    // Thêm các user khảo sát động vào đầu danh sách hiển thị
+    users = [...surveyUsers, ...users];
+
+    updateGroupFilter();
+    renderTable();
+}
+
+initUserData();
+</script>
+</body>
+</html>

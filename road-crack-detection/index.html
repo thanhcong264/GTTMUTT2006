@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ứng dụng phân tích và theo dõi vết nứt mặt đường trên bản đồ Việt Nam">
-    <title>🛣️ Phân tích Vết nứt Mặt đường Việt Nam</title>
+    <meta name="description" content="Ứng dụng phân tích và theo dõi vết nứt mặt đường - AI Road Crack Detection Vietnam">
+    <title>🛣️ AI Phân tích Vết nứt Mặt đường</title>
 
-    <!-- Leaflet CSS & JS -->
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -19,10 +19,10 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg-dark: #0f1117;
-            --bg-card: rgba(22, 27, 45, 0.85);
-            --bg-card-solid: #161b2d;
-            --border-glow: rgba(99, 102, 241, 0.25);
+            --bg-dark: #0a0d14;
+            --bg-card: rgba(16, 20, 35, 0.92);
+            --bg-card-solid: #10141f;
+            --border: rgba(99, 102, 241, 0.2);
             --accent: #6366f1;
             --accent-light: #818cf8;
             --accent-glow: rgba(99, 102, 241, 0.4);
@@ -51,8 +51,8 @@
             width: var(--sidebar-width);
             min-width: var(--sidebar-width);
             height: 100vh;
-            background: linear-gradient(180deg, #0f1117 0%, #1a1f35 100%);
-            border-right: 1px solid var(--border-glow);
+            background: linear-gradient(180deg, #0a0d14 0%, #10141f 100%);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -64,760 +64,440 @@
         .sidebar::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
 
         .sidebar-header {
-            padding: 20px 22px 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, transparent 100%);
         }
 
         .sidebar-header h1 {
-            font-size: 17px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light), #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 16px; font-weight: 800;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             letter-spacing: -0.3px;
         }
 
-        .sidebar-header p {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
+        .sidebar-header p { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
-        /* ===== TAB NAVIGATION ===== */
-        .tab-nav {
-            display: flex;
-            padding: 12px 22px 0;
-            gap: 4px;
-        }
+        /* ===== TAB NAV ===== */
+        .tab-nav { display: flex; padding: 10px 20px 0; gap: 4px; }
 
         .tab-btn {
-            flex: 1;
-            padding: 10px 8px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
+            flex: 1; padding: 9px 6px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
             border-bottom: none;
             border-radius: 10px 10px 0 0;
             color: var(--text-muted);
-            font-family: inherit;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            text-align: center;
+            font-family: inherit; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; text-align: center;
         }
 
-        .tab-btn:hover {
-            background: rgba(99, 102, 241, 0.06);
-            color: var(--text-secondary);
-        }
+        .tab-btn:hover { background: rgba(99,102,241,0.06); color: var(--text-secondary); }
+        .tab-btn.active { background: rgba(99,102,241,0.12); border-color: var(--border); color: var(--accent-light); }
 
-        .tab-btn.active {
-            background: rgba(99, 102, 241, 0.12);
-            border-color: var(--border-glow);
-            color: var(--accent-light);
-        }
-
-        .tab-content {
-            display: none;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
+        .tab-content { display: none; flex: 1; overflow-y: auto; }
+        .tab-content.active { display: block; }
         .tab-content::-webkit-scrollbar { width: 4px; }
-        .tab-content::-webkit-scrollbar-track { background: transparent; }
         .tab-content::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
 
-        /* ===== FILTER SECTIONS (map tab) ===== */
-        .filter-section {
-            padding: 16px 22px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+        /* ===== FILTER SECTIONS ===== */
+        .filter-section { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+        .section-title {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.4px; color: var(--text-muted); margin-bottom: 10px;
         }
 
-        .filter-section h3, .section-title {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        /* Custom Checkbox */
-        .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+        .checkbox-group { display: flex; flex-direction: column; gap: 6px; }
 
         .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px; cursor: pointer; transition: all 0.2s;
         }
 
-        .checkbox-item:hover {
-            background: rgba(99, 102, 241, 0.08);
-            border-color: var(--border-glow);
-        }
-
+        .checkbox-item:hover { background: rgba(99,102,241,0.07); border-color: var(--border); }
         .checkbox-item input[type="checkbox"] { display: none; }
 
         .checkbox-custom {
-            width: 20px; height: 20px; min-width: 20px;
-            border: 2px solid var(--text-muted);
-            border-radius: 6px;
+            width: 18px; height: 18px; min-width: 18px;
+            border: 2px solid var(--text-muted); border-radius: 5px;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
 
         .checkbox-item input:checked ~ .checkbox-custom {
-            background: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
+            background: var(--accent); border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .checkbox-custom::after {
-            content: '✓'; color: white; font-size: 12px; font-weight: 700;
-            opacity: 0; transition: opacity 0.15s ease;
-        }
-
+        .checkbox-custom::after { content: '✓'; color: white; font-size: 11px; font-weight: 700; opacity: 0; transition: opacity 0.15s; }
         .checkbox-item input:checked ~ .checkbox-custom::after { opacity: 1; }
 
-        .checkbox-label {
-            font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.3;
-        }
-
-        .checkbox-label small {
-            display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px;
-        }
+        .checkbox-label { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+        .checkbox-label small { display: block; font-size: 10px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
 
         /* Slider */
-        .slider-container { margin-top: 12px; }
-
-        .slider-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-        }
-
-        .slider-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-
-        .slider-value {
-            font-size: 13px; font-weight: 700; color: var(--accent-light);
-            background: rgba(99, 102, 241, 0.12); padding: 3px 10px; border-radius: 6px;
-        }
+        .slider-container { margin-top: 10px; }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .slider-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .slider-value { font-size: 12px; font-weight: 700; color: var(--accent-light); background: rgba(99,102,241,0.1); padding: 2px 9px; border-radius: 5px; }
 
         input[type="range"] {
-            -webkit-appearance: none; appearance: none;
-            width: 100%; height: 6px; border-radius: 3px;
-            background: linear-gradient(90deg, var(--accent) 0%, rgba(255,255,255,0.08) 0%);
+            -webkit-appearance: none; width: 100%; height: 5px; border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, rgba(255,255,255,0.07) 0%);
             outline: none; cursor: pointer;
         }
-
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 20px; height: 20px; border-radius: 50%;
-            background: var(--accent); border: 3px solid var(--bg-dark);
-            box-shadow: 0 0 10px var(--accent-glow);
-            cursor: grab; transition: transform 0.15s ease;
+            -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+            background: var(--accent); border: 2px solid var(--bg-dark);
+            box-shadow: 0 0 8px var(--accent-glow); cursor: grab; transition: transform 0.15s;
         }
-
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-        input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.1); }
 
         /* Stats */
-        .stats-section {
-            padding: 16px 22px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
+        .stats-section { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
 
         .stat-card {
-            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.06));
-            border: 1px solid var(--border-glow); border-radius: 12px;
-            padding: 14px 16px; text-align: center;
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.05));
+            border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; text-align: center;
         }
 
         .stat-number {
-            font-size: 32px; font-weight: 800;
+            font-size: 30px; font-weight: 900;
             background: linear-gradient(135deg, var(--accent-light), #c084fc);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .stat-label {
-            font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px;
-        }
+        .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
 
         /* Legend */
-        .legend-section { padding: 16px 22px; }
+        .legend-section { padding: 14px 20px; }
         .legend-items { display: flex; flex-direction: column; gap: 5px; }
-
-        .legend-item {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 12px; color: var(--text-secondary); padding: 4px 0;
-        }
-
-        .legend-dot {
-            width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-            box-shadow: 0 0 6px rgba(0,0,0,0.3);
-        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
         /* Road list */
-        .data-section {
-            padding: 16px 22px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-        }
-
-        .data-section h3 {
-            font-size: 11px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1.2px; color: var(--text-muted); margin-bottom: 12px;
-        }
-
-        .road-list { display: flex; flex-direction: column; gap: 5px; }
+        .data-section { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.04); }
+        .data-section h3 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--text-muted); margin-bottom: 10px; }
+        .road-list { display: flex; flex-direction: column; gap: 4px; }
 
         .road-item {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 9px 12px; background: rgba(255,255,255,0.02);
+            padding: 8px 11px; background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;
-            cursor: pointer; transition: all 0.2s ease;
+            cursor: pointer; transition: all 0.2s;
         }
 
-        .road-item:hover {
-            background: rgba(99, 102, 241, 0.08);
-            border-color: var(--border-glow); transform: translateX(3px);
-        }
-
-        .road-item-name {
-            font-size: 12px; font-weight: 500; color: var(--text-primary);
-            flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px;
-        }
-
-        .road-item-badge {
-            font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap;
-        }
+        .road-item:hover { background: rgba(99,102,241,0.07); border-color: var(--border); transform: translateX(3px); }
+        .road-item-name { font-size: 11px; font-weight: 500; color: var(--text-primary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 8px; }
+        .road-item-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; white-space: nowrap; }
 
         /* ===== ANALYSIS TAB SIDEBAR ===== */
-        .analysis-section {
-            padding: 16px 22px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
+        .analysis-section { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
 
         /* Upload Zone */
         .upload-zone {
-            border: 2px dashed rgba(99, 102, 241, 0.3);
-            border-radius: 14px;
-            padding: 28px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(99, 102, 241, 0.04);
-            position: relative;
+            border: 2px dashed rgba(99,102,241,0.3); border-radius: 12px;
+            padding: 22px 14px; text-align: center; cursor: pointer;
+            transition: all 0.3s; background: rgba(99,102,241,0.03); position: relative;
         }
 
-        .upload-zone:hover {
-            border-color: var(--accent);
-            background: rgba(99, 102, 241, 0.08);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
-        }
-
-        .upload-zone.dragover {
-            border-color: var(--accent-light);
-            background: rgba(99, 102, 241, 0.15);
-            box-shadow: 0 0 30px var(--accent-glow);
-        }
-
-        .upload-zone input[type="file"] {
-            position: absolute; inset: 0; opacity: 0; cursor: pointer;
-        }
-
-        .upload-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
-        }
-
-        .upload-text {
-            font-size: 13px; font-weight: 600; color: var(--text-primary);
-        }
-
-        .upload-hint {
-            font-size: 11px; color: var(--text-muted); margin-top: 4px;
-        }
+        .upload-zone:hover { border-color: var(--accent); background: rgba(99,102,241,0.07); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.12); }
+        .upload-zone.dragover { border-color: var(--accent-light); background: rgba(99,102,241,0.12); box-shadow: 0 0 25px var(--accent-glow); }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .upload-icon { font-size: 30px; margin-bottom: 6px; }
+        .upload-text { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .upload-hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
 
         /* Preview */
-        .preview-container {
-            display: none;
-            margin-top: 14px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-            position: relative;
-        }
-
-        .preview-container img {
-            width: 100%;
-            display: block;
-        }
-
+        .preview-container { display: none; margin-top: 12px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07); position: relative; }
+        .preview-container img, .preview-container video { width: 100%; display: block; }
         .preview-remove {
-            position: absolute;
-            top: 8px; right: 8px;
-            width: 28px; height: 28px;
-            background: rgba(239, 68, 68, 0.9);
-            border: none; border-radius: 50%;
-            color: white; font-size: 14px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.15s ease;
+            position: absolute; top: 7px; right: 7px; width: 24px; height: 24px;
+            background: rgba(239,68,68,0.9); border: none; border-radius: 50%;
+            color: white; font-size: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: transform 0.15s;
         }
-
         .preview-remove:hover { transform: scale(1.15); }
 
         /* Analyze Button */
         .analyze-btn {
-            display: none;
-            width: 100%;
-            margin-top: 14px;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
+            display: none; width: 100%; margin-top: 12px; padding: 13px;
+            border: none; border-radius: 10px;
             background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            color: white;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
+            color: white; font-family: inherit; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; letter-spacing: 0.2px;
         }
-
-        .analyze-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--accent-glow);
-        }
-
+        .analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
         .analyze-btn:active { transform: translateY(0); }
+        .analyze-btn.loading { pointer-events: none; opacity: 0.7; }
 
-        .analyze-btn.loading {
-            pointer-events: none;
-            opacity: 0.7;
-        }
+        /* Video Progress */
+        .video-progress-wrap { display: none; margin-top: 10px; }
+        .video-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .video-progress-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+        .video-progress-pct { font-size: 11px; font-weight: 700; color: var(--accent-light); }
+        .video-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+        .video-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #8b5cf6); border-radius: 3px; width: 0%; transition: width 0.3s ease; }
+        .video-progress-status { font-size: 10px; color: var(--text-muted); margin-top: 4px; text-align: center; }
 
         /* Result Cards */
         .result-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 12px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px; padding: 14px; margin-top: 10px;
         }
-
-        .result-card-title {
-            font-size: 11px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 10px;
-        }
-
-        .result-metric {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-
+        .result-card-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); margin-bottom: 8px; }
+        .result-metric { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
         .result-metric:last-child { border-bottom: none; }
-
-        .result-metric-label {
-            font-size: 12px; color: var(--text-secondary); font-weight: 500;
-        }
-
-        .result-metric-value {
-            font-size: 13px; font-weight: 700; color: var(--text-primary);
-        }
+        .result-metric-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+        .result-metric-value { font-size: 13px; font-weight: 700; color: var(--text-primary); }
 
         /* PCI Gauge */
-        .pci-gauge-container {
-            margin-top: 12px;
-            text-align: center;
-        }
+        .pci-gauge-container { margin-top: 10px; text-align: center; }
+        .pci-score-display { position: relative; width: 140px; height: 140px; margin: 0 auto 10px; }
+        .pci-score-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .pci-score-ring circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+        .pci-ring-bg { stroke: rgba(255,255,255,0.05); }
+        .pci-ring-fill { stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pci-score-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .pci-score-number { font-size: 32px; font-weight: 900; line-height: 1; }
+        .pci-score-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: 3px; }
+        .pci-condition { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
+        .pci-description { font-size: 10px; color: var(--text-muted); line-height: 1.5; }
 
-        .pci-score-display {
-            position: relative;
-            width: 160px; height: 160px;
-            margin: 0 auto 12px;
-        }
+        /* PCI Scale */
+        .pci-scale { margin-top: 14px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .pci-scale-row { display: flex; align-items: center; padding: 6px 10px; font-size: 10px; transition: all 0.2s; }
+        .pci-scale-row.active-row { box-shadow: inset 3px 0 0 currentColor; }
+        .pci-scale-range { width: 55px; font-weight: 700; flex-shrink: 0; }
+        .pci-scale-bar { flex: 1; height: 8px; border-radius: 4px; margin: 0 8px; position: relative; overflow: hidden; }
+        .pci-scale-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+        .pci-scale-condition { width: 72px; font-weight: 600; text-align: right; flex-shrink: 0; }
+        .pci-scale-indicator { position: absolute; top: -1px; width: 3px; height: 10px; background: white; border-radius: 2px; box-shadow: 0 0 5px rgba(255,255,255,0.5); transition: left 0.8s ease; display: none; }
 
-        .pci-score-ring {
-            width: 100%; height: 100%;
-            transform: rotate(-90deg);
-        }
+        /* Binary canvas */
+        .binary-preview { margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+        .binary-preview canvas { width: 100%; display: block; }
 
-        .pci-score-ring circle {
-            fill: none;
-            stroke-width: 10;
-            stroke-linecap: round;
-        }
-
-        .pci-ring-bg { stroke: rgba(255,255,255,0.06); }
-
-        .pci-ring-fill {
-            stroke-dasharray: 408;
-            stroke-dashoffset: 408;
-            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .pci-score-text {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .pci-score-number {
-            font-size: 36px; font-weight: 900;
-            line-height: 1;
-        }
-
-        .pci-score-label {
-            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--text-muted); margin-top: 4px;
-        }
-
-        .pci-condition {
-            font-size: 16px; font-weight: 800;
-            margin-bottom: 4px;
-        }
-
-        .pci-description {
-            font-size: 11px; color: var(--text-muted); line-height: 1.5;
-        }
-
-        /* PCI Scale Bar */
-        .pci-scale {
-            margin-top: 16px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .pci-scale-row {
-            display: flex; align-items: center;
-            padding: 7px 12px;
-            font-size: 11px;
-            transition: all 0.2s ease;
-        }
-
-        .pci-scale-row.active-row {
-            box-shadow: inset 3px 0 0 currentColor;
-        }
-
-        .pci-scale-range {
-            width: 62px; font-weight: 700; flex-shrink: 0;
-        }
-
-        .pci-scale-bar {
-            flex: 1; height: 10px; border-radius: 5px; margin: 0 10px;
-            position: relative; overflow: hidden;
-        }
-
-        .pci-scale-bar-fill {
-            position: absolute; top: 0; left: 0; height: 100%; border-radius: 5px;
-            transition: width 0.8s ease;
-        }
-
-        .pci-scale-condition {
-            width: 80px; font-weight: 600; text-align: right; flex-shrink: 0;
-        }
-
-        .pci-scale-indicator {
-            position: absolute; top: -2px; width: 4px; height: 14px;
-            background: white; border-radius: 2px;
-            box-shadow: 0 0 6px rgba(255,255,255,0.5);
-            transition: left 0.8s ease;
+        /* ===== VIDEO SUMMARY PANEL ===== */
+        .video-summary {
             display: none;
-        }
-
-        /* Binary Image */
-        .binary-preview {
-            margin-top: 12px;
+            margin-top: 10px;
             border-radius: 10px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(99,102,241,0.25);
+            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.03));
         }
 
-        .binary-preview canvas {
-            width: 100%;
-            display: block;
+        .video-summary-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 8px;
         }
+
+        .video-summary-header span { font-size: 11px; font-weight: 700; color: var(--accent-light); text-transform: uppercase; letter-spacing: 1px; }
+
+        .video-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.04); }
+
+        .video-summary-cell {
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            text-align: center;
+        }
+
+        .video-summary-cell-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+        .video-summary-cell-value { font-size: 18px; font-weight: 800; }
+
+        .video-summary-timeline {
+            padding: 10px 14px 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .video-summary-timeline-label { font-size: 10px; color: var(--text-muted); margin-bottom: 6px; }
+        .timeline-bars { display: flex; align-items: flex-end; gap: 2px; height: 40px; }
+        .timeline-bar { flex: 1; border-radius: 2px 2px 0 0; min-width: 3px; transition: opacity 0.2s; cursor: default; }
+        .timeline-bar:hover { opacity: 0.7; }
+
+        .video-summary-verdict {
+            padding: 10px 14px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 11px; color: var(--text-secondary); line-height: 1.6;
+        }
+
+        .video-summary-verdict strong { color: var(--text-primary); }
 
         /* ===== MAIN CONTENT ===== */
-        .main-content {
-            flex: 1; position: relative; display: flex; flex-direction: column;
-        }
+        .main-content { flex: 1; position: relative; display: flex; flex-direction: column; }
 
-        /* Top bar */
         .topbar {
-            height: 52px;
-            background: rgba(15, 17, 23, 0.9);
+            height: 50px;
+            background: rgba(10,13,20,0.92);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 24px; z-index: 500;
+            padding: 0 22px; z-index: 500;
         }
 
-        .topbar-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-        .topbar-info { display: flex; align-items: center; gap: 16px; }
+        .topbar-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .topbar-info { display: flex; align-items: center; gap: 14px; }
 
         .topbar-badge {
-            font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
-            background: rgba(34, 197, 94, 0.12); color: var(--success);
-            border: 1px solid rgba(34, 197, 94, 0.2);
+            font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 20px;
+            background: rgba(34,197,94,0.1); color: var(--success);
+            border: 1px solid rgba(34,197,94,0.2);
         }
 
-        /* Map & Analysis panels */
         .main-panel { display: none; flex: 1; width: 100%; }
         .main-panel.active { display: flex; flex-direction: column; }
-
         #map { flex: 1; width: 100%; }
 
         /* Analysis Main Panel */
         .analysis-main {
             flex: 1; overflow-y: auto;
-            background: radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.06) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 80%, rgba(139,92,246,0.04) 0%, transparent 50%),
+            background: radial-gradient(ellipse at 25% 20%, rgba(99,102,241,0.05) 0%, transparent 50%),
+                        radial-gradient(ellipse at 75% 80%, rgba(139,92,246,0.04) 0%, transparent 50%),
                         var(--bg-dark);
-            padding: 40px;
+            padding: 36px;
         }
 
-        .analysis-main::-webkit-scrollbar { width: 6px; }
-        .analysis-main::-webkit-scrollbar-track { background: transparent; }
+        .analysis-main::-webkit-scrollbar { width: 5px; }
         .analysis-main::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
 
-        .analysis-hero {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 40px;
-        }
-
-        .analysis-hero h2 {
-            font-size: 28px; font-weight: 800;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .analysis-hero p {
-            font-size: 14px; color: var(--text-muted); line-height: 1.6;
-        }
+        .analysis-hero { text-align: center; max-width: 680px; margin: 0 auto 36px; }
+        .analysis-hero h2 { font-size: 26px; font-weight: 800; background: linear-gradient(135deg, var(--text-primary), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 7px; }
+        .analysis-hero p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
         /* PCI Reference Table */
-        .pci-ref-table {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-glow);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .pci-ref-header {
-            padding: 24px 28px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .pci-ref-header h3 {
-            font-size: 16px; font-weight: 700; color: var(--text-primary);
-        }
-
-        .pci-ref-header p {
-            font-size: 12px; color: var(--text-muted); margin-top: 4px;
-        }
-
-        .pci-ref-body {
-            display: flex;
-            gap: 0;
-        }
-
-        .pci-ref-left {
-            flex: 1;
-            padding: 0;
-        }
-
-        .pci-ref-row {
-            display: flex;
-            align-items: center;
-            padding: 12px 28px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            transition: background 0.2s ease;
-        }
-
-        .pci-ref-row:hover {
-            background: rgba(255,255,255,0.03);
-        }
-
+        .pci-ref-table { max-width: 860px; margin: 0 auto; background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .pci-ref-header { padding: 22px 26px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .pci-ref-header h3 { font-size: 15px; font-weight: 700; }
+        .pci-ref-header p { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+        .pci-ref-body { display: flex; }
+        .pci-ref-left { flex: 1; }
+        .pci-ref-row { display: flex; align-items: center; padding: 11px 26px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s; }
+        .pci-ref-row:hover { background: rgba(255,255,255,0.02); }
         .pci-ref-row:last-child { border-bottom: none; }
-
-        .pci-ref-range {
-            width: 90px; font-size: 13px; font-weight: 700; color: var(--text-primary);
-        }
-
-        .pci-ref-condition {
-            flex: 1; font-size: 13px; font-weight: 500; color: var(--text-secondary);
-        }
-
-        .pci-ref-color {
-            width: 60px; height: 22px; border-radius: 6px; flex-shrink: 0;
-        }
-
-        /* PCI Visual Scale Bar (right side) */
-        .pci-ref-right {
-            width: 100px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            border-left: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .pci-bar-segment {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            color: rgba(0,0,0,0.7);
-            min-height: 48px;
-        }
-
-        .pci-bar-number {
-            position: absolute;
-            right: 105%;
-            font-size: 10px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
+        .pci-ref-range { width: 85px; font-size: 12px; font-weight: 700; }
+        .pci-ref-condition { flex: 1; font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .pci-ref-color { width: 55px; height: 20px; border-radius: 5px; flex-shrink: 0; }
+        .pci-ref-right { width: 90px; display: flex; flex-direction: column; border-left: 1px solid rgba(255,255,255,0.05); }
+        .pci-bar-segment { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgba(0,0,0,0.7); min-height: 44px; }
 
         /* Leaflet popup */
-        .leaflet-popup-content-wrapper {
-            background: var(--bg-card-solid) !important;
-            border: 1px solid var(--border-glow) !important;
-            border-radius: 14px !important;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5) !important;
-            color: var(--text-primary) !important; padding: 0 !important;
-        }
-
-        .leaflet-popup-content {
-            margin: 0 !important; font-family: 'Inter', sans-serif !important; min-width: 260px !important;
-        }
-
-        .leaflet-popup-tip {
-            background: var(--bg-card-solid) !important;
-            border: 1px solid var(--border-glow) !important; box-shadow: none !important;
-        }
-
-        .leaflet-popup-close-button {
-            color: var(--text-muted) !important; font-size: 20px !important;
-            top: 8px !important; right: 10px !important;
-        }
-
+        .leaflet-popup-content-wrapper { background: var(--bg-card-solid) !important; border: 1px solid var(--border) !important; border-radius: 14px !important; box-shadow: 0 12px 40px rgba(0,0,0,0.5) !important; color: var(--text-primary) !important; padding: 0 !important; }
+        .leaflet-popup-content { margin: 0 !important; font-family: 'Inter', sans-serif !important; min-width: 260px !important; }
+        .leaflet-popup-tip { background: var(--bg-card-solid) !important; }
+        .leaflet-popup-close-button { color: var(--text-muted) !important; font-size: 18px !important; top: 8px !important; right: 10px !important; }
         .leaflet-popup-close-button:hover { color: var(--text-primary) !important; }
-
-        .popup-card { padding: 18px 20px; }
-
-        .popup-card-header {
-            display: flex; align-items: flex-start; gap: 10px;
-            margin-bottom: 14px; padding-bottom: 12px;
-            border-bottom: 2px solid var(--border-glow);
-        }
-
-        .popup-card-icon { font-size: 20px; }
-        .popup-card-title { font-size: 14px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
-
-        .popup-card-body { display: flex; flex-direction: column; gap: 8px; }
-
-        .popup-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 6px 10px; border-radius: 8px;
-        }
-
+        .popup-card { padding: 16px 18px; }
+        .popup-card-header { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+        .popup-card-icon { font-size: 18px; }
+        .popup-card-title { font-size: 13px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+        .popup-card-body { display: flex; flex-direction: column; gap: 7px; }
+        .popup-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 9px; border-radius: 7px; }
         .popup-row:nth-child(even) { background: rgba(255,255,255,0.03); }
-
-        .popup-row-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .popup-row-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
         .popup-row-value { font-size: 12px; font-weight: 600; color: var(--text-primary); }
-        .popup-crack-value { font-size: 18px; font-weight: 800; }
-
-        .popup-level-badge {
-            font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
-        }
-
-        /* Leaflet dark theme */
-        .leaflet-control-zoom a {
-            background: var(--bg-card-solid) !important; color: var(--text-primary) !important;
-            border-color: rgba(255,255,255,0.1) !important;
-        }
-        .leaflet-control-zoom a:hover { background: rgba(99, 102, 241, 0.2) !important; }
-
-        .leaflet-control-layers {
-            background: var(--bg-card-solid) !important;
-            border: 1px solid var(--border-glow) !important;
-            border-radius: 12px !important;
-            color: var(--text-primary) !important;
-        }
-        
-        .leaflet-control-layers-expanded {
-            padding: 10px 14px !important;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 13px !important;
-            font-weight: 500 !important;
-        }
-
-        .leaflet-control-attribution {
-            background: rgba(15,17,23,0.8) !important; color: var(--text-muted) !important; font-size: 10px !important;
-        }
+        .popup-crack-value { font-size: 17px; font-weight: 800; }
+        .popup-level-badge { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 18px; }
+        .leaflet-control-zoom a { background: var(--bg-card-solid) !important; color: var(--text-primary) !important; border-color: rgba(255,255,255,0.1) !important; }
+        .leaflet-control-zoom a:hover { background: rgba(99,102,241,0.2) !important; }
+        .leaflet-control-layers { background: var(--bg-card-solid) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: var(--text-primary) !important; }
+        .leaflet-control-layers-expanded { padding: 10px 13px !important; font-family: 'Inter', sans-serif !important; font-size: 12px !important; font-weight: 500 !important; }
+        .leaflet-control-attribution { background: rgba(10,13,20,0.8) !important; color: var(--text-muted) !important; font-size: 10px !important; }
         .leaflet-control-attribution a { color: var(--accent-light) !important; }
-
-        .leaflet-tooltip {
-            background: var(--bg-card-solid) !important; color: var(--text-primary) !important;
-            border: 1px solid var(--border-glow) !important; border-radius: 8px !important;
-            font-family: 'Inter', sans-serif !important; font-size: 12px !important;
-            font-weight: 500 !important; padding: 6px 12px !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
-        }
-
-        .leaflet-tooltip-top:before,
-        .leaflet-tooltip-bottom:before,
-        .leaflet-tooltip-left:before,
-        .leaflet-tooltip-right:before {
-            border-top-color: var(--bg-card-solid) !important;
-        }
+        .leaflet-tooltip { background: var(--bg-card-solid) !important; color: var(--text-primary) !important; border: 1px solid var(--border) !important; border-radius: 7px !important; font-family: 'Inter', sans-serif !important; font-size: 11px !important; font-weight: 500 !important; padding: 5px 10px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; }
 
         /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .filter-section, .stats-section, .legend-section, .data-section, .analysis-section {
-            animation: fadeIn 0.4s ease forwards;
-        }
-
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
         .result-appear { animation: slideUp 0.5s ease forwards; }
+
+        .spinner-icon { display: inline-block; animation: spin 1s linear infinite; }
 
         @media (max-width: 768px) {
             .sidebar { width: 280px; min-width: 280px; }
-            .analysis-main { padding: 20px; }
+            .analysis-main { padding: 18px; }
         }
+
+        /* User input form inside analysis tab */
+        .user-info-form {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 14px;
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .user-info-form h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .user-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .user-form-group label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .user-form-control {
+            width: 100%;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .user-form-control:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .user-form-control::placeholder {
+            color: var(--text-muted);
+        }
+        .email-shortcut-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .email-shortcut-btn:hover {
+            background: rgba(34, 197, 94, 0.25);
+            transform: translateY(-1px);
+        }
+
     </style>
 </head>
 <body>
@@ -825,11 +505,10 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h1>🛣️ Vết nứt Mặt đường</h1>
-            <p>Phân tích & theo dõi tình trạng mặt đường</p>
+            <h1>🛣️ AI Phân tích Mặt đường</h1>
+            <p>Phân tích vết nứt & theo dõi tình trạng đường</p>
         </div>
 
-        <!-- Tab Navigation -->
         <div class="tab-nav">
             <button class="tab-btn active" data-tab="map" id="btn-tab-map">🗺️ Bản đồ</button>
             <button class="tab-btn" data-tab="analysis" id="btn-tab-analysis">📸 Phân tích</button>
@@ -839,29 +518,23 @@
         <div class="tab-content active" id="tab-map">
 
             <div class="filter-section">
-                <h3>🏗️ Loại mặt đường</h3>
+                <h3 class="section-title">🏗️ Loại mặt đường</h3>
                 <div class="checkbox-group">
                     <label class="checkbox-item" for="filter-asphalt">
                         <input type="checkbox" id="filter-asphalt">
                         <span class="checkbox-custom"></span>
-                        <span class="checkbox-label">
-                            Chỉ hiển thị đường Nhựa
-                            <small>Ẩn đường Bê tông và các loại khác</small>
-                        </span>
+                        <span class="checkbox-label">Chỉ hiển thị đường Nhựa<small>Ẩn đường bê tông và loại khác</small></span>
                     </label>
                 </div>
             </div>
 
             <div class="filter-section">
-                <h3>📏 Chiều dài đoạn đường</h3>
+                <h3 class="section-title">📏 Chiều dài đoạn đường</h3>
                 <div class="checkbox-group">
                     <label class="checkbox-item" for="filter-length">
                         <input type="checkbox" id="filter-length">
                         <span class="checkbox-custom"></span>
-                        <span class="checkbox-label">
-                            Chỉ hiển thị đường dài &gt; 1 km
-                            <small>Ẩn các đoạn đường ngắn</small>
-                        </span>
+                        <span class="checkbox-label">Chỉ hiển thị đường dài &gt; 1 km<small>Ẩn các đoạn đường ngắn</small></span>
                     </label>
                 </div>
                 <div class="slider-container">
@@ -875,18 +548,18 @@
 
             <div class="stats-section">
                 <div class="stat-card">
-                    <div class="stat-number" id="stat-count">6</div>
+                    <div class="stat-number" id="stat-count">9</div>
                     <div class="stat-label">Đoạn đường hiển thị</div>
                 </div>
             </div>
 
             <div class="legend-section">
-                <h3 class="section-title">📊 Mức độ nứt</h3>
+                <h3 class="section-title">📊 Mức độ nứt (PCI)</h3>
                 <div class="legend-items">
-                    <div class="legend-item"><span class="legend-dot" style="background: #22c55e;"></span> Tốt — dưới 4%</div>
-                    <div class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> Nhẹ — 4% đến 8%</div>
-                    <div class="legend-item"><span class="legend-dot" style="background: #f97316;"></span> Trung bình — 8% đến 15%</div>
-                    <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span> Nghiêm trọng — từ 15% trở lên</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#22c55e;"></span>Tốt — dưới 4% vết nứt</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#eab308;"></span>Nhẹ — 4% đến 8%</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#f97316;"></span>Trung bình — 8% đến 15%</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#ef4444;"></span>Nghiêm trọng — từ 15% trở lên</div>
                 </div>
             </div>
 
@@ -896,25 +569,54 @@
             </div>
         </div>
 
-        <!-- ===== TAB: PHÂN TÍCH ẢNH ===== -->
+        <!-- ===== TAB: PHÂN TÍCH ===== -->
         <div class="tab-content" id="tab-analysis">
 
             <div class="analysis-section">
-                <h3 class="section-title">📤 Tải ảnh mặt đường</h3>
+                <h3 class="section-title">📤 Tải lên ảnh / video mặt đường</h3>
                 <div class="upload-zone" id="upload-zone">
-                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp, video/mp4, video/webm, video/ogg">
+                    <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/ogg,video/avi">
                     <div class="upload-icon">📷 🎥</div>
-                    <div class="upload-text">Nhấn hoặc kéo thả ảnh / video vào đây</div>
-                    <div class="upload-hint">Hỗ trợ JPG, PNG, MP4, WEBM</div>
+                    <div class="upload-text">Nhấn hoặc kéo thả vào đây</div>
+                    <div class="upload-hint">Hỗ trợ JPG, PNG, MP4, WEBM • Ảnh & Video</div>
                 </div>
 
                 <div class="preview-container" id="preview-container">
-                    <img id="preview-img" src="" alt="Preview">
-                    <video id="preview-video" style="width: 100%; display: none;" controls muted loop></video>
+                    <img id="preview-img" src="" alt="Preview" style="display:none;">
+                    <video id="preview-video" style="width:100%;display:none;" controls muted playsinline></video>
                     <button class="preview-remove" id="preview-remove" title="Xóa tệp">✕</button>
                 </div>
 
+                <!-- Form Nhập Thông Tin Khảo Sát -->
+                <div class="user-info-form">
+                    <h4>📋 Thông tin nhóm khảo sát</h4>
+                    <div class="user-form-group">
+                        <label>Họ và Tên người thực hiện *</label>
+                        <input type="text" id="user-real-name" class="user-form-control" placeholder="Vd: Nguyễn Văn A" required>
+                    </div>
+                    <div class="user-form-group">
+                        <label>Tên/Số Nhóm *</label>
+                        <input type="text" id="user-group-name" class="user-form-control" placeholder="Vd: Nhóm 1 hoặc Nhóm 2" required>
+                    </div>
+                    <div class="user-form-group">
+                        <label>Gmail Nhóm * (Để nhận kết quả)</label>
+                        <input type="email" id="user-gmail" class="user-form-control" placeholder="Vd: nhom1utt@gmail.com" required>
+                    </div>
+                </div>
+
                 <button class="analyze-btn" id="analyze-btn">🔍 Phân tích mặt đường</button>
+
+                <!-- Video Progress -->
+                <div class="video-progress-wrap" id="video-progress-wrap">
+                    <div class="video-progress-header">
+                        <span class="video-progress-label" id="vp-label">Đang phân tích video...</span>
+                        <span class="video-progress-pct" id="vp-pct">0%</span>
+                    </div>
+                    <div class="video-progress-bar">
+                        <div class="video-progress-fill" id="vp-fill"></div>
+                    </div>
+                    <div class="video-progress-status" id="vp-status">Đang lấy mẫu frame...</div>
+                </div>
             </div>
 
             <!-- Kết quả phân tích -->
@@ -924,32 +626,31 @@
                     <h3 class="section-title">📊 Kết quả phân tích</h3>
                     <div class="result-card">
                         <div class="result-metric">
-                            <span class="result-metric-label">Tổng số pixel</span>
+                            <span class="result-metric-label">Tổng số pixel phân tích</span>
                             <span class="result-metric-value" id="res-total-pixels">—</span>
                         </div>
                         <div class="result-metric">
-                            <span class="result-metric-label">Pixel vết nứt (đen)</span>
+                            <span class="result-metric-label">Pixel vết nứt (tối)</span>
                             <span class="result-metric-value" id="res-crack-pixels">—</span>
                         </div>
                         <div class="result-metric">
-                            <span class="result-metric-label">Pixel bình thường (trắng)</span>
+                            <span class="result-metric-label">Pixel bình thường (sáng)</span>
                             <span class="result-metric-value" id="res-normal-pixels">—</span>
                         </div>
                         <div class="result-metric">
                             <span class="result-metric-label">Tỷ lệ diện tích vết nứt</span>
-                            <span class="result-metric-value" id="res-crack-percent" style="font-size: 16px;">—</span>
+                            <span class="result-metric-value" id="res-crack-percent" style="font-size:15px;">—</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="analysis-section result-appear" style="animation-delay: 0.15s;">
+                <div class="analysis-section result-appear" style="animation-delay:0.12s;">
                     <h3 class="section-title">🏆 Chỉ số PCI (ASTM D6433)</h3>
-                    <!-- PCI Gauge -->
                     <div class="pci-gauge-container">
                         <div class="pci-score-display">
                             <svg class="pci-score-ring" viewBox="0 0 140 140">
-                                <circle class="pci-ring-bg" cx="70" cy="70" r="65"></circle>
-                                <circle class="pci-ring-fill" id="pci-ring" cx="70" cy="70" r="65"></circle>
+                                <circle class="pci-ring-bg" cx="70" cy="70" r="62"></circle>
+                                <circle class="pci-ring-fill" id="pci-ring" cx="70" cy="70" r="62"></circle>
                             </svg>
                             <div class="pci-score-text">
                                 <div class="pci-score-number" id="pci-score-num">—</div>
@@ -957,55 +658,54 @@
                             </div>
                         </div>
                         <div class="pci-condition" id="pci-condition-text">—</div>
-                        <div class="pci-description" id="pci-description">Tải ảnh lên để phân tích</div>
+                        <div class="pci-description" id="pci-description">Tải ảnh/video để bắt đầu phân tích</div>
                     </div>
 
-                    <!-- PCI Scale -->
                     <div class="pci-scale" id="pci-scale">
-                        <div class="pci-scale-row" data-min="85" data-max="100" style="background: rgba(0,100,0,0.12); color: #22c55e;">
-                            <span class="pci-scale-range">85 – 100</span>
-                            <div class="pci-scale-bar" style="background: rgba(0,100,0,0.15);">
-                                <div class="pci-scale-bar-fill" style="background: #166534; width: 0%;"></div>
+                        <div class="pci-scale-row" data-min="85" data-max="100" style="background:rgba(0,100,0,0.1);color:#22c55e;">
+                            <span class="pci-scale-range">85–100</span>
+                            <div class="pci-scale-bar" style="background:rgba(0,100,0,0.12);">
+                                <div class="pci-scale-bar-fill" style="background:#166534;width:0%;"></div>
                                 <div class="pci-scale-indicator"></div>
                             </div>
                             <span class="pci-scale-condition">Rất tốt</span>
                         </div>
-                        <div class="pci-scale-row" data-min="65" data-max="85" style="background: rgba(74,222,128,0.08); color: #4ade80;">
-                            <span class="pci-scale-range">65 – 85</span>
-                            <div class="pci-scale-bar" style="background: rgba(74,222,128,0.12);">
-                                <div class="pci-scale-bar-fill" style="background: #22c55e; width: 0%;"></div>
+                        <div class="pci-scale-row" data-min="65" data-max="85" style="background:rgba(74,222,128,0.07);color:#4ade80;">
+                            <span class="pci-scale-range">65–85</span>
+                            <div class="pci-scale-bar" style="background:rgba(74,222,128,0.1);">
+                                <div class="pci-scale-bar-fill" style="background:#22c55e;width:0%;"></div>
                                 <div class="pci-scale-indicator"></div>
                             </div>
                             <span class="pci-scale-condition">Tốt</span>
                         </div>
-                        <div class="pci-scale-row" data-min="50" data-max="65" style="background: rgba(234,179,8,0.08); color: #eab308;">
-                            <span class="pci-scale-range">50 – 65</span>
-                            <div class="pci-scale-bar" style="background: rgba(234,179,8,0.12);">
-                                <div class="pci-scale-bar-fill" style="background: #eab308; width: 0%;"></div>
+                        <div class="pci-scale-row" data-min="50" data-max="65" style="background:rgba(234,179,8,0.07);color:#eab308;">
+                            <span class="pci-scale-range">50–65</span>
+                            <div class="pci-scale-bar" style="background:rgba(234,179,8,0.1);">
+                                <div class="pci-scale-bar-fill" style="background:#eab308;width:0%;"></div>
                                 <div class="pci-scale-indicator"></div>
                             </div>
                             <span class="pci-scale-condition">Trung bình</span>
                         </div>
-                        <div class="pci-scale-row" data-min="40" data-max="50" style="background: rgba(249,115,22,0.08); color: #f97316;">
-                            <span class="pci-scale-range">40 – 50</span>
-                            <div class="pci-scale-bar" style="background: rgba(249,115,22,0.12);">
-                                <div class="pci-scale-bar-fill" style="background: #f97316; width: 0%;"></div>
+                        <div class="pci-scale-row" data-min="40" data-max="50" style="background:rgba(249,115,22,0.07);color:#f97316;">
+                            <span class="pci-scale-range">40–50</span>
+                            <div class="pci-scale-bar" style="background:rgba(249,115,22,0.1);">
+                                <div class="pci-scale-bar-fill" style="background:#f97316;width:0%;"></div>
                                 <div class="pci-scale-indicator"></div>
                             </div>
                             <span class="pci-scale-condition">Kém</span>
                         </div>
-                        <div class="pci-scale-row" data-min="20" data-max="40" style="background: rgba(239,68,68,0.08); color: #ef4444;">
-                            <span class="pci-scale-range">20 – 40</span>
-                            <div class="pci-scale-bar" style="background: rgba(239,68,68,0.12);">
-                                <div class="pci-scale-bar-fill" style="background: #ef4444; width: 0%;"></div>
+                        <div class="pci-scale-row" data-min="20" data-max="40" style="background:rgba(239,68,68,0.07);color:#ef4444;">
+                            <span class="pci-scale-range">20–40</span>
+                            <div class="pci-scale-bar" style="background:rgba(239,68,68,0.1);">
+                                <div class="pci-scale-bar-fill" style="background:#ef4444;width:0%;"></div>
                                 <div class="pci-scale-indicator"></div>
                             </div>
                             <span class="pci-scale-condition">Rất kém</span>
                         </div>
-                        <div class="pci-scale-row" data-min="0" data-max="20" style="background: rgba(107,114,128,0.1); color: #9ca3af;">
-                            <span class="pci-scale-range">0 – 20</span>
-                            <div class="pci-scale-bar" style="background: rgba(107,114,128,0.12);">
-                                <div class="pci-scale-bar-fill" style="background: #6b7280; width: 0%;"></div>
+                        <div class="pci-scale-row" data-min="0" data-max="20" style="background:rgba(107,114,128,0.07);color:#9ca3af;">
+                            <span class="pci-scale-range">0–20</span>
+                            <div class="pci-scale-bar" style="background:rgba(107,114,128,0.1);">
+                                <div class="pci-scale-bar-fill" style="background:#6b7280;width:0%;"></div>
                                 <div class="pci-scale-indicator"></div>
                             </div>
                             <span class="pci-scale-condition">Hỏng</span>
@@ -1013,15 +713,59 @@
                     </div>
                 </div>
 
-                <div class="analysis-section result-appear" style="animation-delay: 0.3s;">
-                    <h3 class="section-title">🖼️ Ảnh nhị phân (Phát hiện nứt)</h3>
+                <div class="analysis-section result-appear" style="animation-delay:0.24s;">
+                    <h3 class="section-title">🖼️ Ảnh nhị phân (Phát hiện vết nứt)</h3>
                     <div class="binary-preview">
                         <canvas id="binary-canvas"></canvas>
                     </div>
-                    <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted); text-align: center;">
-                        Đen = Vết nứt &nbsp;|&nbsp; Trắng = Bình thường
+                    <div style="margin-top:6px;font-size:10px;color:var(--text-muted);text-align:center;">
+                        ⬛ Vùng tối = Vết nứt &nbsp;|&nbsp; ⬜ Vùng sáng = Mặt đường bình thường
                     </div>
                 </div>
+
+                <!-- Video Summary (chỉ hiện khi phân tích video) -->
+                <div class="analysis-section result-appear" style="animation-delay:0.36s;">
+                    <div class="video-summary" id="video-summary">
+                        <div class="video-summary-header">
+                            <span>📹</span>
+                            <span>Tổng hợp phân tích Video</span>
+                        </div>
+                        <div class="video-summary-grid">
+                            <div class="video-summary-cell">
+                                <div class="video-summary-cell-label">PCI Trung bình</div>
+                                <div class="video-summary-cell-value" id="vs-avg-pci">—</div>
+                            </div>
+                            <div class="video-summary-cell">
+                                <div class="video-summary-cell-label">PCI Thấp nhất</div>
+                                <div class="video-summary-cell-value" id="vs-min-pci">—</div>
+                            </div>
+                            <div class="video-summary-cell">
+                                <div class="video-summary-cell-label">PCI Cao nhất</div>
+                                <div class="video-summary-cell-value" id="vs-max-pci">—</div>
+                            </div>
+                            <div class="video-summary-cell">
+                                <div class="video-summary-cell-label">Số frame phân tích</div>
+                                <div class="video-summary-cell-value" id="vs-frames">—</div>
+                            </div>
+                        </div>
+                        <div class="video-summary-timeline">
+                            <div class="video-summary-timeline-label">📈 Biến động PCI theo thời gian video:</div>
+                            <div class="timeline-bars" id="timeline-bars"></div>
+                        </div>
+                        <div class="video-summary-verdict" id="vs-verdict">—</div>
+                    </div>
+                </div>
+
+                <!-- Nút thao tác gửi Gmail và chuyển đến danh sách nhóm -->
+                <div class="analysis-section result-appear" style="animation-delay: 0.42s; text-align: center; display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                    <button class="email-shortcut-btn" id="btn-quick-send-email" onclick="quickSendResultEmail()">
+                        📧 Gửi kết quả vào Gmail nhóm
+                    </button>
+                    <a href="users.html" style="display: block; font-size: 11px; color: var(--accent-light); text-decoration: underline; font-weight: 600;">
+                        👥 Đi tới Bảng Thông tin Nhóm để xem danh sách cập nhật
+                    </a>
+                </div>
+
             </div>
         </div>
     </aside>
@@ -1029,29 +773,29 @@
     <!-- ===== MAIN CONTENT ===== -->
     <main class="main-content">
         <div class="topbar">
-            <span class="topbar-title" id="topbar-title">🗺️ Bản đồ trực quan</span>
+            <span class="topbar-title" id="topbar-title">🗺️ Bản đồ trực quan tuyến đường</span>
             <div class="topbar-info">
-                <button id="btn-my-location" style="display: none; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; align-items: center; gap: 4px; transition: all 0.2s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'">
-                    <span style="font-size: 12px;">📍</span> Vị trí của tôi
+                <button id="btn-my-location" style="display:none;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:#60a5fa;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:4px;transition:all 0.2s;" onmouseover="this.style.background='rgba(59,130,246,0.22)'" onmouseout="this.style.background='rgba(59,130,246,0.12)'">
+                    <span>📍</span> Vị trí của tôi
                 </button>
-                <span class="topbar-badge" id="topbar-badge">● Đang hiển thị 6 / 6 đoạn đường</span>
+                <span class="topbar-badge" id="topbar-badge">● Đang hiển thị 9 / 9 đoạn đường</span>
+                <a href="users.html" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);border-radius:7px;color:#818cf8;font-size:11px;font-weight:700;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.22)'" onmouseout="this.style.background='rgba(99,102,241,0.12)'">👥 Người dùng</a>
             </div>
         </div>
 
-        <!-- Main Panel: Map -->
+        <!-- Map Panel -->
         <div class="main-panel active" id="panel-map">
             <div id="map"></div>
         </div>
 
-        <!-- Main Panel: Analysis -->
+        <!-- Analysis Panel -->
         <div class="main-panel" id="panel-analysis">
             <div class="analysis-main">
                 <div class="analysis-hero">
                     <h2>Chỉ số Tình trạng Mặt đường (PCI)</h2>
-                    <p>Pavement Condition Index — Theo tiêu chuẩn ASTM D6433 của U.S. Army Corps of Engineers. Thang điểm từ 0 đến 100 đánh giá chất lượng mặt đường.</p>
+                    <p>Pavement Condition Index — Tiêu chuẩn ASTM D6433 của U.S. Army Corps of Engineers.<br>Thang điểm từ 0–100 đánh giá chất lượng mặt đường dựa trên tỷ lệ và mức độ vết nứt.</p>
                 </div>
 
-                <!-- PCI Reference Table -->
                 <div class="pci-ref-table">
                     <div class="pci-ref-header">
                         <h3>📏 Bảng Chỉ số PCI — ASTM D6433</h3>
@@ -1059,652 +803,814 @@
                     </div>
                     <div class="pci-ref-body">
                         <div class="pci-ref-left">
-                            <div class="pci-ref-row">
-                                <span class="pci-ref-range">85 – 100</span>
-                                <span class="pci-ref-condition">Very Good (Rất tốt)</span>
-                                <span class="pci-ref-color" style="background: #166534;"></span>
-                            </div>
-                            <div class="pci-ref-row">
-                                <span class="pci-ref-range">65 – 85</span>
-                                <span class="pci-ref-condition">Satisfactory (Tốt)</span>
-                                <span class="pci-ref-color" style="background: #22c55e;"></span>
-                            </div>
-                            <div class="pci-ref-row">
-                                <span class="pci-ref-range">50 – 65</span>
-                                <span class="pci-ref-condition">Fair (Trung bình)</span>
-                                <span class="pci-ref-color" style="background: #eab308;"></span>
-                            </div>
-                            <div class="pci-ref-row">
-                                <span class="pci-ref-range">40 – 50</span>
-                                <span class="pci-ref-condition">Poor (Kém)</span>
-                                <span class="pci-ref-color" style="background: #f97316;"></span>
-                            </div>
-                            <div class="pci-ref-row">
-                                <span class="pci-ref-range">20 – 40</span>
-                                <span class="pci-ref-condition">Very Poor (Rất kém)</span>
-                                <span class="pci-ref-color" style="background: #ef4444;"></span>
-                            </div>
-                            <div class="pci-ref-row">
-                                <span class="pci-ref-range">0 – 20</span>
-                                <span class="pci-ref-condition">Failed (Hỏng)</span>
-                                <span class="pci-ref-color" style="background: #6b7280;"></span>
-                            </div>
+                            <div class="pci-ref-row"><span class="pci-ref-range">85 – 100</span><span class="pci-ref-condition">Very Good — Rất tốt</span><span class="pci-ref-color" style="background:#166534;"></span></div>
+                            <div class="pci-ref-row"><span class="pci-ref-range">65 – 85</span><span class="pci-ref-condition">Satisfactory — Tốt</span><span class="pci-ref-color" style="background:#22c55e;"></span></div>
+                            <div class="pci-ref-row"><span class="pci-ref-range">50 – 65</span><span class="pci-ref-condition">Fair — Trung bình</span><span class="pci-ref-color" style="background:#eab308;"></span></div>
+                            <div class="pci-ref-row"><span class="pci-ref-range">40 – 50</span><span class="pci-ref-condition">Poor — Kém</span><span class="pci-ref-color" style="background:#f97316;"></span></div>
+                            <div class="pci-ref-row"><span class="pci-ref-range">20 – 40</span><span class="pci-ref-condition">Very Poor — Rất kém</span><span class="pci-ref-color" style="background:#ef4444;"></span></div>
+                            <div class="pci-ref-row"><span class="pci-ref-range">0 – 20</span><span class="pci-ref-condition">Failed — Hỏng hoàn toàn</span><span class="pci-ref-color" style="background:#6b7280;"></span></div>
                         </div>
                         <div class="pci-ref-right">
-                            <div class="pci-bar-segment" style="background: #166534;">Good</div>
-                            <div class="pci-bar-segment" style="background: #22c55e;">Satisfactory</div>
-                            <div class="pci-bar-segment" style="background: #eab308;">Fair</div>
-                            <div class="pci-bar-segment" style="background: #f97316;">Poor</div>
-                            <div class="pci-bar-segment" style="background: #ef4444;">Very Poor</div>
-                            <div class="pci-bar-segment" style="background: #9ca3af; color: rgba(0,0,0,0.5);">Serious</div>
-                            <div class="pci-bar-segment" style="background: #6b7280;">Failed</div>
+                            <div class="pci-bar-segment" style="background:#166534;">Great</div>
+                            <div class="pci-bar-segment" style="background:#22c55e;">Good</div>
+                            <div class="pci-bar-segment" style="background:#eab308;">Fair</div>
+                            <div class="pci-bar-segment" style="background:#f97316;">Poor</div>
+                            <div class="pci-bar-segment" style="background:#ef4444;">V.Poor</div>
+                            <div class="pci-bar-segment" style="background:#6b7280;">Failed</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <audio id="background-audio" loop preload="auto" src="https://raw.githubusercontent.com/Tiendatmagix/antigravity-media/main/dung_lam_trai_tim_anh_dau.mp3"></audio>
     </main>
 
-    <!-- Hidden canvas for processing -->
+    <!-- Hidden canvas -->
     <canvas id="process-canvas" style="display:none;"></canvas>
 
     <script>
-        // ===========================
-        // DỮ LIỆU ĐƯỜNG
-        // ===========================
-        const roadData = [
-            // Cập nhật tọa độ chính xác nằm ngay trên mặt đường để Google Street View có thể nhận diện
-            { name: "Quốc lộ 1A (Đoạn qua Hà Nội)", latStart: 20.887648, lonStart: 105.856950, latEnd: 20.8500, lonEnd: 105.8600, surfaceType: "Nhựa", lengthKm: 5.5, crackPercent: 12.5, image: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường Nguyễn Trãi (Hà Nội)", latStart: 20.995400, lonStart: 105.807800, latEnd: 20.9850, lonEnd: 105.7950, surfaceType: "Nhựa", lengthKm: 2.3, crackPercent: 5.0, image: "https://images.unsplash.com/photo-1584351583369-6baf055b51a7?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường Liên Thôn (Đan Phượng)", latStart: 21.0950, lonStart: 105.7000, latEnd: 21.0960, lonEnd: 105.7050, surfaceType: "Bê tông", lengthKm: 0.8, crackPercent: 20.0, image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường cao tốc Bắc - Nam", latStart: 19.8000, lonStart: 105.9000, latEnd: 19.7000, lonEnd: 105.9500, surfaceType: "Nhựa", lengthKm: 15.0, crackPercent: 2.1, image: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=400&q=80" },
-            { name: "Hẻm 123 (Quận 1, TP.HCM)", latStart: 10.7760, lonStart: 106.7010, latEnd: 10.7770, lonEnd: 106.7020, surfaceType: "Bê tông", lengthKm: 0.3, crackPercent: 15.0, image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường ven biển (Đà Nẵng)", latStart: 16.0500, lonStart: 108.2300, latEnd: 16.0300, lonEnd: 108.2400, surfaceType: "Nhựa", lengthKm: 1.2, crackPercent: 8.4, image: "https://images.unsplash.com/photo-1468818438311-4bab781ab9b8?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường Phạm Văn Đồng (Hà Nội)", latStart: 21.050600, lonStart: 105.780800, latEnd: 21.0660, lonEnd: 105.7820, surfaceType: "Nhựa", lengthKm: 3.2, crackPercent: 3.5, image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường Giải Phóng (Hà Nội)", latStart: 20.985600, lonStart: 105.841500, latEnd: 20.9650, lonEnd: 105.8450, surfaceType: "Nhựa", lengthKm: 4.1, crackPercent: 7.2, image: "https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80" },
-            { name: "Đường Vành đai 3 (Hà Nội)", latStart: 21.006800, lonStart: 105.797700, latEnd: 20.9800, lonEnd: 105.8150, surfaceType: "Nhựa", lengthKm: 6.8, crackPercent: 4.8, image: "https://images.unsplash.com/photo-1512401763783-f8a45e998634?auto=format&fit=crop&w=400&q=80" }
-        ];
+    // ============================================================
+    // DỮ LIỆU ĐƯỜNG
+    // ============================================================
+    const roadData = [
+        { name: "Quốc lộ 1A (Đoạn qua Hà Nội)", latStart: 20.887648, lonStart: 105.856950, latEnd: 20.8500, lonEnd: 105.8600, surfaceType: "Nhựa", lengthKm: 5.5, crackPercent: 12.5 },
+        { name: "Đường Nguyễn Trãi (Hà Nội)", latStart: 20.995400, lonStart: 105.807800, latEnd: 20.9850, lonEnd: 105.7950, surfaceType: "Nhựa", lengthKm: 2.3, crackPercent: 5.0 },
+        { name: "Đường Liên Thôn (Đan Phượng)", latStart: 21.0950, lonStart: 105.7000, latEnd: 21.0960, lonEnd: 105.7050, surfaceType: "Bê tông", lengthKm: 0.8, crackPercent: 20.0 },
+        { name: "Đường cao tốc Bắc - Nam", latStart: 19.8000, lonStart: 105.9000, latEnd: 19.7000, lonEnd: 105.9500, surfaceType: "Nhựa", lengthKm: 15.0, crackPercent: 2.1 },
+        { name: "Hẻm 123 (Quận 1, TP.HCM)", latStart: 10.7760, lonStart: 106.7010, latEnd: 10.7770, lonEnd: 106.7020, surfaceType: "Bê tông", lengthKm: 0.3, crackPercent: 15.0 },
+        { name: "Đường ven biển (Đà Nẵng)", latStart: 16.0500, lonStart: 108.2300, latEnd: 16.0300, lonEnd: 108.2400, surfaceType: "Nhựa", lengthKm: 1.2, crackPercent: 8.4 },
+        { name: "Đường Phạm Văn Đồng (Hà Nội)", latStart: 21.050600, lonStart: 105.780800, latEnd: 21.0660, lonEnd: 105.7820, surfaceType: "Nhựa", lengthKm: 3.2, crackPercent: 3.5 },
+        { name: "Đường Giải Phóng (Hà Nội)", latStart: 20.985600, lonStart: 105.841500, latEnd: 20.9650, lonEnd: 105.8450, surfaceType: "Nhựa", lengthKm: 4.1, crackPercent: 7.2 },
+        { name: "Đường Vành đai 3 (Hà Nội)", latStart: 21.006800, lonStart: 105.797700, latEnd: 20.9800, lonEnd: 105.8150, surfaceType: "Nhựa", lengthKm: 6.8, crackPercent: 4.8 }
+    ];
 
-        // ===========================
-        // TIỆN ÍCH MÀU
-        // ===========================
-        function getCrackColor(pct) {
-            if (pct >= 15) return '#ef4444';
-            if (pct >= 8) return '#f97316';
-            if (pct >= 4) return '#eab308';
-            return '#22c55e';
-        }
+    // ============================================================
+    // TIỆN ÍCH MÀU & PCI
+    // ============================================================
+    function getCrackColor(pct) {
+        if (pct >= 15) return '#ef4444';
+        if (pct >= 8)  return '#f97316';
+        if (pct >= 4)  return '#eab308';
+        return '#22c55e';
+    }
 
-        function getCrackLevel(pct) {
-            if (pct >= 15) return { text: 'Nghiêm trọng', emoji: '🔴', bg: 'rgba(239,68,68,0.15)', color: '#ef4444' };
-            if (pct >= 8) return { text: 'Trung bình', emoji: '🟠', bg: 'rgba(249,115,22,0.15)', color: '#f97316' };
-            if (pct >= 4) return { text: 'Nhẹ', emoji: '🟡', bg: 'rgba(234,179,8,0.15)', color: '#eab308' };
-            return { text: 'Tốt', emoji: '🟢', bg: 'rgba(34,197,94,0.15)', color: '#22c55e' };
-        }
+    function getCrackLevel(pct) {
+        if (pct >= 15) return { text: 'Nghiêm trọng', emoji: '🔴', bg: 'rgba(239,68,68,0.15)', color: '#ef4444' };
+        if (pct >= 8)  return { text: 'Trung bình',   emoji: '🟠', bg: 'rgba(249,115,22,0.15)', color: '#f97316' };
+        if (pct >= 4)  return { text: 'Nhẹ',           emoji: '🟡', bg: 'rgba(234,179,8,0.15)',  color: '#eab308' };
+        return { text: 'Tốt', emoji: '🟢', bg: 'rgba(34,197,94,0.15)', color: '#22c55e' };
+    }
 
-        function getBadgeStyle(pct) {
-            const c = getCrackColor(pct);
-            return `background: ${c}22; color: ${c}; border: 1px solid ${c}44;`;
-        }
+    function getBadgeStyle(pct) {
+        const c = getCrackColor(pct);
+        return `background:${c}22;color:${c};border:1px solid ${c}44;`;
+    }
 
-        // ===========================
-        // PCI SCORING (ASTM D6433)
-        // ===========================
-        function crackPercentToPCI(crackPct) {
-            // Mapping: 0% crack → PCI 100, 50%+ crack → PCI 0
-            // Non-linear curve simulating deduct value behavior
-            if (crackPct <= 0) return 100;
-            if (crackPct >= 50) return 0;
+    function crackPercentToPCI(crackPct) {
+        if (crackPct <= 0)  return 100;
+        if (crackPct >= 50) return 0;
+        const pci = 100 * Math.pow(1 - crackPct / 50, 1.3);
+        return Math.round(Math.max(0, Math.min(100, pci)));
+    }
 
-            // Exponential decay: small crack % → big PCI drop initially
-            const pci = 100 * Math.pow(1 - crackPct / 50, 1.3);
-            return Math.round(Math.max(0, Math.min(100, pci)));
-        }
+    function getPCIInfo(pci) {
+        if (pci >= 85) return { condition: 'Very Good',    conditionVi: 'Rất tốt',     color: '#166534', colorLight: '#22c55e', emoji: '🟢', desc: 'Mặt đường trong tình trạng rất tốt. Chỉ cần bảo trì định kỳ nhỏ.' };
+        if (pci >= 65) return { condition: 'Satisfactory', conditionVi: 'Tốt',         color: '#22c55e', colorLight: '#4ade80', emoji: '🟢', desc: 'Mặt đường tốt, có ít hư hỏng nhẹ. Nên lên kế hoạch bảo trì phòng ngừa.' };
+        if (pci >= 50) return { condition: 'Fair',         conditionVi: 'Trung bình',  color: '#eab308', colorLight: '#fde047', emoji: '🟡', desc: 'Mặt đường trung bình. Cần bảo trì sửa chữa kịp thời để tránh xuống cấp.' };
+        if (pci >= 40) return { condition: 'Poor',         conditionVi: 'Kém',         color: '#f97316', colorLight: '#fb923c', emoji: '🟠', desc: 'Mặt đường kém. Cần sửa chữa lớn hoặc phủ lại bề mặt (resurfacing).' };
+        if (pci >= 20) return { condition: 'Very Poor',    conditionVi: 'Rất kém',     color: '#ef4444', colorLight: '#f87171', emoji: '🔴', desc: 'Mặt đường rất kém. Cần tái xây dựng hoặc can thiệp khẩn cấp.' };
+        return { condition: 'Failed',       conditionVi: 'Hỏng',        color: '#6b7280', colorLight: '#9ca3af', emoji: '⚫', desc: 'Mặt đường đã hỏng hoàn toàn. Phải xây dựng lại ngay lập tức.' };
+    }
 
-        function getPCIInfo(pci) {
-            if (pci >= 85) return { condition: 'Very Good', conditionVi: 'Rất tốt', color: '#166534', colorLight: '#22c55e', emoji: '🟢', desc: 'Mặt đường trong tình trạng rất tốt. Chỉ cần bảo trì định kỳ.' };
-            if (pci >= 65) return { condition: 'Satisfactory', conditionVi: 'Tốt', color: '#22c55e', colorLight: '#4ade80', emoji: '🟢', desc: 'Mặt đường tốt, có ít hư hỏng nhẹ. Nên lên kế hoạch bảo trì phòng ngừa.' };
-            if (pci >= 50) return { condition: 'Fair', conditionVi: 'Trung bình', color: '#eab308', colorLight: '#fde047', emoji: '🟡', desc: 'Mặt đường trung bình. Cần bảo trì sửa chữa kịp thời để tránh xuống cấp.' };
-            if (pci >= 40) return { condition: 'Poor', conditionVi: 'Kém', color: '#f97316', colorLight: '#fb923c', emoji: '🟠', desc: 'Mặt đường kém. Cần sửa chữa lớn hoặc tái tạo bề mặt.' };
-            if (pci >= 20) return { condition: 'Very Poor', conditionVi: 'Rất kém', color: '#ef4444', colorLight: '#f87171', emoji: '🔴', desc: 'Mặt đường rất kém. Cần tái xây dựng hoặc sửa chữa khẩn cấp.' };
-            return { condition: 'Failed', conditionVi: 'Hỏng', color: '#6b7280', colorLight: '#9ca3af', emoji: '⚫', desc: 'Mặt đường đã hỏng hoàn toàn. Cần xây dựng lại ngay lập tức.' };
-        }
+    // ============================================================
+    // TAB SWITCHING
+    // ============================================================
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const mainPanels = document.querySelectorAll('.main-panel');
+    let mapInstance = null;
 
-        // ===========================
-        // TAB SWITCHING
-        // ===========================
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const mainPanels = document.querySelectorAll('.main-panel');
-        let mapInstance = null;
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            tabContents.forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            mainPanels.forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-' + tab).classList.add('active');
 
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                tabContents.forEach(c => c.classList.remove('active'));
-                document.getElementById('tab-' + tab).classList.add('active');
-
-                mainPanels.forEach(p => p.classList.remove('active'));
-                document.getElementById('panel-' + tab).classList.add('active');
-
-                if (tab === 'map') {
-                    document.getElementById('topbar-title').textContent = '🗺️ Bản đồ trực quan';
-                    document.getElementById('topbar-badge').style.display = '';
-                    if (mapInstance) mapInstance.invalidateSize();
-                } else {
-                    document.getElementById('topbar-title').textContent = '📸 Phân tích Vết nứt Mặt đường';
-                    document.getElementById('topbar-badge').style.display = 'none';
-                }
-            });
-        });
-
-        // ===========================
-        // KHỞI TẠO BẢN ĐỒ
-        // ===========================
-        mapInstance = L.map('map', { zoomControl: true, attributionControl: true }).setView([16.05, 107.0], 6);
-
-        // Các lớp bản đồ nền (Base layers)
-        const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OSM &copy; CARTO', maxZoom: 19
-        });
-        
-        const streetMap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-            attribution: '&copy; Google Maps', maxZoom: 19
-        });
-        
-        const satelliteMap = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            attribution: '&copy; Google Maps', maxZoom: 19
-        });
-
-        // Mặc định sử dụng bản đồ đường phố (Street View) theo yêu cầu
-        streetMap.addTo(mapInstance);
-
-        // Trình điều khiển chuyển đổi bản đồ
-        const baseMaps = {
-            "🏙️ Xem Phố (Streets)": streetMap,
-            "🌙 Bản đồ Tối": darkMap,
-            "🌍 Vệ Tinh (Satellite)": satelliteMap
-        };
-        L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(mapInstance);
-
-        let userLocation = null;
-        let userMarkerInstance = null;
-        const btnMyLocation = document.getElementById('btn-my-location');
-
-        if (btnMyLocation) {
-            btnMyLocation.addEventListener('click', () => {
-                if (userLocation && mapInstance) {
-                    mapInstance.flyTo(userLocation, 16, { duration: 1.2 });
-                    if (userMarkerInstance) {
-                        setTimeout(() => userMarkerInstance.openPopup(), 1200);
-                    }
-                }
-            });
-        }
-
-        // Định vị vị trí thực của người dùng qua GPS trình duyệt
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    userLocation = [lat, lng];
-                    
-                    if (btnMyLocation) btnMyLocation.style.display = 'flex';
-                    
-                    // Di chuyển bản đồ đến vị trí của người dùng
-                    mapInstance.flyTo([lat, lng], 14, { duration: 1.5 });
-                    
-                    // Thêm marker vị trí hiện tại
-                    const userMarker = L.circleMarker([lat, lng], {
-                        radius: 8,
-                        fillColor: "#3b82f6", // Màu xanh dương
-                        color: "#ffffff",
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 1
-                    }).addTo(mapInstance);
-                    
-                    userMarkerInstance = userMarker;
-                    
-                    const popupHtml = `
-                        <div class="popup-card" style="padding: 16px; width: 260px;">
-                            <div class="popup-card-header" style="border-bottom-color: #3b82f6; margin-bottom: 10px; padding-bottom: 10px;">
-                                <span class="popup-card-icon">📍</span>
-                                <span class="popup-card-title">Vị trí hiện tại của bạn</span>
-                            </div>
-                            <div class="popup-card-body">
-                                <div class="popup-row">
-                                    <span class="popup-row-label">Vĩ độ</span>
-                                    <span class="popup-row-value">${lat.toFixed(5)}</span>
-                                </div>
-                                <div class="popup-row">
-                                    <span class="popup-row-label">Kinh độ</span>
-                                    <span class="popup-row-value">${lng.toFixed(5)}</span>
-                                </div>
-                                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; gap: 6px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1px solid rgba(59, 130, 246, 0.3); transition: all 0.2s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'">
-                                        <span>🌍</span> Mở Street View 360°
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    userMarker.bindPopup(popupHtml);
-                    userMarker.bindTooltip("📍 Vị trí của bạn", { direction: 'top', offset: [0, -5] }).openTooltip();
-                },
-                (error) => {
-                    console.log("Không thể lấy vị trí do thiết bị từ chối hoặc lỗi:", error.message);
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        }
-
-        let roadLayers = [];
-
-        function createPopupHTML(road) {
-            const level = getCrackLevel(road.crackPercent);
-            const color = getCrackColor(road.crackPercent);
-            return `
-                <div class="popup-card" style="padding: 16px; width: 280px;">
-                    <div class="popup-card-header" style="border-bottom-color: ${color};">
-                        <span class="popup-card-icon">🛣️</span>
-                        <span class="popup-card-title">${road.name}</span>
-                    </div>
-                    <div class="popup-card-body">
-                        <div class="popup-row">
-                            <span class="popup-row-label">Loại mặt đường</span>
-                            <span class="popup-row-value">${road.surfaceType}</span>
-                        </div>
-                        <div class="popup-row">
-                            <span class="popup-row-label">Chiều dài</span>
-                            <span class="popup-row-value">${road.lengthKm} km</span>
-                        </div>
-                        <div class="popup-row">
-                            <span class="popup-row-label">Tỷ lệ vết nứt</span>
-                            <span class="popup-row-value popup-crack-value" style="color: ${color};">${road.crackPercent}%</span>
-                        </div>
-                        <div class="popup-row">
-                            <span class="popup-row-label">Đánh giá</span>
-                            <span class="popup-level-badge" style="background: ${level.bg}; color: ${level.color};">
-                                ${level.emoji} ${level.text}
-                            </span>
-                        </div>
-                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                            <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${road.latStart},${road.lonStart}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; gap: 6px; background: rgba(255,255,255,0.05); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-                                <span>🛣️</span> Xem Street View 360°
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderRoads(data) {
-            roadLayers.forEach(l => mapInstance.removeLayer(l));
-            roadLayers = [];
-
-            data.forEach(road => {
-                const color = getCrackColor(road.crackPercent);
-                const coords = [[road.latStart, road.lonStart], [road.latEnd, road.lonEnd]];
-
-                const polyline = L.polyline(coords, { color, weight: 6, opacity: 0.85, lineCap: 'round', lineJoin: 'round' });
-                polyline.bindPopup(createPopupHTML(road), { maxWidth: 320 });
-                polyline.bindTooltip(`📍 ${road.name} — Nứt: ${road.crackPercent}%`, { sticky: true });
-                polyline.on('mouseover', function() { this.setStyle({ weight: 10, opacity: 1 }); });
-                polyline.on('mouseout', function() { this.setStyle({ weight: 6, opacity: 0.85 }); });
-                polyline.addTo(mapInstance);
-                roadLayers.push(polyline);
-
-                const mid = [(road.latStart + road.latEnd)/2, (road.lonStart + road.lonEnd)/2];
-                const marker = L.circleMarker(mid, { radius: 6, color: '#0f1117', weight: 2, fillColor: color, fillOpacity: 1 });
-                marker.bindPopup(createPopupHTML(road), { maxWidth: 320 });
-                marker.bindTooltip(road.name);
-                marker.addTo(mapInstance);
-                roadLayers.push(marker);
-            });
-        }
-
-        function renderRoadList(data) {
-            const list = document.getElementById('road-list');
-            list.innerHTML = '';
-            data.forEach((road, idx) => {
-                const item = document.createElement('div');
-                item.className = 'road-item';
-                item.innerHTML = `
-                    <span class="road-item-name">${road.name}</span>
-                    <span class="road-item-badge" style="${getBadgeStyle(road.crackPercent)}">${road.crackPercent}%</span>
-                `;
-                item.addEventListener('click', () => {
-                    // Switch to map tab
-                    document.getElementById('btn-tab-map').click();
-                    const mid = [(road.latStart + road.latEnd)/2, (road.lonStart + road.lonEnd)/2];
-                    mapInstance.flyTo(mid, 14, { duration: 1.2 });
-                    const pi = idx * 2;
-                    if (roadLayers[pi]) setTimeout(() => roadLayers[pi].openPopup(), 1300);
-                });
-                list.appendChild(item);
-            });
-        }
-
-        // ===========================
-        // BỘ LỌC
-        // ===========================
-        function getFilteredData() {
-            const onlyAsphalt = document.getElementById('filter-asphalt').checked;
-            const onlyLong = document.getElementById('filter-length').checked;
-            const sliderVal = parseFloat(document.getElementById('slider-length').value);
-
-            let filtered = [...roadData];
-            if (onlyAsphalt) filtered = filtered.filter(r => r.surfaceType === 'Nhựa');
-            let minLen = sliderVal;
-            if (onlyLong && minLen < 1) minLen = 1;
-            filtered = filtered.filter(r => r.lengthKm >= minLen);
-            return filtered;
-        }
-
-        function updateAll() {
-            const filtered = getFilteredData();
-            renderRoads(filtered);
-            renderRoadList(filtered);
-            document.getElementById('stat-count').textContent = filtered.length;
-            document.getElementById('topbar-badge').textContent = `● Đang hiển thị ${filtered.length} / ${roadData.length} đoạn đường`;
-        }
-
-        const slider = document.getElementById('slider-length');
-        const sliderDisplay = document.getElementById('slider-display');
-
-        function updateSlider() {
-            const val = parseFloat(slider.value);
-            sliderDisplay.textContent = val.toFixed(1) + ' km';
-            const pct = ((val - parseFloat(slider.min)) / (parseFloat(slider.max) - parseFloat(slider.min))) * 100;
-            slider.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
-            updateAll();
-        }
-
-        slider.addEventListener('input', updateSlider);
-
-        document.getElementById('filter-length').addEventListener('change', function() {
-            if (this.checked && parseFloat(slider.value) < 1) {
-                slider.value = 1;
-                updateSlider();
-            } else { updateAll(); }
-        });
-
-        document.getElementById('filter-asphalt').addEventListener('change', updateAll);
-
-        // ===========================
-        // UPLOAD & PHÂN TÍCH ẢNH
-        // ===========================
-        const fileInput = document.getElementById('file-input');
-        const uploadZone = document.getElementById('upload-zone');
-        const previewContainer = document.getElementById('preview-container');
-        const previewImg = document.getElementById('preview-img');
-        const previewRemove = document.getElementById('preview-remove');
-        const analyzeBtn = document.getElementById('analyze-btn');
-        const analysisResults = document.getElementById('analysis-results');
-
-        let currentFileData = null;
-        let isVideoFile = false;
-        let videoRafId = null;
-
-        const previewVideo = document.getElementById('preview-video');
-
-        // Drag & drop
-        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-        uploadZone.addEventListener('drop', e => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-        });
-
-        fileInput.addEventListener('change', e => {
-            if (e.target.files.length) handleFile(e.target.files[0]);
-        });
-
-        function handleFile(file) {
-            const isImage = file.type.startsWith('image/');
-            const isVideo = file.type.startsWith('video/');
-            if (!isImage && !isVideo) return;
-
-            isVideoFile = isVideo;
-            
-            // Dừng xử lý video cũ
-            if (videoRafId) { cancelAnimationFrame(videoRafId); videoRafId = null; }
-            previewVideo.pause();
-
-            const reader = new FileReader();
-            reader.onload = e => {
-                if (isImage) {
-                    previewImg.src = e.target.result;
-                    previewImg.style.display = 'block';
-                    previewVideo.style.display = 'none';
-                } else {
-                    previewVideo.src = e.target.result;
-                    previewVideo.style.display = 'block';
-                    previewImg.style.display = 'none';
-                }
-                
-                previewContainer.style.display = 'block';
-                analyzeBtn.style.display = 'block';
-                analysisResults.style.display = 'none';
-                currentFileData = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        previewRemove.addEventListener('click', () => {
-            previewContainer.style.display = 'none';
-            analyzeBtn.style.display = 'none';
-            analysisResults.style.display = 'none';
-            fileInput.value = '';
-            currentFileData = null;
-            if (videoRafId) { cancelAnimationFrame(videoRafId); videoRafId = null; }
-            previewVideo.pause();
-            previewVideo.removeAttribute('src');
-            previewImg.removeAttribute('src');
-        });
-
-        // ===========================
-        // PHÂN TÍCH ẢNH & VIDEO BẰNG CANVAS
-        // ===========================
-        analyzeBtn.addEventListener('click', () => {
-            if (!currentFileData) return;
-
-            analysisResults.style.display = 'block';
-
-            if (isVideoFile) {
-                analyzeBtn.textContent = '🎥 Đang phân tích video...';
-                analyzeBtn.classList.add('loading');
-                previewVideo.play();
-                videoRafId = 1; // Khởi tạo để vòng lặp có thể chạy
-                processVideoFrame();
+            if (tab === 'map') {
+                document.getElementById('topbar-title').textContent = '🗺️ Bản đồ trực quan tuyến đường';
+                document.getElementById('topbar-badge').style.display = '';
+                if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 100);
             } else {
-                analyzeBtn.textContent = '⏳ Đang phân tích...';
-                analyzeBtn.classList.add('loading');
-
-                setTimeout(() => {
-                    const img = new Image();
-                    img.onload = () => performAnalysis(img);
-                    img.src = currentFileData;
-                    analyzeBtn.textContent = '🔍 Phân tích mặt đường';
-                    analyzeBtn.classList.remove('loading');
-                }, 600);
+                document.getElementById('topbar-title').textContent = '📸 Phân tích Vết nứt Mặt đường — AI';
+                document.getElementById('topbar-badge').style.display = 'none';
             }
         });
+    });
 
-        function processVideoFrame() {
-            if (previewVideo.paused || previewVideo.ended) {
-                analyzeBtn.textContent = '🔍 Phân tích lại video';
+    // ============================================================
+    // KHỞI TẠO BẢN ĐỒ LEAFLET
+    // ============================================================
+    mapInstance = L.map('map', { zoomControl: true }).setView([16.05, 107.0], 6);
+
+    const streetMap   = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { attribution: '© Google Maps', maxZoom: 19 });
+    const darkMap     = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OSM © CARTO', maxZoom: 19 });
+    const satelliteMap = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { attribution: '© Google Maps', maxZoom: 19 });
+
+    streetMap.addTo(mapInstance);
+    L.control.layers({ "🏙️ Xem Phố": streetMap, "🌙 Bản đồ Tối": darkMap, "🌍 Vệ Tinh": satelliteMap }, null, { position: 'bottomright' }).addTo(mapInstance);
+
+    // GPS vị trí người dùng
+    const btnMyLoc = document.getElementById('btn-my-location');
+    let userLocCoord = null;
+    let userMarkerInst = null;
+
+    if (btnMyLoc) {
+        btnMyLoc.addEventListener('click', () => {
+            if (userLocCoord && mapInstance) {
+                mapInstance.flyTo(userLocCoord, 16, { duration: 1.2 });
+                if (userMarkerInst) setTimeout(() => userMarkerInst.openPopup(), 1200);
+            }
+        });
+    }
+
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const lat = pos.coords.latitude, lng = pos.coords.longitude;
+            userLocCoord = [lat, lng];
+            if (btnMyLoc) btnMyLoc.style.display = 'flex';
+            mapInstance.flyTo([lat, lng], 14, { duration: 1.5 });
+            const uMarker = L.circleMarker([lat, lng], {
+                radius: 8, fillColor: "#3b82f6", color: "#ffffff", weight: 2, opacity: 1, fillOpacity: 1
+            }).addTo(mapInstance);
+            userMarkerInst = uMarker;
+            uMarker.bindPopup(`<div class="popup-card"><div class="popup-card-header" style="border-bottom-color:#3b82f6;"><span class="popup-card-icon">📍</span><span class="popup-card-title">Vị trí hiện tại</span></div><div class="popup-card-body"><div class="popup-row"><span class="popup-row-label">Vĩ độ</span><span class="popup-row-value">${lat.toFixed(5)}</span></div><div class="popup-row"><span class="popup-row-label">Kinh độ</span><span class="popup-row-value">${lng.toFixed(5)}</span></div></div></div>`);
+            uMarker.bindTooltip("📍 Vị trí của bạn", { direction: 'top', offset: [0, -5] }).openTooltip();
+        }, err => console.log("GPS error:", err.message), { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+    }
+
+    let roadLayers = [];
+
+    function createPopupHTML(road) {
+        const level = getCrackLevel(road.crackPercent);
+        const color = getCrackColor(road.crackPercent);
+        return `<div class="popup-card" style="width:280px;">
+            <div class="popup-card-header" style="border-bottom-color:${color};">
+                <span class="popup-card-icon">🛣️</span>
+                <span class="popup-card-title">${road.name}</span>
+            </div>
+            <div class="popup-card-body">
+                <div class="popup-row"><span class="popup-row-label">Loại mặt đường</span><span class="popup-row-value">${road.surfaceType}</span></div>
+                <div class="popup-row"><span class="popup-row-label">Chiều dài</span><span class="popup-row-value">${road.lengthKm} km</span></div>
+                <div class="popup-row"><span class="popup-row-label">Tỷ lệ vết nứt</span><span class="popup-row-value popup-crack-value" style="color:${color};">${road.crackPercent}%</span></div>
+                <div class="popup-row"><span class="popup-row-label">Đánh giá</span><span class="popup-level-badge" style="background:${level.bg};color:${level.color};">${level.emoji} ${level.text}</span></div>
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;">
+                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${road.latStart},${road.lonStart}" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:100%;gap:5px;background:rgba(255,255,255,0.04);color:var(--text-primary);padding:7px 10px;border-radius:6px;font-size:12px;font-weight:500;text-decoration:none;border:1px solid rgba(255,255,255,0.08);">🛣️ Xem Street View 360°</a>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function renderRoads(data) {
+        roadLayers.forEach(l => mapInstance.removeLayer(l));
+        roadLayers = [];
+        data.forEach((road, idx) => {
+            const color = getCrackColor(road.crackPercent);
+            const coords = [[road.latStart, road.lonStart], [road.latEnd, road.lonEnd]];
+            const poly = L.polyline(coords, { color, weight: 6, opacity: 0.88, lineCap: 'round', lineJoin: 'round' });
+            poly.bindPopup(createPopupHTML(road), { maxWidth: 320 });
+            poly.bindTooltip(`📍 ${road.name} — Nứt: ${road.crackPercent}%`, { sticky: true });
+            poly.on('mouseover', function() { this.setStyle({ weight: 11, opacity: 1 }); });
+            poly.on('mouseout', function() { this.setStyle({ weight: 6, opacity: 0.88 }); });
+            poly.addTo(mapInstance);
+            roadLayers.push(poly);
+
+            const mid = [(road.latStart + road.latEnd) / 2, (road.lonStart + road.lonEnd) / 2];
+            const marker = L.circleMarker(mid, { radius: 6, color: '#0a0d14', weight: 2, fillColor: color, fillOpacity: 1 });
+            marker.bindPopup(createPopupHTML(road), { maxWidth: 320 });
+            marker.bindTooltip(road.name);
+            marker.addTo(mapInstance);
+            roadLayers.push(marker);
+        });
+    }
+
+    function renderRoadList(data) {
+        const list = document.getElementById('road-list');
+        list.innerHTML = '';
+        data.forEach((road, idx) => {
+            const item = document.createElement('div');
+            item.className = 'road-item';
+            item.innerHTML = `<span class="road-item-name">${road.name}</span><span class="road-item-badge" style="${getBadgeStyle(road.crackPercent)}">${road.crackPercent}%</span>`;
+            item.addEventListener('click', () => {
+                document.getElementById('btn-tab-map').click();
+                const mid = [(road.latStart + road.latEnd) / 2, (road.lonStart + road.lonEnd) / 2];
+                mapInstance.flyTo(mid, 14, { duration: 1.2 });
+                const layerIdx = idx * 2;
+                if (roadLayers[layerIdx]) setTimeout(() => roadLayers[layerIdx].openPopup(), 1300);
+            });
+            list.appendChild(item);
+        });
+    }
+
+    function getFilteredData() {
+        const onlyAsphalt = document.getElementById('filter-asphalt').checked;
+        const onlyLong = document.getElementById('filter-length').checked;
+        const sliderVal = parseFloat(document.getElementById('slider-length').value);
+        let f = [...roadData];
+        if (onlyAsphalt) f = f.filter(r => r.surfaceType === 'Nhựa');
+        let minLen = sliderVal;
+        if (onlyLong && minLen < 1) minLen = 1;
+        f = f.filter(r => r.lengthKm >= minLen);
+        return f;
+    }
+
+    function updateAll() {
+        const f = getFilteredData();
+        renderRoads(f);
+        renderRoadList(f);
+        document.getElementById('stat-count').textContent = f.length;
+        document.getElementById('topbar-badge').textContent = `● Đang hiển thị ${f.length} / ${roadData.length} đoạn đường`;
+    }
+
+    const slider = document.getElementById('slider-length');
+    const sliderDisplay = document.getElementById('slider-display');
+
+    function updateSlider() {
+        const val = parseFloat(slider.value);
+        sliderDisplay.textContent = val.toFixed(1) + ' km';
+        const pct = ((val - parseFloat(slider.min)) / (parseFloat(slider.max) - parseFloat(slider.min))) * 100;
+        slider.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, rgba(255,255,255,0.07) ${pct}%)`;
+        updateAll();
+    }
+
+    slider.addEventListener('input', updateSlider);
+    document.getElementById('filter-length').addEventListener('change', function() {
+        if (this.checked && parseFloat(slider.value) < 1) { slider.value = 1; updateSlider(); }
+        else updateAll();
+    });
+    document.getElementById('filter-asphalt').addEventListener('change', updateAll);
+
+    // ============================================================
+    // UPLOAD & PHÂN TÍCH ẢNH / VIDEO
+    // ============================================================
+    const fileInput       = document.getElementById('file-input');
+    const uploadZone      = document.getElementById('upload-zone');
+    const previewContainer= document.getElementById('preview-container');
+    const previewImg      = document.getElementById('preview-img');
+    const previewVideo    = document.getElementById('preview-video');
+    const previewRemove   = document.getElementById('preview-remove');
+    const analyzeBtn      = document.getElementById('analyze-btn');
+    const analysisResults = document.getElementById('analysis-results');
+    const vpWrap          = document.getElementById('video-progress-wrap');
+    const vpFill          = document.getElementById('vp-fill');
+    const vpPct           = document.getElementById('vp-pct');
+    const vpStatus        = document.getElementById('vp-status');
+    const vpLabel         = document.getElementById('vp-label');
+
+    let currentFileData = null;
+    let isVideoFile     = false;
+    let videoAnalysisActive = false;
+
+    // Drag & drop
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+    uploadZone.addEventListener('drop', e => {
+        e.preventDefault(); uploadZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+    function handleFile(file) {
+        const isImg = file.type.startsWith('image/');
+        const isVid = file.type.startsWith('video/');
+        if (!isImg && !isVid) return;
+        isVideoFile = isVid;
+        videoAnalysisActive = false;
+
+        previewVideo.pause();
+        const reader = new FileReader();
+        reader.onload = ev => {
+            if (isImg) {
+                previewImg.src = ev.target.result;
+                previewImg.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else {
+                previewVideo.src = ev.target.result;
+                previewVideo.style.display = 'block';
+                previewImg.style.display = 'none';
+            }
+            previewContainer.style.display = 'block';
+            analyzeBtn.style.display = 'block';
+            analyzeBtn.textContent = isVid ? '🎥 Phân tích toàn bộ video' : '🔍 Phân tích mặt đường';
+            analyzeBtn.classList.remove('loading');
+            analysisResults.style.display = 'none';
+            vpWrap.style.display = 'none';
+            document.getElementById('video-summary').style.display = 'none';
+            currentFileData = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    previewRemove.addEventListener('click', () => {
+        videoAnalysisActive = false;
+        previewContainer.style.display = 'none';
+        analyzeBtn.style.display = 'none';
+        analysisResults.style.display = 'none';
+        vpWrap.style.display = 'none';
+        fileInput.value = '';
+        currentFileData = null;
+        previewVideo.pause();
+        previewVideo.removeAttribute('src');
+        previewImg.removeAttribute('src');
+        document.getElementById('video-summary').style.display = 'none';
+    });
+
+    analyzeBtn.addEventListener('click', () => {
+        if (!currentFileData) return;
+
+        // Ràng buộc nhập thông tin
+        const name = document.getElementById('user-real-name').value.trim();
+        const group = document.getElementById('user-group-name').value.trim();
+        const gmail = document.getElementById('user-gmail').value.trim();
+
+        if (!name || !group || !gmail) {
+            alert('Vui lòng điền đầy đủ: Họ tên, Tên nhóm và Gmail trước khi phân tích!');
+            document.getElementById('user-real-name').focus();
+            return;
+        }
+
+        analyzeBtn.classList.add('loading');
+        analysisResults.style.display = 'none';
+        document.getElementById('video-summary').style.display = 'none';
+
+        if (isVideoFile) {
+            analyzeBtn.textContent = '⏳ Đang chuẩn bị...';
+            vpWrap.style.display = 'block';
+            vpFill.style.width = '0%';
+            vpPct.textContent = '0%';
+            vpStatus.textContent = 'Đang tải video...';
+            videoAnalysisActive = true;
+            analyzeVideo();
+        } else {
+            analyzeBtn.textContent = '⏳ Đang phân tích ảnh...';
+            vpWrap.style.display = 'none';
+            setTimeout(() => {
+                const img = new Image();
+                img.onload = () => {
+                    const result = analyzeFrame(img, img.naturalWidth, img.naturalHeight);
+                    displaySingleResult(result);
+                    analyzeBtn.textContent = '✅ Phân tích hoàn tất — Phân tích lại';
+                    analyzeBtn.classList.remove('loading');
+
+                    // Lưu dữ liệu phân tích ảnh vào danh sách nhóm
+                    saveAnalysisToUsers(result.pciScore, result.crackPercent);
+                };
+                img.src = currentFileData;
+            }, 300);
+        }
+    });
+
+    // ============================================================
+    // PHÂN TÍCH ẢNH ĐƠN
+    // ============================================================
+    function analyzeFrame(source, w, h) {
+        const canvas = document.getElementById('process-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Giới hạn kích thước để tối ưu hiệu năng
+        const maxDim = 640;
+        let sw = w, sh = h;
+        if (sw > maxDim || sh > maxDim) {
+            const ratio = Math.min(maxDim / sw, maxDim / sh);
+            sw = Math.round(sw * ratio);
+            sh = Math.round(sh * ratio);
+        }
+
+        canvas.width = sw;
+        canvas.height = sh;
+        ctx.drawImage(source, 0, 0, sw, sh);
+
+        const imageData = ctx.getImageData(0, 0, sw, sh);
+        const data = imageData.data;
+        const totalPixels = sw * sh;
+
+        // ── Bước 1: Chuyển sang ảnh xám (grayscale) ──
+        const gray = new Uint8Array(totalPixels);
+        for (let i = 0; i < totalPixels; i++) {
+            const idx = i * 4;
+            // Công thức luminance chuẩn ITU-R BT.601
+            gray[i] = Math.round(0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2]);
+        }
+
+        // ── Bước 2: Thuật toán Otsu's Thresholding để tìm ngưỡng tối ưu ──
+        const histogram = new Array(256).fill(0);
+        for (let i = 0; i < totalPixels; i++) histogram[gray[i]]++;
+
+        let sum = 0;
+        for (let i = 0; i < 256; i++) sum += i * histogram[i];
+
+        let sumB = 0, wB = 0, wF = 0, maxVar = 0, threshold = 127;
+        for (let t = 0; t < 256; t++) {
+            wB += histogram[t];
+            if (wB === 0) continue;
+            wF = totalPixels - wB;
+            if (wF === 0) break;
+            sumB += t * histogram[t];
+            const mB = sumB / wB;
+            const mF = (sum - sumB) / wF;
+            const variance = wB * wF * (mB - mF) * (mB - mF);
+            if (variance > maxVar) { maxVar = variance; threshold = t; }
+        }
+
+        // ── Bước 3: Điều chỉnh ngưỡng — Mặt đường thường tối hơn vết nứt ──
+        // Vết nứt thường rất tối → lấy ngưỡng thấp hơn một chút để chuẩn hơn
+        // Với ảnh đường nhựa tối: crack là các vùng sáng bất thường (ánh sáng xuyên qua)
+        // Với ảnh đường bê tông sáng: crack là các vùng tối nhất
+        // Sử dụng Otsu cộng thêm hệ số điều chỉnh dựa trên độ sáng trung bình
+        const meanBrightness = gray.reduce((a, b) => a + b, 0) / totalPixels;
+        let adjustedThreshold = threshold;
+        if (meanBrightness > 140) {
+            // Ảnh sáng (bê tông): crack là vùng tối → giữ threshold
+            adjustedThreshold = Math.max(threshold - 10, 40);
+        } else {
+            // Ảnh tối (nhựa): crack là vùng tối hơn bình thường → giảm threshold
+            adjustedThreshold = Math.max(threshold - 15, 30);
+        }
+
+        // ── Bước 4: Áp dụng ngưỡng và tạo ảnh nhị phân ──
+        let crackPixels = 0;
+        const binaryCanvas = document.getElementById('binary-canvas');
+        const bCtx = binaryCanvas.getContext('2d');
+        binaryCanvas.width = sw;
+        binaryCanvas.height = sh;
+        const binaryData = bCtx.createImageData(sw, sh);
+
+        for (let i = 0; i < totalPixels; i++) {
+            // Pixel tối hơn threshold → là vết nứt
+            const isCrack = gray[i] < adjustedThreshold;
+            if (isCrack) crackPixels++;
+            const val = isCrack ? 0 : 255;
+            const idx = i * 4;
+            binaryData.data[idx]     = isCrack ? 30  : 250; // R
+            binaryData.data[idx + 1] = isCrack ? 30  : 250; // G
+            binaryData.data[idx + 2] = isCrack ? 50  : 250; // B
+            binaryData.data[idx + 3] = 255;
+        }
+
+        bCtx.putImageData(binaryData, 0, 0);
+
+        const normalPixels  = totalPixels - crackPixels;
+        const crackPercent  = (crackPixels / totalPixels) * 100;
+        const pciScore      = crackPercentToPCI(crackPercent);
+        const pciInfo       = getPCIInfo(pciScore);
+
+        return { totalPixels, crackPixels, normalPixels, crackPercent, pciScore, pciInfo, threshold: adjustedThreshold };
+    }
+
+    // ============================================================
+    // HIỂN THỊ KẾT QUẢ ẢNH ĐƠN
+    // ============================================================
+    function displaySingleResult(result) {
+        document.getElementById('res-total-pixels').textContent = result.totalPixels.toLocaleString();
+        document.getElementById('res-crack-pixels').textContent = result.crackPixels.toLocaleString();
+        document.getElementById('res-normal-pixels').textContent = result.normalPixels.toLocaleString();
+        const pctEl = document.getElementById('res-crack-percent');
+        pctEl.textContent = result.crackPercent.toFixed(2) + '%';
+        pctEl.style.color = getCrackColor(result.crackPercent);
+
+        updatePCIGauge(result.pciScore, result.pciInfo);
+        updatePCIScale(result.pciScore);
+
+        analysisResults.style.display = 'block';
+        document.getElementById('video-summary').style.display = 'none';
+    }
+
+    function updatePCIGauge(pciScore, pciInfo) {
+        const numEl = document.getElementById('pci-score-num');
+        numEl.textContent = pciScore;
+        numEl.style.color = pciInfo.color;
+
+        const ring = document.getElementById('pci-ring');
+        const circumference = 2 * Math.PI * 62;
+        ring.style.stroke = pciInfo.color;
+        ring.style.strokeDasharray = circumference;
+        requestAnimationFrame(() => {
+            ring.style.strokeDashoffset = circumference - (circumference * pciScore / 100);
+        });
+
+        const condEl = document.getElementById('pci-condition-text');
+        condEl.textContent = `${pciInfo.emoji} ${pciInfo.conditionVi} (${pciInfo.condition})`;
+        condEl.style.color = pciInfo.color;
+
+        document.getElementById('pci-description').textContent = pciInfo.desc;
+    }
+
+    function updatePCIScale(pciScore) {
+        document.querySelectorAll('.pci-scale-row').forEach(row => {
+            const min = parseInt(row.dataset.min), max = parseInt(row.dataset.max);
+            const fill = row.querySelector('.pci-scale-bar-fill');
+            const indicator = row.querySelector('.pci-scale-indicator');
+            row.classList.remove('active-row');
+            row.style.fontWeight = '';
+            fill.style.width = '0%';
+            indicator.style.display = 'none';
+
+            if ((pciScore >= min && pciScore < max) || (max === 100 && pciScore === 100)) {
+                row.classList.add('active-row');
+                row.style.fontWeight = '700';
+                const posInRange = (pciScore - min) / (max - min) * 100;
+                fill.style.width = posInRange + '%';
+                indicator.style.display = 'block';
+                indicator.style.left = posInRange + '%';
+            }
+        });
+    }
+
+    // ============================================================
+    // PHÂN TÍCH VIDEO — LẤY MẪU THÔNG MINH (MULTI-FRAME SAMPLING)
+    // ============================================================
+    function analyzeVideo() {
+        const video = previewVideo;
+
+        // Đợi metadata load xong
+        const onMeta = () => {
+            video.removeEventListener('loadedmetadata', onMeta);
+            if (!videoAnalysisActive) return;
+
+            const duration = video.duration;
+            if (!duration || isNaN(duration) || duration === Infinity) {
+                vpStatus.textContent = '⚠️ Không đọc được thời lượng video. Thử phát video trước.';
+                analyzeBtn.textContent = '🔍 Phân tích mặt đường';
                 analyzeBtn.classList.remove('loading');
-                
-                if (previewVideo.ended) {
-                    const finalPciScore = document.getElementById('pci-score-num').textContent;
-                    const finalCondition = document.getElementById('pci-condition-text').textContent;
-                    alert(`Phân tích video hoàn tất!\nĐiểm số PCI trung bình/cuối cùng: ${finalPciScore}\nMức độ đánh giá: ${finalCondition}`);
-                }
+                videoAnalysisActive = false;
                 return;
             }
-            performAnalysis(previewVideo);
-        }
 
-        function performAnalysis(source) {
-            const canvas = document.getElementById('process-canvas');
-            const ctx = canvas.getContext('2d');
+            // Xác định số frame lấy mẫu — tối đa 30, tối thiểu 8
+            const targetFrames = Math.min(30, Math.max(8, Math.floor(duration * 2)));
+            const frameResults = [];
+            const timestamps   = [];
 
-            // Resize for performance (max 800px)
-            const maxDim = 800;
-            let w = source.videoWidth || source.width;
-            let h = source.videoHeight || source.height;
-            
-            if (!w || !h) {
-                return; // Wait for metadata
+            // Tạo mảng timestamps phân bố đều
+            for (let i = 0; i < targetFrames; i++) {
+                // Bỏ qua 2% đầu và cuối để tránh fade in/out
+                const t = (duration * 0.02) + (duration * 0.96 * i / (targetFrames - 1));
+                timestamps.push(t);
             }
 
-            if (w > maxDim || h > maxDim) {
-                const ratio = Math.min(maxDim / w, maxDim / h);
-                w = Math.round(w * ratio);
-                h = Math.round(h * ratio);
+            analyzeBtn.textContent = `🎥 Đang phân tích ${targetFrames} frame...`;
+            vpLabel.textContent = `Đang lấy mẫu ${targetFrames} điểm của video...`;
+
+            let currentIdx = 0;
+
+            function seekAndCapture() {
+                if (!videoAnalysisActive) return;
+                if (currentIdx >= timestamps.length) {
+                    // Hoàn thành — tổng hợp kết quả
+                    finalizeVideoAnalysis(frameResults, timestamps, duration);
+                    return;
+                }
+
+                const t = timestamps[currentIdx];
+                video.currentTime = t;
+
+                const onSeeked = () => {
+                    video.removeEventListener('seeked', onSeeked);
+                    if (!videoAnalysisActive) return;
+
+                    const w = video.videoWidth  || 640;
+                    const h = video.videoHeight || 360;
+                    const result = analyzeFrame(video, w, h);
+                    result.timestamp = t;
+                    frameResults.push(result);
+
+                    // Cập nhật preview kết quả theo frame hiện tại
+                    displaySingleResult(result);
+                    analysisResults.style.display = 'block';
+
+                    // Cập nhật preview kết quả theo frame hiện tại
+                    displaySingleResult(result);
+                    analysisResults.style.display = 'block';
+
+                    // Cập nhật progress
+                    const progress = ((currentIdx + 1) / timestamps.length) * 100;
+                    vpFill.style.width = progress + '%';
+                    vpPct.textContent = Math.round(progress) + '%';
+                    vpStatus.textContent = `Frame ${currentIdx + 1}/${timestamps.length} — PCI: ${result.pciScore} — Nứt: ${result.crackPercent.toFixed(1)}%`;
+
+                    currentIdx++;
+                    // Dùng setTimeout để tránh block UI
+                    setTimeout(seekAndCapture, 50);
+                };
+
+                video.addEventListener('seeked', onSeeked, { once: true });
             }
 
-            canvas.width = w;
-            canvas.height = h;
-            ctx.drawImage(source, 0, 0, w, h);
+            seekAndCapture();
+        };
 
-                const imageData = ctx.getImageData(0, 0, w, h);
-                const data = imageData.data;
-                const totalPixels = w * h;
+        if (video.readyState >= 1) {
+            onMeta();
+        } else {
+            video.addEventListener('loadedmetadata', onMeta);
+        }
+    }
 
-                // Step 1: Convert to grayscale
-                const gray = new Uint8Array(totalPixels);
-                for (let i = 0; i < totalPixels; i++) {
-                    const idx = i * 4;
-                    gray[i] = Math.round(0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2]);
-                }
+    // Biến lưu giữ thông tin kết quả phân tích hiện tại để gửi email
+    let currentAnalysisResult = null;
 
-                // Step 2: Adaptive thresholding (simulated)
-                // Use Otsu's method to find optimal threshold
-                const histogram = new Array(256).fill(0);
-                for (let i = 0; i < totalPixels; i++) histogram[gray[i]]++;
+    // Hàm lưu thông tin phân tích vào localStorage để users.html có thể đọc
+    function saveAnalysisToUsers(pci, crack) {
+        const name = document.getElementById('user-real-name').value.trim();
+        const group = document.getElementById('user-group-name').value.trim();
+        const gmail = document.getElementById('user-gmail').value.trim();
 
-                let sum = 0;
-                for (let i = 0; i < 256; i++) sum += i * histogram[i];
+        if (!name || !group || !gmail) return;
 
-                let sumB = 0, wB = 0, wF = 0, maxVariance = 0, threshold = 127;
-                for (let t = 0; t < 256; t++) {
-                    wB += histogram[t];
-                    if (wB === 0) continue;
-                    wF = totalPixels - wB;
-                    if (wF === 0) break;
-
-                    sumB += t * histogram[t];
-                    const mB = sumB / wB;
-                    const mF = (sum - sumB) / wF;
-                    const variance = wB * wF * (mB - mF) * (mB - mF);
-
-                    if (variance > maxVariance) {
-                        maxVariance = variance;
-                        threshold = t;
-                    }
-                }
-
-                // Step 3: Apply threshold & count
-                let crackPixels = 0;
-                const binaryCanvas = document.getElementById('binary-canvas');
-                const bCtx = binaryCanvas.getContext('2d');
-                binaryCanvas.width = w;
-                binaryCanvas.height = h;
-                const binaryData = bCtx.createImageData(w, h);
-
-                for (let i = 0; i < totalPixels; i++) {
-                    const isBelowThreshold = gray[i] < threshold;
-                    if (isBelowThreshold) crackPixels++;
-
-                    const val = isBelowThreshold ? 0 : 255;
-                    const idx = i * 4;
-                    binaryData.data[idx] = val;
-                    binaryData.data[idx + 1] = val;
-                    binaryData.data[idx + 2] = val;
-                    binaryData.data[idx + 3] = 255;
-                }
-
-                bCtx.putImageData(binaryData, 0, 0);
-
-                // Step 4: Calculate results
-                const normalPixels = totalPixels - crackPixels;
-                const crackPercent = (crackPixels / totalPixels * 100);
-                const pciScore = crackPercentToPCI(crackPercent);
-                const pciInfo = getPCIInfo(pciScore);
-
-                // Display results
-                document.getElementById('res-total-pixels').textContent = totalPixels.toLocaleString();
-                document.getElementById('res-crack-pixels').textContent = crackPixels.toLocaleString();
-                document.getElementById('res-normal-pixels').textContent = normalPixels.toLocaleString();
-                document.getElementById('res-crack-percent').textContent = crackPercent.toFixed(2) + '%';
-                document.getElementById('res-crack-percent').style.color = getCrackColor(crackPercent);
-
-                // PCI Gauge
-                const pciScoreNum = document.getElementById('pci-score-num');
-                pciScoreNum.textContent = pciScore;
-                pciScoreNum.style.color = pciInfo.color;
-
-                const ring = document.getElementById('pci-ring');
-                const circumference = 2 * Math.PI * 65; // ~408
-                ring.style.stroke = pciInfo.color;
-                ring.style.strokeDasharray = circumference;
-                // Animate
-                requestAnimationFrame(() => {
-                    ring.style.strokeDashoffset = circumference - (circumference * pciScore / 100);
-                });
-
-                const conditionEl = document.getElementById('pci-condition-text');
-                conditionEl.textContent = `${pciInfo.emoji} ${pciInfo.conditionVi} (${pciInfo.condition})`;
-                conditionEl.style.color = pciInfo.color;
-
-                document.getElementById('pci-description').textContent = pciInfo.desc;
-
-                // PCI Scale highlight
-                const scaleRows = document.querySelectorAll('.pci-scale-row');
-                scaleRows.forEach(row => {
-                    const min = parseInt(row.dataset.min);
-                    const max = parseInt(row.dataset.max);
-                    const fill = row.querySelector('.pci-scale-bar-fill');
-                    const indicator = row.querySelector('.pci-scale-indicator');
-
-                    row.classList.remove('active-row');
-                    row.style.fontWeight = '';
-                    fill.style.width = '0%';
-                    indicator.style.display = 'none';
-
-                    if (pciScore >= min && pciScore < max || (max === 100 && pciScore === 100)) {
-                        row.classList.add('active-row');
-                        row.style.fontWeight = '700';
-                        const posInRange = (pciScore - min) / (max - min) * 100;
-                        fill.style.width = posInRange + '%';
-                        indicator.style.display = 'block';
-                        indicator.style.left = posInRange + '%';
-                    }
-                });
-
-                // Show results
-                analysisResults.style.display = 'block';
-
-                // Schedule next frame if it is video
-                if (isVideoFile && videoRafId) {
-                    videoRafId = requestAnimationFrame(processVideoFrame);
-                }
+        // Lấy danh sách users từ localStorage (nếu có)
+        let localUsers = [];
+        try {
+            localUsers = JSON.parse(localStorage.getItem('survey_users')) || [];
+        } catch(e) {
+            localUsers = [];
         }
 
-        // ===========================
-        // KHỞI CHẠY
-        // ===========================
-        updateSlider();
+        // Tạo user mới
+        const newUser = {
+            id: 'L_' + Date.now(),
+            name: name,
+            uid: 'SV_' + Math.floor(1000 + Math.random() * 9000),
+            group: group,
+            status: 'online',
+            gmail: gmail,
+            pci: Math.round(pci),
+            crack: parseFloat(crack.toFixed(1)),
+            area: 'Khảo sát qua video tải lên',
+            note: 'Kết quả phân tích tự động lúc ' + new Date().toLocaleTimeString('vi-VN')
+        };
+
+        // Đẩy lên đầu danh sách
+        localUsers.unshift(newUser);
+        localStorage.setItem('survey_users', JSON.stringify(localUsers));
+
+        // Lưu thông tin hiện tại phục vụ nút gửi Gmail nhanh
+        currentAnalysisResult = newUser;
+    }
+
+    // Hàm gửi email nhanh
+    function quickSendResultEmail() {
+        if (!currentAnalysisResult) {
+            alert('Vui lòng hoàn thành phân tích trước khi gửi email!');
+            return;
+        }
+        const user = currentAnalysisResult;
+        const subject = `Kết quả phân tích vết nứt mặt đường — ${user.group}`;
+        const body = `Kính gửi ${user.name} (${user.group}),\n\nHệ thống AI đã hoàn tất chấm điểm đoạn đường do bạn tải lên:\n\n📊 Kết quả khảo sát:\n📍 Khu vực: ${user.area}\n🔢 Điểm PCI: ${user.pci}/100\n📉 Tỷ lệ vết nứt: ${user.crack}%\n🏆 Đánh giá: ${getPCIInfo(user.pci).conditionVi} (${getPCIInfo(user.pci).condition})\n\n💡 Chi tiết: ${getPCIInfo(user.pci).desc}\n\n— Hệ thống AI Phân tích Vết nứt Mặt đường 🛣️`;
+        
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(user.gmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(gmailUrl, '_blank');
+    }
+
+    // ============================================================
+    // TỔNG HỢP KẾT QUẢ VIDEO SAU KHI LẤY MẪU XONG
+    // ============================================================
+    function finalizeVideoAnalysis(frames, timestamps, duration) {
+        if (!frames.length) return;
+        videoAnalysisActive = false;
+
+        const pciScores     = frames.map(f => f.pciScore);
+        const crackPcts     = frames.map(f => f.crackPercent);
+        const avgPCI        = Math.round(pciScores.reduce((a, b) => a + b, 0) / pciScores.length);
+        const minPCI        = Math.min(...pciScores);
+        const maxPCI        = Math.max(...pciScores);
+        const avgCrack      = crackPcts.reduce((a, b) => a + b, 0) / crackPcts.length;
+
+        // Kết quả frame worst-case (PCI thấp nhất)
+        const worstFrameIdx = pciScores.indexOf(minPCI);
+        const worstFrame    = frames[worstFrameIdx];
+
+        // Hiển thị kết quả cuối cùng dựa trên PCI trung bình (đại diện nhất)
+        const avgPCIInfo = getPCIInfo(avgPCI);
+        updatePCIGauge(avgPCI, avgPCIInfo);
+        updatePCIScale(avgPCI);
+
+        const pctEl = document.getElementById('res-crack-percent');
+        pctEl.textContent = avgCrack.toFixed(2) + '%';
+        pctEl.style.color = getCrackColor(avgCrack);
+
+        document.getElementById('res-total-pixels').textContent = worstFrame.totalPixels.toLocaleString();
+        document.getElementById('res-crack-pixels').textContent = worstFrame.crackPixels.toLocaleString();
+        document.getElementById('res-normal-pixels').textContent = worstFrame.normalPixels.toLocaleString();
+
+        // Ảnh nhị phân: tái phân tích frame kém nhất để hiển thị
+        const video = previewVideo;
+        video.currentTime = timestamps[worstFrameIdx];
+        video.addEventListener('seeked', () => {
+            analyzeFrame(video, video.videoWidth || 640, video.videoHeight || 360);
+        }, { once: true });
+
+        // ── Điền Video Summary ──
+        document.getElementById('vs-avg-pci').textContent = avgPCI;
+        document.getElementById('vs-avg-pci').style.color = avgPCIInfo.color;
+
+        const minInfo = getPCIInfo(minPCI);
+        document.getElementById('vs-min-pci').textContent = minPCI;
+        document.getElementById('vs-min-pci').style.color = minInfo.color;
+
+        const maxInfo = getPCIInfo(maxPCI);
+        document.getElementById('vs-max-pci').textContent = maxPCI;
+        document.getElementById('vs-max-pci').style.color = maxInfo.color;
+
+        document.getElementById('vs-frames').textContent = frames.length;
+
+        // Timeline bars
+        const timelineBars = document.getElementById('timeline-bars');
+        timelineBars.innerHTML = '';
+        const maxPCIVal = 100;
+        frames.forEach((f, i) => {
+            const bar = document.createElement('div');
+            bar.className = 'timeline-bar';
+            bar.style.height = (f.pciScore / maxPCIVal * 100) + '%';
+            bar.style.background = getPCIInfo(f.pciScore).color;
+            bar.title = `Frame ${i+1} | t=${f.timestamp.toFixed(1)}s | PCI: ${f.pciScore} | Nứt: ${f.crackPercent.toFixed(1)}%`;
+            timelineBars.appendChild(bar);
+        });
+
+        // Verdict - đánh giá tổng hợp
+        const worstTimePct = Math.round((timestamps[worstFrameIdx] / duration) * 100);
+        const variability = maxPCI - minPCI;
+        let verdictText = `<strong>📋 Kết luận phân tích toàn video (${frames.length} điểm lấy mẫu):</strong><br><br>`;
+        verdictText += `• PCI trung bình: <strong style="color:${avgPCIInfo.color};">${avgPCI}/100 — ${avgPCIInfo.conditionVi}</strong><br>`;
+        verdictText += `• Tỷ lệ vết nứt trung bình: <strong>${avgCrack.toFixed(1)}%</strong><br>`;
+        verdictText += `• Điểm yếu nhất tại: <strong>${(timestamps[worstFrameIdx]/duration*100).toFixed(0)}% video</strong> (PCI ${minPCI})<br>`;
+        verdictText += `• Biến động chất lượng: <strong>${variability > 20 ? '⚠️ Cao (' + variability + ' điểm)' : '✅ Đồng đều (' + variability + ' điểm)'}</strong><br><br>`;
+        verdictText += `<strong>🔧 Khuyến nghị:</strong> ${avgPCIInfo.desc}`;
+        if (variability > 20) verdictText += ` Chú ý đặc biệt đến đoạn đường xung quanh ${(timestamps[worstFrameIdx]).toFixed(1)}s trong video có dấu hiệu hư hỏng nặng hơn.`;
+
+        document.getElementById('vs-verdict').innerHTML = verdictText;
+        document.getElementById('video-summary').style.display = 'block';
+
+        // Progress complete
+        vpFill.style.width = '100%';
+        vpPct.textContent = '100%';
+        vpLabel.textContent = '✅ Phân tích hoàn tất!';
+        vpStatus.textContent = `Đã phân tích ${frames.length} frame. PCI trung bình: ${avgPCI}/100`;
+
+        analyzeBtn.textContent = `✅ Hoàn tất — PCI Trung bình: ${avgPCI}/100`;
+        analyzeBtn.classList.remove('loading');
+        analysisResults.style.display = 'block';
+
+        // Lưu dữ liệu vào danh sách thông tin nhóm
+        saveAnalysisToUsers(avgPCI, avgCrack);
+
+        // Cuộn xuống video summary
+        setTimeout(() => {
+            document.getElementById('video-summary').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 400);
+    }
+
+    // ============================================================
+    // KHỞI CHẠY
+    // ============================================================
+    updateSlider();
+
+    // ============================================================
+    // KHỞI CHẠY PHÁT NHẠC NỀN TỰ ĐỘNG CHẠY NGẦM (BACKGROUND MUSIC)
+    // ============================================================
+    const audio = document.getElementById('background-audio');
+    audio.src = 'https://raw.githubusercontent.com/Tiendatmagix/antigravity-media/main/dung_lam_trai_tim_anh_dau.mp3';
+    audio.volume = 0.6;
+
+    let hasPlayed = false;
+
+    function playMusic() {
+        if (hasPlayed) return;
+        audio.play().then(() => {
+            hasPlayed = true;
+            removePlayListeners();
+        }).catch(err => {
+            console.log("Playback failed/blocked, waiting for interaction...");
+        });
+    }
+
+    function removePlayListeners() {
+        document.removeEventListener('click', playMusic);
+        document.removeEventListener('scroll', playMusic);
+        document.removeEventListener('mousemove', playMusic);
+        document.removeEventListener('keydown', playMusic);
+        document.removeEventListener('touchstart', playMusic);
+    }
+
+    document.addEventListener('click', playMusic);
+    document.addEventListener('scroll', playMusic, { passive: true });
+    document.addEventListener('mousemove', playMusic, { passive: true });
+    document.addEventListener('keydown', playMusic);
+    document.addEventListener('touchstart', playMusic, { passive: true });
+
     </script>
 </body>
 </html>
