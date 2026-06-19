@@ -1031,6 +1031,9 @@
         <div class="topbar">
             <span class="topbar-title" id="topbar-title">🗺️ Bản đồ trực quan</span>
             <div class="topbar-info">
+                <button id="btn-my-location" style="display: none; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; align-items: center; gap: 4px; transition: all 0.2s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'">
+                    <span style="font-size: 12px;">📍</span> Vị trí của tôi
+                </button>
                 <span class="topbar-badge" id="topbar-badge">● Đang hiển thị 6 / 6 đoạn đường</span>
             </div>
         </div>
@@ -1228,12 +1231,30 @@
         };
         L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(mapInstance);
 
+        let userLocation = null;
+        let userMarkerInstance = null;
+        const btnMyLocation = document.getElementById('btn-my-location');
+
+        if (btnMyLocation) {
+            btnMyLocation.addEventListener('click', () => {
+                if (userLocation && mapInstance) {
+                    mapInstance.flyTo(userLocation, 16, { duration: 1.2 });
+                    if (userMarkerInstance) {
+                        setTimeout(() => userMarkerInstance.openPopup(), 1200);
+                    }
+                }
+            });
+        }
+
         // Định vị vị trí thực của người dùng qua GPS trình duyệt
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
+                    userLocation = [lat, lng];
+                    
+                    if (btnMyLocation) btnMyLocation.style.display = 'flex';
                     
                     // Di chuyển bản đồ đến vị trí của người dùng
                     mapInstance.flyTo([lat, lng], 14, { duration: 1.5 });
@@ -1248,6 +1269,33 @@
                         fillOpacity: 1
                     }).addTo(mapInstance);
                     
+                    userMarkerInstance = userMarker;
+                    
+                    const popupHtml = `
+                        <div class="popup-card" style="padding: 16px; width: 260px;">
+                            <div class="popup-card-header" style="border-bottom-color: #3b82f6; margin-bottom: 10px; padding-bottom: 10px;">
+                                <span class="popup-card-icon">📍</span>
+                                <span class="popup-card-title">Vị trí hiện tại của bạn</span>
+                            </div>
+                            <div class="popup-card-body">
+                                <div class="popup-row">
+                                    <span class="popup-row-label">Vĩ độ</span>
+                                    <span class="popup-row-value">${lat.toFixed(5)}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-row-label">Kinh độ</span>
+                                    <span class="popup-row-value">${lng.toFixed(5)}</span>
+                                </div>
+                                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                                    <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; gap: 6px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1px solid rgba(59, 130, 246, 0.3); transition: all 0.2s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'">
+                                        <span>🌍</span> Mở Street View 360°
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    userMarker.bindPopup(popupHtml);
                     userMarker.bindTooltip("📍 Vị trí của bạn", { direction: 'top', offset: [0, -5] }).openTooltip();
                 },
                 (error) => {
@@ -1495,6 +1543,12 @@
             if (previewVideo.paused || previewVideo.ended) {
                 analyzeBtn.textContent = '🔍 Phân tích lại video';
                 analyzeBtn.classList.remove('loading');
+                
+                if (previewVideo.ended) {
+                    const finalPciScore = document.getElementById('pci-score-num').textContent;
+                    const finalCondition = document.getElementById('pci-condition-text').textContent;
+                    alert(`Phân tích video hoàn tất!\nĐiểm số PCI trung bình/cuối cùng: ${finalPciScore}\nMức độ đánh giá: ${finalCondition}`);
+                }
                 return;
             }
             performAnalysis(previewVideo);
