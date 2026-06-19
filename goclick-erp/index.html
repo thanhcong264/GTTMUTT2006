@@ -1,0 +1,3168 @@
+<!doctype html>
+<html lang="vi" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoClick ERP - Tiếp thị Liên kết & Chấm công</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                DEFAULT: '#6366f1',
+                light: '#818cf8',
+                dark: '#4f46e5',
+              },
+              surface: {
+                DEFAULT: '#0f172a',
+                card: '#1e293b',
+                elevated: '#334155',
+                border: '#334155',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            boxShadow: {
+              'glow': '0 0 20px rgba(99, 102, 241, 0.3)',
+              'glow-green': '0 0 20px rgba(16, 185, 129, 0.3)',
+              'glow-red': '0 0 20px rgba(239, 68, 68, 0.3)',
+              'card': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)',
+              'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2)',
+            }
+          }
+        }
+      }
+    </script>
+    <!-- React & Babel Standalone CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Custom CSS Mappings for React Compatibility -->
+    <style>
+      body {
+        background: linear-gradient(135deg, #0f172a 0%, #0d1526 50%, #0f172a 100%);
+        min-height: 100vh;
+        color: #f1f5f9;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+      .card {
+        background-color: #1e293b;
+        border-radius: 1rem;
+        border: 1px solid #334155;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        border-color: rgba(99, 102, 241, 0.3);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+      }
+      .glass-card {
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(4px);
+        background-color: rgba(30, 41, 59, 0.7);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1rem;
+        border-radius: 0.75rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.200s ease;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background-color: #6366f1;
+        color: #ffffff;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      }
+      .btn-primary:hover {
+        background-color: #4f46e5;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+      }
+      .btn-primary:active {
+        transform: scale(0.95);
+      }
+      .btn-secondary {
+        background-color: #334155;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+      }
+      .btn-secondary:hover {
+        background-color: #475569;
+      }
+      .btn-success {
+        background-color: #10b981;
+        color: #ffffff;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+      }
+      .btn-success:hover {
+        background-color: #059669;
+      }
+      .btn-danger {
+        background-color: #ef4444;
+        color: #ffffff;
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+      }
+      .btn-danger:hover {
+        background-color: #dc2626;
+      }
+      .btn-ghost {
+        color: #94a3b8;
+      }
+      .btn-ghost:hover {
+        color: #e2e8f0;
+        background-color: #334155;
+      }
+      .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+        border-radius: 0.5rem;
+      }
+      .btn-lg {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.75rem;
+      }
+      .input {
+        width: 100%;
+        background-color: #334155;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        color: #e2e8f0;
+        transition: all 0.2s ease;
+      }
+      .input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+        border-color: #6366f1;
+      }
+      .label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #94a3b8;
+        margin-bottom: 0.375rem;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.125rem 0.625rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge-success {
+        background-color: rgba(6, 78, 59, 0.5);
+        color: #34d399;
+        border: 1px solid rgba(4, 120, 87, 0.3);
+      }
+      .badge-warning {
+        background-color: rgba(120, 53, 4, 0.5);
+        color: #fbbf24;
+        border: 1px solid rgba(146, 64, 14, 0.3);
+      }
+      .badge-danger {
+        background-color: rgba(127, 29, 29, 0.5);
+        color: #f87171;
+        border: 1px solid rgba(153, 27, 27, 0.3);
+      }
+      .badge-info {
+        background-color: rgba(30, 58, 138, 0.5);
+        color: #60a5fa;
+        border: 1px solid rgba(30, 64, 175, 0.3);
+      }
+      .badge-purple {
+        background-color: rgba(88, 28, 135, 0.5);
+        color: #c084fc;
+        border: 1px solid rgba(107, 33, 168, 0.3);
+      }
+      .badge-neutral {
+        background-color: rgba(51, 65, 85, 0.5);
+        color: #94a3b8;
+        border: 1px solid rgba(71, 85, 105, 0.3);
+      }
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .table {
+        width: 100%;
+        font-size: 0.875rem;
+        text-align: left;
+      }
+      .table thead tr {
+        border-bottom: 1px solid #334155;
+      }
+      .table thead th {
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .table tbody tr {
+        border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        transition: all 0.15s ease;
+      }
+      .table tbody tr:hover {
+        background-color: rgba(51, 65, 85, 0.5);
+      }
+      .table tbody td {
+        padding: 0.875rem 1rem;
+        color: #e2e8f0;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.625rem 0.75rem;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #94a3b8;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .nav-item:hover {
+        background-color: #334155;
+        color: #e2e8f0;
+      }
+      .nav-item.active {
+        background-color: rgba(99, 102, 241, 0.2);
+        color: #818cf8;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+      }
+      .stat-card {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      /* Simple Fade In Animation */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- MAIN REACT APP (BABEL) -->
+    <script type="text/babel">
+      const { useState, useEffect, useMemo } = React;
+
+      // ────────────────────────────────────────────────────────
+      // VECTOR SVG ICONS DIRECTORY (Lucide Replacements)
+      // ────────────────────────────────────────────────────────
+      const Icon = ({ name, size = 16, className = '' }) => {
+        const svgProps = {
+          width: size,
+          height: size,
+          className: className,
+          viewBox: '0 0 24 24',
+          fill: 'none',
+          stroke: 'currentColor',
+          strokeWidth: '2',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round'
+        };
+
+        const pathData = {
+          LayoutDashboard: <React.Fragment><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="10" rx="1" /><rect width="7" height="5" x="3" y="15" rx="1" /></React.Fragment>,
+          Users: <React.Fragment><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></React.Fragment>,
+          Clock: <React.Fragment><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></React.Fragment>,
+          TrendingUp: <React.Fragment><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></React.Fragment>,
+          Network: <React.Fragment><rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M12 8v8M12 16H5M12 16h7" /></React.Fragment>,
+          GitBranch: <React.Fragment><line x1="6" x2="6" y1="3" y2="15" /><circle cx="18" cy="6" r="3" /><circle cx="6" cy="18" r="3" /><path d="M18 9a9 9 0 0 1-9 9" /></React.Fragment>,
+          BarChart3: <React.Fragment><line x1="18" x2="18" y1="20" y2="10" /><line x1="12" x2="12" y1="20" y2="4" /><line x1="6" x2="6" y1="20" y2="14" /></React.Fragment>,
+          Link2: <React.Fragment><path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8" /></React.Fragment>,
+          Settings: <React.Fragment><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></React.Fragment>,
+          Shield: <React.Fragment><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></React.Fragment>,
+          UserCheck: <React.Fragment><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" /></React.Fragment>,
+          Calculator: <React.Fragment><rect width="16" height="20" x="4" y="2" rx="2" /><line x1="8" x2="16" y1="6" y2="6" /><line x1="16" x2="16" y1="14" y2="18" /><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" /></React.Fragment>,
+          LogOut: <React.Fragment><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></React.Fragment>,
+          Menu: <React.Fragment><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></React.Fragment>,
+          X: <React.Fragment><line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="6" y2="18" /></React.Fragment>,
+          ChevronDown: <React.Fragment><polyline points="6 9 12 15 18 9" /></React.Fragment>,
+          ChevronRight: <React.Fragment><polyline points="9 18 15 12 9 6" /></React.Fragment>,
+          ChevronLeft: <React.Fragment><polyline points="15 18 9 12 15 6" /></React.Fragment>,
+          ChevronUp: <React.Fragment><polyline points="18 15 12 9 6 15" /></React.Fragment>,
+          Search: <React.Fragment><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /></React.Fragment>,
+          Bell: <React.Fragment><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0" /></React.Fragment>,
+          Zap: <React.Fragment><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></React.Fragment>,
+          Eye: <React.Fragment><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></React.Fragment>,
+          EyeOff: <React.Fragment><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20" /></React.Fragment>,
+          Loader2: <React.Fragment><path d="M21 12a9 9 0 1 1-6.21-8.56" /></React.Fragment>,
+          MapPin: <React.Fragment><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" /><circle cx="12" cy="10" r="3" /></React.Fragment>,
+          CheckCircle: <React.Fragment><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3" /></React.Fragment>,
+          XCircle: <React.Fragment><circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line x1="9" x2="15" y1="9" y2="15" /></React.Fragment>,
+          AlertCircle: <React.Fragment><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></React.Fragment>,
+          Plus: <React.Fragment><line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" /></React.Fragment>,
+          Calendar: <React.Fragment><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /></React.Fragment>,
+          Activity: <React.Fragment><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></React.Fragment>,
+          RefreshCw: <React.Fragment><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16M16 16h5v5" /></React.Fragment>,
+          ExternalLink: <React.Fragment><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" /></React.Fragment>,
+          CreditCard: <React.Fragment><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></React.Fragment>,
+          Fingerprint: <React.Fragment><path d="M2 12a10 10 0 0 1 20 0M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M11 12a1 1 0 0 1 2 0v3" /></React.Fragment>,
+          Webhook: <React.Fragment><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M12 5a7 7 0 0 1 7 7M5 12a7 7 0 0 1 7-7" /></React.Fragment>,
+          Building2: <React.Fragment><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18M6 18h12M10 6h4M10 10h4M10 14h4" /></React.Fragment>,
+          FileText: <React.Fragment><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></React.Fragment>,
+        };
+
+        const path = pathData[name] || pathData.AlertCircle;
+        return <svg {...svgProps}>{path}</svg>;
+      };
+
+      // ────────────────────────────────────────────────────────
+      // OFFLINE LOCALSTORAGE DATABASE INITIALIZER
+      // ────────────────────────────────────────────────────────
+      const initLocalStorageDB = () => {
+        const defaultEmployees = [
+          { id: "emp-001", employee_code: "GC001", full_name: "Nguyễn Văn Admin", email: "admin@goclick.vn", password: "admin123", role: "admin", department: "Ban Giám Đốc", position: "CEO", hire_date: "2022-01-01", status: "active", base_salary: 50000000, avatar: "NV" },
+          { id: "emp-002", employee_code: "GC002", full_name: "Trần Thị HR", email: "hr@goclick.vn", password: "hr123", role: "hr", department: "Phòng Nhân Sự", position: "HR Manager", hire_date: "2022-03-15", status: "active", base_salary: 25000000, avatar: "TH" },
+          { id: "emp-003", employee_code: "GC003", full_name: "Lê Minh AM", email: "am@goclick.vn", password: "am123", role: "affiliate_manager", department: "Phòng Marketing", position: "Affiliate Manager", hire_date: "2022-06-01", status: "active", base_salary: 30000000, avatar: "LM" },
+          { id: "emp-004", employee_code: "GC004", full_name: "Phạm Kế Toán", email: "accountant@goclick.vn", password: "acc123", role: "accountant", department: "Phòng Kế Toán", position: "Chief Accountant", hire_date: "2022-02-10", status: "active", base_salary: 28000000, avatar: "PK" },
+          { id: "emp-005", employee_code: "GC005", full_name: "Hoàng Văn B", email: "hvb@goclick.vn", password: "hvb123", role: "employee", department: "Phòng Marketing", position: "Content Creator", hire_date: "2023-01-10", status: "active", base_salary: 15000000, avatar: "HB" },
+          { id: "emp-006", employee_code: "GC006", full_name: "Nguyễn Thị C", email: "ntc@goclick.vn", password: "ntc123", role: "employee", department: "Phòng Marketing", position: "Digital Marketer", hire_date: "2023-03-20", status: "active", base_salary: 18000000, avatar: "NC" }
+        ];
+
+        const defaultAffiliates = [
+          { id: "aff-001", affiliate_code: "AF001", full_name: "Công ty TNHH MediaPro", email: "contact@mediapro.vn", phone: "0901234567", status: "active", tier_level: 1, parent_id: null, manager_id: "emp-003", manager_name: "Lê Minh AM", traffic_source: "SEO / Blog", total_clicks: 15240, total_conversions: 892, total_revenue: 267600000, total_commission: 26760000, joined_at: "2023-06-01" },
+          { id: "aff-002", affiliate_code: "AF002", full_name: "Nguyễn Affiliate King", email: "king@affiliate.vn", phone: "0912345678", status: "active", tier_level: 1, parent_id: null, manager_id: "emp-003", manager_name: "Lê Minh AM", traffic_source: "Facebook Ads", total_clicks: 8920, total_conversions: 456, total_revenue: 136800000, total_commission: 13680000, joined_at: "2023-08-15" },
+          { id: "aff-003", affiliate_code: "AF003", full_name: "Digital Star Agency", email: "info@digitalstar.vn", phone: "0923456789", status: "pending", tier_level: 2, parent_id: "aff-001", manager_id: "emp-003", manager_name: "Lê Minh AM", traffic_source: "TikTok", total_clicks: 3450, total_conversions: 120, total_revenue: 36000000, total_commission: 3600000, joined_at: "2024-01-10" },
+          { id: "aff-004", affiliate_code: "AF004", full_name: "Trần Review YouTube", email: "review@youtube.com", phone: "0934567890", status: "active", tier_level: 1, parent_id: null, manager_id: "emp-003", manager_name: "Lê Minh AM", traffic_source: "YouTube", total_clicks: 22100, total_conversions: 1345, total_revenue: 403500000, total_commission: 40350000, joined_at: "2023-04-20" },
+          { id: "aff-005", affiliate_code: "AF005", full_name: "Email Marketing Pro", email: "pro@emailmkt.vn", phone: "0945678901", status: "suspended", tier_level: 2, parent_id: "aff-002", manager_id: "emp-003", manager_name: "Lê Minh AM", traffic_source: "Email Marketing", total_clicks: 1200, total_conversions: 45, total_revenue: 13500000, total_commission: 1350000, joined_at: "2024-02-01" }
+        ];
+
+        const defaultWorkflows = [
+          {
+            id: "wf-001",
+            type: "leave_request",
+            title: "Đơn nghỉ phép - Hoàng Văn B (03/06 - 05/06)",
+            requester_id: "emp-005",
+            requester_name: "Hoàng Văn B",
+            status: "pending",
+            priority: "normal",
+            current_step: 1,
+            total_steps: 2,
+            created_at: "2026-06-01T09:00:00",
+            steps: [
+              { step: 1, name: "Trưởng phòng duyệt", role: "affiliate_manager", status: "pending" },
+              { step: 2, name: "HR ghi nhận", role: "hr", status: "waiting" }
+            ]
+          },
+          {
+            id: "wf-002",
+            type: "payout_approval",
+            title: "Duyệt hoa hồng tháng 5/2026 - Nguyễn Affiliate King",
+            requester_id: "emp-003",
+            requester_name: "Lê Minh AM",
+            status: "in_progress",
+            priority: "high",
+            current_step: 2,
+            total_steps: 2,
+            created_at: "2026-06-02T10:00:00",
+            steps: [
+              { step: 1, name: "AM đối soát", role: "affiliate_manager", status: "approved", acted_at: "2026-06-02T10:30:00", note: "Số liệu đối soát khớp 100%" },
+              { step: 2, name: "Kế toán trưởng duyệt chi", role: "accountant", status: "pending" }
+            ]
+          },
+          {
+            id: "wf-003",
+            type: "leave_request",
+            title: "Đơn nghỉ ốm - Nguyễn Thị C (07/06)",
+            requester_id: "emp-006",
+            requester_name: "Nguyễn Thị C",
+            status: "approved",
+            priority: "normal",
+            current_step: 2,
+            total_steps: 2,
+            created_at: "2026-06-05T08:00:00",
+            steps: [
+              { step: 1, name: "Trưởng phòng duyệt", role: "affiliate_manager", status: "approved", acted_at: "2026-06-05T09:00:00", note: "Duyệt nghỉ ốm" },
+              { step: 2, name: "HR ghi nhận", role: "hr", status: "approved", acted_at: "2026-06-05T11:00:00" }
+            ]
+          },
+          {
+            id: "wf-004",
+            type: "payout_approval",
+            title: "Duyệt hoa hồng tháng 5/2026 - Trần Review YouTube",
+            requester_id: "emp-003",
+            requester_name: "Lê Minh AM",
+            status: "pending",
+            priority: "urgent",
+            current_step: 1,
+            total_steps: 2,
+            created_at: "2026-06-03T14:00:00",
+            steps: [
+              { step: 1, name: "AM đối soát", role: "affiliate_manager", status: "pending" },
+              { step: 2, name: "Kế toán trưởng duyệt chi", role: "accountant", status: "waiting" }
+            ]
+          }
+        ];
+
+        const defaultCommissionConfig = [
+          { tier_level: 1, rate_percent: 10.0, name: "Hoa hồng cấp 1" },
+          { tier_level: 2, rate_percent: 3.0, name: "Hoa hồng cấp 2" },
+          { tier_level: 3, rate_percent: 1.0, name: "Hoa hồng cấp 3" }
+        ];
+
+        const defaultIntegrations = [
+          { id: 1, name: "PayPal", type: "payment_gateway", status: "active", last_sync: "2026-06-05T10:00:00" },
+          { id: 2, name: "VNPAY", type: "payment_gateway", status: "active", last_sync: "2026-06-05T10:00:00" },
+          { id: 3, name: "Máy chấm công ZKTeco", type: "attendance_device", status: "active", last_sync: "2026-06-06T08:05:00" },
+          { id: 4, name: "AccessTrade Network", type: "tracking_network", status: "active", last_sync: "2026-06-06T09:30:00" },
+          { id: 5, name: "Admitad Network", type: "tracking_network", status: "inactive", last_sync: null }
+        ];
+
+        const defaultPostbackLogs = [
+          { id: 1, affiliate_code: "AF001", affiliate_name: "Công ty TNHH MediaPro", click_id: "CLK_ABC123", order_id: "ORD_001", revenue: 300000, status: "confirmed", received_at: "2026-06-06T10:05:00" },
+          { id: 2, affiliate_code: "AF004", affiliate_name: "Trần Review YouTube", click_id: "CLK_DEF456", order_id: "ORD_002", revenue: 450000, status: "confirmed", received_at: "2026-06-06T10:12:00" },
+          { id: 3, affiliate_code: "AF002", affiliate_name: "Nguyễn Affiliate King", click_id: "CLK_GHI789", order_id: "ORD_003", revenue: 280000, status: "pending", received_at: "2026-06-06T10:35:00" }
+        ];
+
+        const defaultPermissions = {
+          admin: ["dashboard", "attendance", "employees", "affiliates", "commission", "payouts", "workflow", "reports", "integration", "settings", "rbac"],
+          hr: ["dashboard", "attendance", "employees", "workflow", "reports"],
+          affiliate_manager: ["dashboard", "attendance", "affiliates", "commission", "workflow", "reports"],
+          accountant: ["dashboard", "affiliates", "commission", "payouts", "workflow", "reports"],
+          employee: ["dashboard", "attendance", "workflow", "reports"]
+        };
+
+        const generateTimesheets = () => {
+          const records = [];
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = today.getMonth();
+          const statuses = ["present", "late", "present", "present", "absent", "present", "present", "half_day", "present", "present"];
+          const empIds = ["emp-001", "emp-002", "emp-003", "emp-004", "emp-005", "emp-006"];
+          const empNames = {
+            "emp-001": "Nguyễn Văn Admin",
+            "emp-002": "Trần Thị HR",
+            "emp-003": "Lê Minh AM",
+            "emp-004": "Phạm Kế Toán",
+            "emp-005": "Hoàng Văn B",
+            "emp-006": "Nguyễn Thị C"
+          };
+
+          for (const empId of empIds) {
+            let statIdx = 0;
+            for (let d = 1; d <= today.getDate(); d++) {
+              const current = new Date(year, month, d);
+              const dayOfWeek = current.getDay();
+              if (dayOfWeek > 0 && dayOfWeek < 6) { // Mon-Fri
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const status = statuses[statIdx % statuses.length];
+                statIdx++;
+
+                let checkInTime = null;
+                let checkOutTime = null;
+                let workingHours = 0;
+                let otHours = 0;
+
+                if (status === "present") {
+                  checkInTime = `${dateStr}T08:05:00`;
+                  checkOutTime = `${dateStr}T17:30:00`;
+                  workingHours = 8.0;
+                  if (empId === "emp-001") otHours = 1.5;
+                } else if (status === "late") {
+                  checkInTime = `${dateStr}T09:15:00`;
+                  checkOutTime = `${dateStr}T17:30:00`;
+                  workingHours = 8.0;
+                } else if (status === "half_day") {
+                  checkInTime = `${dateStr}T08:05:00`;
+                  checkOutTime = `${dateStr}T12:00:00`;
+                  workingHours = 4.0;
+                }
+
+                records.push({
+                  id: `ts-${empId}-${d}`,
+                  employee_id: empId,
+                  employee_name: empNames[empId],
+                  work_date: dateStr,
+                  check_in_time: checkInTime,
+                  check_out_time: checkOutTime,
+                  status: status,
+                  source: empId === "emp-003" ? "gps" : "fingerprint",
+                  working_hours: workingHours,
+                  ot_hours: otHours
+                });
+              }
+            }
+          }
+          return records;
+        };
+
+        if (!localStorage.getItem("gc_employees")) localStorage.setItem("gc_employees", JSON.stringify(defaultEmployees));
+        if (!localStorage.getItem("gc_affiliates")) localStorage.setItem("gc_affiliates", JSON.stringify(defaultAffiliates));
+        if (!localStorage.getItem("gc_workflows")) localStorage.setItem("gc_workflows", JSON.stringify(defaultWorkflows));
+        if (!localStorage.getItem("gc_commission_config")) localStorage.setItem("gc_commission_config", JSON.stringify(defaultCommissionConfig));
+        if (!localStorage.getItem("gc_integrations")) localStorage.setItem("gc_integrations", JSON.stringify(defaultIntegrations));
+        if (!localStorage.getItem("gc_postback_logs")) localStorage.setItem("gc_postback_logs", JSON.stringify(defaultPostbackLogs));
+        if (!localStorage.getItem("gc_permissions")) localStorage.setItem("gc_permissions", JSON.stringify(defaultPermissions));
+        if (!localStorage.getItem("gc_timesheets")) localStorage.setItem("gc_timesheets", JSON.stringify(generateTimesheets()));
+      };
+
+      initLocalStorageDB();
+
+      const db = {
+        get: (key) => JSON.parse(localStorage.getItem(`gc_${key}`)),
+        set: (key, val) => localStorage.setItem(`gc_${key}`, JSON.stringify(val)),
+      };
+
+      // ────────────────────────────────────────────────────────
+      // REACT HIGH-FIDELITY SVG RESPONSIVE CHARTS
+      // ────────────────────────────────────────────────────────
+      
+      // 1. Line/Area Chart: Clicks & CR Performance Trend
+      const AreaLineChart = ({ period }) => {
+        // Generate trend data based on period
+        const daysCount = period === '7d' ? 7 : period === '90d' ? 30 : 15;
+        const today = new Date();
+        const data = [];
+        for (let i = daysCount - 1; i >= 0; i--) {
+          const d = new Date(today);
+          d.setDate(today.getDate() - i * (period === '90d' ? 3 : 1));
+          const clicks = 800 + (i % 5) * 150 + (30 - i) * 10;
+          const cr = +(4.5 + (i % 4) * 0.6 + (clicks % 3) * 0.1).toFixed(1);
+          data.push({
+            date: d.toLocaleDateString('vi-VN', { month: '2-digit', day: '2-digit' }),
+            clicks,
+            cr
+          });
+        }
+
+        const width = 600;
+        const height = 200;
+        const padding = 30;
+
+        const maxClicks = Math.max(...data.map(d => d.clicks)) * 1.1;
+        const maxCR = 10;
+
+        const chartW = width - padding * 2;
+        const chartH = height - padding * 2;
+
+        const getX = (index) => padding + (index * (chartW / (data.length - 1)));
+        const getYClicks = (val) => height - padding - ((val / maxClicks) * chartH);
+        const getYCR = (val) => height - padding - ((val / maxCR) * chartH);
+
+        // Build SVG paths
+        let areaPath = '';
+        let linePath = '';
+        let crPath = '';
+
+        data.forEach((d, i) => {
+          const x = getX(i);
+          const yC = getYClicks(d.clicks);
+          const yCR = getYCR(d.cr);
+
+          if (i === 0) {
+            areaPath = `M ${x} ${height - padding} L ${x} ${yC}`;
+            linePath = `M ${x} ${yC}`;
+            crPath = `M ${x} ${yCR}`;
+          } else {
+            areaPath += ` L ${x} ${yC}`;
+            linePath += ` L ${x} ${yC}`;
+            crPath += ` L ${x} ${yCR}`;
+          }
+
+          if (i === data.length - 1) {
+            areaPath += ` L ${x} ${height - padding} Z`;
+          }
+        });
+
+        return (
+          <div className="w-full">
+            <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full text-slate-500 font-sans">
+              <defs>
+                <linearGradient id="purpleG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity="0.4" />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+              {/* Grids */}
+              {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
+                <line key={idx} x1={padding} y1={padding + r * chartH} x2={width - padding} y2={padding + r * chartH} stroke="#334155" strokeDasharray="3 3" />
+              ))}
+              
+              {/* Paths */}
+              {data.length > 0 && <path d={areaPath} fill="url(#purpleG)" />}
+              {data.length > 0 && <path d={linePath} fill="none" stroke="#6366f1" strokeWidth="2.5" />}
+              {data.length > 0 && <path d={crPath} fill="none" stroke="#10b981" strokeWidth="2" strokeDasharray="4 2" />}
+
+              {/* Data points */}
+              {data.map((d, i) => (
+                <circle key={`cl-${i}`} cx={getX(i)} cy={getYClicks(d.clicks)} r="3" fill="#6366f1" />
+              ))}
+              {data.map((d, i) => (
+                <circle key={`cr-${i}`} cx={getX(i)} cy={getYCR(d.cr)} r="3" fill="#10b981" />
+              ))}
+
+              {/* X Axis Labels */}
+              {data.map((d, i) => {
+                if (data.length > 10 && i % 2 !== 0) return null;
+                return (
+                  <text key={i} x={getX(i)} y={height - 8} fontSize="9" textAnchor="middle" fill="#94a3b8">
+                    {d.date}
+                  </text>
+                );
+              })}
+
+              {/* Y Axis Left (Clicks) */}
+              <text x={5} y={padding} fontSize="9" fill="#818cf8" textAnchor="start">Clicks</text>
+              <text x={5} y={height - padding} fontSize="9" fill="#818cf8" textAnchor="start">0</text>
+              <text x={5} y={height - padding - chartH/2} fontSize="9" fill="#818cf8" textAnchor="start">{Math.round(maxClicks/2)}</text>
+
+              {/* Y Axis Right (CR) */}
+              <text x={width - 5} y={padding} fontSize="9" fill="#10b981" textAnchor="end">CR %</text>
+              <text x={width - 5} y={height - padding} fontSize="9" fill="#10b981" textAnchor="end">0%</text>
+              <text x={width - 5} y={padding + 5} fontSize="9" fill="#10b981" textAnchor="end">10%</text>
+            </svg>
+            <div className="flex gap-4 items-center justify-center text-xs mt-2">
+              <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-[#6366f1] inline-block"></span> Clicks</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-0.5 border-t border-dashed border-[#10b981] inline-block"></span> Tỷ lệ chuyển đổi (CR)</span>
+            </div>
+          </div>
+        );
+      };
+
+      // 2. Bar Chart: Conversions by Date
+      const ConversionsBarChart = ({ period }) => {
+        const daysCount = period === '7d' ? 7 : period === '90d' ? 30 : 15;
+        const today = new Date();
+        const data = [];
+        for (let i = daysCount - 1; i >= 0; i--) {
+          const d = new Date(today);
+          d.setDate(today.getDate() - i * (period === '90d' ? 3 : 1));
+          data.push({
+            date: d.toLocaleDateString('vi-VN', { month: '2-digit', day: '2-digit' }),
+            val: Math.round(40 + (i % 4) * 15 + Math.random() * 8)
+          });
+        }
+
+        const width = 600;
+        const height = 200;
+        const padding = 30;
+
+        const maxVal = Math.max(...data.map(d => d.val)) * 1.1;
+        const chartW = width - padding * 2;
+        const chartH = height - padding * 2;
+        const barWidth = (chartW / data.length) * 0.6;
+        const stepX = chartW / data.length;
+
+        return (
+          <div className="w-full">
+            <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full text-slate-500 font-sans">
+              {/* Grids */}
+              {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
+                <line key={idx} x1={padding} y1={padding + r * chartH} x2={width - padding} y2={padding + r * chartH} stroke="#334155" strokeDasharray="3 3" />
+              ))}
+
+              {/* Bars */}
+              {data.map((d, i) => {
+                const x = padding + i * stepX + (stepX - barWidth) / 2;
+                const barH = (d.val / maxVal) * chartH;
+                const y = height - padding - barH;
+                return (
+                  <rect key={i} x={x} y={y} width={barWidth} height={barH} fill="#10b981" rx="2" />
+                );
+              })}
+
+              {/* X labels */}
+              {data.map((d, i) => {
+                if (data.length > 10 && i % 2 !== 0) return null;
+                const x = padding + i * stepX + stepX / 2;
+                return (
+                  <text key={i} x={x} y={height - 8} fontSize="9" textAnchor="middle" fill="#94a3b8">
+                    {d.date}
+                  </text>
+                );
+              })}
+
+              {/* Y labels */}
+              <text x={5} y={padding} fontSize="9" fill="#94a3b8" textAnchor="start">Đơn hàng</text>
+              <text x={5} y={height - padding} fontSize="9" fill="#94a3b8" textAnchor="start">0</text>
+              <text x={5} y={padding + 5} fontSize="9" fill="#94a3b8" textAnchor="start">{Math.round(maxVal)}</text>
+            </svg>
+          </div>
+        );
+      };
+
+      // 3. Stacked Bar Chart: Attendance by Employee
+      const AttendanceStackedChart = ({ employees, timesheets }) => {
+        // Calculate present, late, absent per employee
+        const data = employees.map(emp => {
+          const empTs = timesheets.filter(t => t.employee_id === emp.id);
+          const present = empTs.filter(t => t.status === 'present').length;
+          const late = empTs.filter(t => t.status === 'late').length;
+          const absent = empTs.filter(t => t.status === 'absent').length;
+          return {
+            name: emp.full_name.split(' ').pop(),
+            present,
+            late,
+            absent
+          };
+        });
+
+        const width = 600;
+        const height = 200;
+        const padding = 35;
+
+        const maxDays = 22; // max workdays in month estimation
+        const chartW = width - padding * 2;
+        const chartH = height - padding * 2;
+        const stepX = chartW / data.length;
+        const barWidth = 24;
+
+        return (
+          <div className="w-full">
+            <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full text-slate-500 font-sans">
+              {/* Grids */}
+              {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
+                <line key={idx} x1={padding} y1={padding + r * chartH} x2={width - padding} y2={padding + r * chartH} stroke="#334155" strokeDasharray="3 3" />
+              ))}
+
+              {/* Stacked Bars */}
+              {data.map((d, i) => {
+                const x = padding + i * stepX + (stepX - barWidth) / 2;
+                
+                const presH = (d.present / maxDays) * chartH;
+                const lateH = (d.late / maxDays) * chartH;
+                const absH = (d.absent / maxDays) * chartH;
+
+                const yPres = height - padding - presH;
+                const yLate = yPres - lateH;
+                const yAbs = yLate - absH;
+
+                return (
+                  <g key={i}>
+                    {/* Present */}
+                    {presH > 0 && <rect x={x} y={yPres} width={barWidth} height={presH} fill="#6366f1" />}
+                    {/* Late */}
+                    {lateH > 0 && <rect x={x} y={yLate} width={barWidth} height={lateH} fill="#f59e0b" />}
+                    {/* Absent */}
+                    {absH > 0 && <rect x={x} y={yAbs} width={barWidth} height={absH} fill="#ef4444" />}
+                  </g>
+                );
+              })}
+
+              {/* X labels */}
+              {data.map((d, i) => {
+                const x = padding + i * stepX + stepX / 2;
+                return (
+                  <text key={i} x={x} y={height - 8} fontSize="10" textAnchor="middle" fill="#94a3b8">
+                    {d.name}
+                  </text>
+                );
+              })}
+
+              {/* Y labels */}
+              <text x={5} y={padding} fontSize="9" fill="#94a3b8" textAnchor="start">Ngày</text>
+              <text x={5} y={height - padding} fontSize="9" fill="#94a3b8" textAnchor="start">0d</text>
+              <text x={5} y={padding + 5} fontSize="9" fill="#94a3b8" textAnchor="start">{maxDays}d</text>
+            </svg>
+            <div className="flex gap-4 items-center justify-center text-xs mt-2">
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-[#6366f1] rounded-sm"></span> Đúng giờ</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-[#f59e0b] rounded-sm"></span> Đi muộn</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-[#ef4444] rounded-sm"></span> Vắng</span>
+            </div>
+          </div>
+        );
+      };
+
+      // 4. Horizontal Bar Chart: Top Affiliate Revenue/Commission (mil VND)
+      const TopAffiliateRevenueChart = ({ affiliates }) => {
+        const sorted = [...affiliates].sort((a,b) => b.total_revenue - a.total_revenue).slice(0, 5);
+        
+        const width = 600;
+        const height = 200;
+        const paddingLeft = 120;
+        const paddingRight = 40;
+        const paddingY = 25;
+
+        const maxRev = Math.max(...sorted.map(s => s.total_revenue)) * 1.1;
+
+        const chartW = width - paddingLeft - paddingRight;
+        const chartH = height - paddingY * 2;
+        const barHeight = 16;
+        const gapY = chartH / sorted.length;
+
+        return (
+          <div className="w-full">
+            <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full text-slate-500 font-sans">
+              {/* Grids */}
+              {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
+                <line key={idx} x1={paddingLeft + r * chartW} y1={paddingY} x2={paddingLeft + r * chartW} y2={height - paddingY} stroke="#334155" strokeDasharray="3 3" />
+              ))}
+
+              {sorted.map((aff, i) => {
+                const y = paddingY + i * gapY + (gapY - barHeight * 2) / 2;
+                
+                const revW = (aff.total_revenue / maxRev) * chartW;
+                const commW = (aff.total_commission / maxRev) * chartW;
+
+                return (
+                  <g key={aff.id}>
+                    {/* Name */}
+                    <text x={paddingLeft - 10} y={y + barHeight + 2} fontSize="10" textAnchor="end" fill="#f1f5f9" fontWeight="500">
+                      {aff.full_name.split(' ').slice(-2).join(' ')}
+                    </text>
+                    
+                    {/* Revenue Bar */}
+                    <rect x={paddingLeft} y={y} width={revW} height={barHeight} fill="#3b82f6" rx="2" />
+                    {/* Commission Bar */}
+                    <rect x={paddingLeft} y={y + barHeight + 2} width={commW} height={barHeight - 4} fill="#f59e0b" rx="1" />
+
+                    {/* Value text */}
+                    <text x={paddingLeft + revW + 5} y={y + 12} fontSize="9" fill="#3b82f6" fontWeight="bold">
+                      {Math.round(aff.total_revenue / 1000000)}M
+                    </text>
+                  </g>
+                );
+              })}
+
+              {/* X Labels */}
+              {[0, 0.5, 1].map((r, idx) => (
+                <text key={idx} x={paddingLeft + r * chartW} y={height - 5} fontSize="9" textAnchor="middle" fill="#94a3b8">
+                  {Math.round((r * maxRev) / 1000000)}Mđ
+                </text>
+              ))}
+            </svg>
+            <div className="flex gap-4 items-center justify-center text-xs mt-2">
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-[#3b82f6] rounded-sm"></span> Doanh thu</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-[#f59e0b] rounded-sm"></span> Hoa hồng</span>
+            </div>
+          </div>
+        );
+      };
+
+
+      // ────────────────────────────────────────────────────────
+      // SUB-COMPONENTS
+      // ────────────────────────────────────────────────────────
+      
+      // Sidebar Component
+      const Sidebar = ({ currentTab, onNavigate, collapsed, onToggle, user, onLogout }) => {
+        const roleLabels = { admin: 'Admin / CEO', hr: 'Nhân Sự', affiliate_manager: 'Affiliate Mgr', accountant: 'Kế Toán', employee: 'Nhân Viên' };
+        const roleColors = {
+          admin: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+          hr: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+          affiliate_manager: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+          accountant: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+          employee: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+        };
+
+        const hasAccess = (tab) => {
+          const perms = JSON.parse(localStorage.getItem("gc_permissions")) || {};
+          const allowedTabs = perms[user?.role] || [];
+          return allowedTabs.includes(tab) || user?.role === 'admin';
+        };
+
+        const [openGroups, setOpenGroups] = useState({ hr: true, marketing: true, accountant: false, system: false });
+        const toggleGroup = (grp) => setOpenGroups(p => ({ ...p, [grp]: !p[grp] }));
+
+        return (
+          <aside className={`fixed left-0 top-0 h-screen z-30 flex flex-col bg-surface-card border-r border-surface-border transition-all duration-300 ease-in-out ${collapsed ? 'w-16' : 'w-64'}`}>
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-surface-border min-h-[64px]">
+              {!collapsed && (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-blue-500 flex items-center justify-center shadow-glow">
+                    <Icon name="Zap" size={16} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-white leading-tight">GoClick ERP</p>
+                    <p className="text-xs text-slate-500">v1.0 • Offline Demo</p>
+                  </div>
+                </div>
+              )}
+              {collapsed && (
+                <div className="w-8 h-8 mx-auto rounded-xl bg-gradient-to-br from-brand to-blue-500 flex items-center justify-center shadow-glow">
+                  <Icon name="Zap" size={16} className="text-white" />
+                </div>
+              )}
+              <button onClick={onToggle} className="p-1.5 rounded-lg hover:bg-surface-elevated text-slate-400 hover:text-slate-200 transition-colors">
+                <Icon name={collapsed ? 'Menu' : 'X'} size={18} />
+              </button>
+            </div>
+
+            {/* User Info card */}
+            {!collapsed && user && (
+              <div className="p-3 border-b border-surface-border">
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-surface-elevated/50">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    {user.avatar || 'US'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{user.full_name}</p>
+                    <span className={`badge text-[10px] mt-0.5 border ${roleColors[user.role]}`}>
+                      {roleLabels[user.role]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Navigation links */}
+            <nav className="flex-1 overflow-y-auto p-3 space-y-3">
+              {collapsed ? (
+                <div className="space-y-2 text-center">
+                  {['dashboard', 'attendance', 'employees', 'affiliates', 'workflow', 'reports', 'integration', 'rbac'].map(t => {
+                    if (!hasAccess(t)) return null;
+                    const iconNames = {
+                      dashboard: 'LayoutDashboard', attendance: 'Clock', employees: 'UserCheck', affiliates: 'Network',
+                      workflow: 'GitBranch', reports: 'BarChart3', integration: 'Link2', rbac: 'Shield'
+                    };
+                    return (
+                      <button key={t} onClick={() => onNavigate(t)} className={`nav-item justify-center px-2 w-full ${currentTab === t ? 'active' : ''}`} title={t}>
+                        <Icon name={iconNames[t]} size={18} />
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <button onClick={() => onNavigate('dashboard')} className={`nav-item w-full ${currentTab === 'dashboard' ? 'active' : ''}`}>
+                    <Icon name="LayoutDashboard" size={16} />
+                    <span>Tổng quan Dashboard</span>
+                  </button>
+
+                  {/* HR Group */}
+                  <div>
+                    <div onClick={() => toggleGroup('hr')} className="flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase tracking-widest text-slate-500 hover:text-slate-400 cursor-pointer">
+                      <span className="flex items-center gap-2"><Icon name="Users" size={12} />Phòng Nhân Sự</span>
+                      <Icon name={openGroups.hr ? 'ChevronDown' : 'ChevronRight'} size={12} />
+                    </div>
+                    {openGroups.hr && (
+                      <div className="mt-1 space-y-0.5 ml-2 pl-2 border-l border-surface-border/50">
+                        {hasAccess('attendance') && (
+                          <button onClick={() => onNavigate('attendance')} className={`nav-item w-full ${currentTab === 'attendance' ? 'active' : ''}`}>
+                            <Icon name="Clock" size={15} />
+                            <span>Chấm Công & Nghỉ phép</span>
+                          </button>
+                        )}
+                        {hasAccess('employees') && (
+                          <button onClick={() => onNavigate('employees')} className={`nav-item w-full ${currentTab === 'employees' ? 'active' : ''}`}>
+                            <Icon name="UserCheck" size={15} />
+                            <span>Sơ đồ / Hồ sơ NV</span>
+                          </button>
+                        )}
+                        <button onClick={() => onNavigate('workflow')} className={`nav-item w-full ${currentTab === 'workflow' ? 'active' : ''}`}>
+                          <Icon name="GitBranch" size={15} />
+                          <span>Duyệt Đơn / Workflow</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Marketing Group */}
+                  <div>
+                    <div onClick={() => toggleGroup('marketing')} className="flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase tracking-widest text-slate-500 hover:text-slate-400 cursor-pointer">
+                      <span className="flex items-center gap-2"><Icon name="Network" size={12} />Phòng Marketing</span>
+                      <Icon name={openGroups.marketing ? 'ChevronDown' : 'ChevronRight'} size={12} />
+                    </div>
+                    {openGroups.marketing && (
+                      <div className="mt-1 space-y-0.5 ml-2 pl-2 border-l border-surface-border/50">
+                        {hasAccess('affiliates') && (
+                          <button onClick={() => onNavigate('affiliates')} className={`nav-item w-full ${currentTab === 'affiliates' ? 'active' : ''}`}>
+                            <Icon name="Network" size={15} />
+                            <span>Đối Tác Affiliate</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reports & Integration */}
+                  <div>
+                    <div onClick={() => toggleGroup('accountant')} className="flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase tracking-widest text-slate-500 hover:text-slate-400 cursor-pointer">
+                      <span className="flex items-center gap-2"><Icon name="BarChart3" size={12} />Báo Cáo & Tích Hợp</span>
+                      <Icon name={openGroups.accountant ? 'ChevronDown' : 'ChevronRight'} size={12} />
+                    </div>
+                    {openGroups.accountant && (
+                      <div className="mt-1 space-y-0.5 ml-2 pl-2 border-l border-surface-border/50">
+                        <button onClick={() => onNavigate('reports')} className={`nav-item w-full ${currentTab === 'reports' ? 'active' : ''}`}>
+                          <Icon name="BarChart3" size={15} />
+                          <span>Báo Cáo Analytics</span>
+                        </button>
+                        {hasAccess('integration') && (
+                          <button onClick={() => onNavigate('integration')} className={`nav-item w-full ${currentTab === 'integration' ? 'active' : ''}`}>
+                            <Icon name="Link2" size={15} />
+                            <span>Integration Hub</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Settings Group */}
+                  <div>
+                    <div onClick={() => toggleGroup('system')} className="flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase tracking-widest text-slate-500 hover:text-slate-400 cursor-pointer">
+                      <span className="flex items-center gap-2"><Icon name="Settings" size={12} />Hệ Thống</span>
+                      <Icon name={openGroups.system ? 'ChevronDown' : 'ChevronRight'} size={12} />
+                    </div>
+                    {openGroups.system && (
+                      <div className="mt-1 space-y-0.5 ml-2 pl-2 border-l border-surface-border/50">
+                        {hasAccess('rbac') && (
+                          <button onClick={() => onNavigate('rbac')} className={`nav-item w-full ${currentTab === 'rbac' ? 'active' : ''}`}>
+                            <Icon name="Shield" size={15} />
+                            <span>Phân Quyền RBAC</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </nav>
+
+            {/* Logout footer */}
+            <div className="p-3 border-t border-surface-border">
+              <button onClick={onLogout} className="nav-item w-full text-red-400 hover:text-red-300 hover:bg-red-900/20">
+                <Icon name="LogOut" size={16} />
+                {!collapsed && <span>Đăng xuất</span>}
+              </button>
+            </div>
+          </aside>
+        );
+      };
+
+      // Header Component with RBAC Fast Switcher
+      const Header = ({ title, subtitle, user, onRoleChange, onLogout }) => {
+        const [showDropdown, setShowDropdown] = useState(false);
+        const [showRoleSelect, setShowRoleSelect] = useState(false);
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        const roleLabels = { admin: 'Admin / CEO', hr: 'Nhân Sự', affiliate_manager: 'Affiliate Manager', accountant: 'Kế Toán', employee: 'Nhân Viên' };
+
+        return (
+          <header className="sticky top-0 z-20 bg-surface-card/80 backdrop-blur-sm border-b border-surface-border px-6 py-3.5 flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-lg font-bold text-white truncate">{title}</h1>
+              {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+            </div>
+
+            {/* Quick RBAC Switcher Badge */}
+            <div className="flex items-center gap-3">
+              <div className="hidden lg:block text-right pr-2 border-r border-slate-700">
+                <p className="text-xs font-semibold text-slate-300">{now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p className="text-[10px] text-slate-500">{dateStr}</p>
+              </div>
+
+              <div className="relative">
+                <button onClick={() => setShowRoleSelect(!showRoleSelect)} className="btn btn-secondary btn-sm bg-brand/10 border-brand/20 hover:bg-brand/20 text-brand-light text-xs font-bold gap-1">
+                  <Icon name="Shield" size={12} />
+                  Switch Role: {roleLabels[user?.role]}
+                  <Icon name="ChevronDown" size={10} />
+                </button>
+                {showRoleSelect && (
+                  <div className="absolute right-0 top-full mt-2 w-48 card shadow-xl z-50 p-1">
+                    {Object.entries(roleLabels).map(([role, label]) => (
+                      <button key={role} onClick={() => { onRoleChange(role); setShowRoleSelect(false); }} className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg hover:bg-surface-elevated ${user?.role === role ? 'text-brand-light bg-brand/10' : 'text-slate-300'}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* User menu dropdown */}
+              <div className="relative">
+                <button onClick={() => setShowDropdown(!showDropdown)} className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl hover:bg-surface-elevated transition-colors">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                    {user?.avatar || 'US'}
+                  </div>
+                  <div className="hidden md:block text-left">
+                    <p className="text-sm font-semibold text-white leading-tight">{user?.full_name?.split(' ').pop()}</p>
+                    <p className="text-[10px] text-slate-500">{roleLabels[user?.role]}</p>
+                  </div>
+                  <Icon name="ChevronDown" size={14} className="text-slate-500" />
+                </button>
+
+                {showDropdown && (
+                  <div className="absolute right-0 top-full mt-2 w-48 card shadow-xl z-50 py-1">
+                    <div className="px-4 py-2 border-b border-surface-border">
+                      <p className="text-sm font-semibold text-white truncate">{user?.full_name}</p>
+                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                    </div>
+                    <button onClick={onLogout} className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors">
+                      Đăng xuất
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </header>
+        );
+      };
+
+      // ────────────────────────────────────────────────────────
+      // PAGES COMPONENTS
+      // ────────────────────────────────────────────────────────
+      
+      // LOGIN PAGE
+      const LoginPage = ({ onLogin }) => {
+        const [email, setEmail] = useState('admin@goclick.vn');
+        const [password, setPassword] = useState('admin123');
+        const [showPass, setShowPass] = useState(false);
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState('');
+
+        const demoAccounts = [
+          { email: 'admin@goclick.vn', password: 'admin123', role: 'Admin / CEO', color: 'from-purple-600 to-indigo-600' },
+          { email: 'hr@goclick.vn', password: 'hr123', role: 'Phòng Nhân Sự', color: 'from-blue-600 to-cyan-600' },
+          { email: 'am@goclick.vn', password: 'am123', role: 'Affiliate Manager', color: 'from-emerald-600 to-teal-600' },
+          { email: 'accountant@goclick.vn', password: 'acc123', role: 'Kế Toán Trưởng', color: 'from-amber-600 to-orange-600' },
+          { email: 'hvb@goclick.vn', password: 'hvb123', role: 'Nhân Viên', color: 'from-slate-600 to-slate-800' }
+        ];
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          setLoading(true);
+          setError('');
+          setTimeout(() => {
+            const employees = db.get("employees") || [];
+            const emp = employees.find(x => x.email === email && x.password === password);
+            if (emp) {
+              onLogin(emp);
+            } else {
+              setError('Thông tin đăng nhập không hợp lệ. Vui lòng thử tài khoản demo.');
+            }
+            setLoading(false);
+          }, 800);
+        };
+
+        const handleDemoClick = (acc) => {
+          setEmail(acc.email);
+          setPassword(acc.password);
+        };
+
+        return (
+          <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-indigo-950/20 to-slate-950 z-0" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
+            
+            <div className="relative w-full max-w-md z-10">
+              <div className="text-center mb-8 animate-fade-in">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-blue-500 shadow-glow mb-4">
+                  <Icon name="Zap" size={32} className="text-white" />
+                </div>
+                <h1 className="text-3xl font-black text-white tracking-tight">GoClick ERP</h1>
+                <p className="text-slate-400 mt-1 text-sm font-medium">Hệ thống Tiếp thị Liên kết & Chấm công</p>
+              </div>
+
+              {/* Login box */}
+              <div className="glass-card p-8 shadow-2xl animate-fade-in">
+                <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <Icon name="Shield" size={16} className="text-brand" /> Đăng nhập hệ thống
+                </h2>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="label">Email công việc</label>
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="input" placeholder="email@goclick.vn" required />
+                  </div>
+                  <div>
+                    <label className="label">Mật khẩu</label>
+                    <div className="relative">
+                      <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="input pr-10" placeholder="••••••••" required />
+                      <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                        <Icon name={showPass ? 'EyeOff' : 'Eye'} size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="bg-red-900/30 border border-red-700/40 rounded-xl px-4 py-3 text-xs text-red-400">
+                      {error}
+                    </div>
+                  )}
+
+                  <button type="submit" disabled={loading} className="btn btn-primary w-full justify-center mt-2 btn-lg">
+                    {loading ? <Icon name="Loader2" size={18} className="animate-spin" /> : <Icon name="Zap" size={18} />}
+                    {loading ? 'Đang xác thực...' : 'Đăng nhập'}
+                  </button>
+                </form>
+              </div>
+
+              {/* Quick Demo Switcher */}
+              <div className="mt-4 glass-card p-4 animate-fade-in">
+                <p className="text-[11px] text-slate-500 mb-3 text-center font-bold uppercase tracking-wider">⚡ Tài khoản Demo - Click để điền nhanh</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {demoAccounts.map(acc => (
+                    <button key={acc.email} onClick={() => handleDemoClick(acc)} className="text-left p-2.5 rounded-xl border border-surface-border bg-surface-elevated/40 hover:bg-surface-elevated transition-all duration-150 group">
+                      <p className={`text-xs font-bold bg-gradient-to-r ${acc.color} bg-clip-text text-transparent`}>{acc.role}</p>
+                      <p className="text-[10px] text-slate-500 font-mono truncate">{acc.email}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // DASHBOARD PAGE
+      const DashboardPage = ({ user, onNavigate }) => {
+        const [period, setPeriod] = useState('30d');
+        const [employees] = useState(() => db.get("employees") || []);
+        const [timesheets] = useState(() => db.get("timesheets") || []);
+        const [affiliates] = useState(() => db.get("affiliates") || []);
+        const [workflows] = useState(() => db.get("workflows") || []);
+
+        // Stats calculation
+        const pendingWfs = workflows.filter(w => w.status === 'pending' || w.status === 'in_progress');
+        const totalRevenue = affiliates.reduce((sum, a) => sum + a.total_revenue, 0);
+        const totalCommission = affiliates.reduce((sum, a) => sum + a.total_commission, 0);
+        
+        // Active role filters on workflow approval queue preview
+        const pendingForRole = pendingWfs.filter(wf => {
+          const activeStep = wf.steps.find(s => s.status === 'pending');
+          return activeStep && (activeStep.role === user.role || user.role === 'admin');
+        });
+
+        const kpis = [
+          { label: 'Tổng số nhân sự', value: employees.length, unit: 'nhân viên', change: 0, icon: 'Users', color: 'from-violet-500/20 to-brand/20 border-brand/20 text-brand' },
+          { label: 'Yêu cầu chờ duyệt', value: pendingForRole.length, unit: 'đơn', change: -3, icon: 'GitBranch', color: 'from-amber-500/20 to-orange-500/20 border-amber-500/20 text-amber-400' },
+          { label: 'Tổng hoa hồng Affiliate', value: totalCommission, unit: 'đ', change: 12.5, icon: 'Calculator', color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/20 text-emerald-400' },
+          { label: 'Doanh thu đối tác', value: totalRevenue, unit: 'đ', change: 8.2, icon: 'TrendingUp', color: 'from-blue-500/20 to-cyan-500/20 border-blue-500/20 text-blue-400' },
+        ];
+
+        const formatValue = (kpi) => {
+          if (kpi.unit === 'đ') return new Intl.NumberFormat('vi-VN').format(kpi.value) + 'đ';
+          return `${kpi.value} ${kpi.unit}`;
+        };
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Stats Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {kpis.map((kpi, idx) => (
+                <div key={idx} className={`stat-card bg-gradient-to-br ${kpi.color.split(' ').slice(0, 2).join(' ')} border ${kpi.color.split(' ')[2]}`}>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{kpi.label}</p>
+                      <p className="text-2xl font-black text-white mt-2">{formatValue(kpi.value)}</p>
+                    </div>
+                    <div className={`p-2.5 rounded-xl border ${kpi.color.split(' ').slice(0, 2).join(' ')} ${kpi.color.split(' ')[2]}`}>
+                      <Icon name={kpi.icon} size={20} className={kpi.color.split(' ')[3]} />
+                    </div>
+                  </div>
+                  {kpi.change !== 0 && (
+                    <p className={`text-xs font-semibold flex items-center gap-1 ${kpi.change > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <Icon name={kpi.change > 0 ? 'ChevronUp' : 'ChevronDown'} size={12} />
+                      <span>{Math.abs(kpi.change)}% so với tháng trước</span>
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              {/* Svg line chart performance */}
+              <div className="xl:col-span-2 card p-5 flex flex-col justify-between">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="font-bold text-white text-base">Hiệu suất Tiếp thị liên kết</h3>
+                    <p className="text-xs text-slate-500"> clicks và tỉ lệ chuyển đổi realtime</p>
+                  </div>
+                  <div className="flex gap-1">
+                    {['7d', '30d', '90d'].map(p => (
+                      <button key={p} onClick={() => setPeriod(p)} className={`btn btn-sm ${period === p ? 'btn-primary' : 'btn-secondary'}`}>{p}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="h-56 flex items-center justify-center">
+                  <AreaLineChart period={period} />
+                </div>
+              </div>
+
+              {/* Top partners list */}
+              <div className="card p-5">
+                <h3 className="font-bold text-white text-base mb-4 flex items-center gap-2">
+                  <Icon name="Activity" size={16} className="text-brand-light" /> Top đối tác doanh thu cao
+                </h3>
+                <div className="space-y-4">
+                  {affiliates.slice(0, 4).map((aff, i) => (
+                    <div key={aff.id} className="flex items-center justify-between p-2 rounded-xl bg-surface-elevated/20 border border-surface-border/50">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center font-bold text-sm text-brand-light">
+                          {i + 1}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-white truncate max-w-[120px]">{aff.full_name}</p>
+                          <p className="text-xs text-slate-500">{aff.traffic_source}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-emerald-400">{new Intl.NumberFormat('vi-VN').format(aff.total_revenue)}đ</p>
+                        <p className="text-[10px] text-slate-500">{aff.total_conversions} conversions</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Attendance Chart & Approvals preview */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              {/* Mini attendance chart */}
+              <div className="card p-5">
+                <h3 className="font-bold text-white text-base mb-4">Ngày công tháng này (Thành viên)</h3>
+                <div className="h-56 flex items-center justify-center">
+                  <AttendanceStackedChart employees={employees} timesheets={timesheets} />
+                </div>
+              </div>
+
+              {/* Approval queue preview */}
+              <div className="card p-5">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="font-bold text-white text-base">Đơn chờ phê duyệt của bạn</h3>
+                    <p className="text-xs text-slate-500">{pendingForRole.length} yêu cầu cần được xử lý</p>
+                  </div>
+                  <button onClick={() => onNavigate('workflow')} className="text-xs text-brand-light font-semibold hover:underline flex items-center gap-1">
+                    Xem tất cả <Icon name="ChevronRight" size={14} />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {pendingForRole.length === 0 ? (
+                    <div className="text-center py-10 text-slate-500 text-sm">
+                      <Icon name="CheckCircle" size={32} className="mx-auto mb-2 text-emerald-500/40" />
+                      Không có đơn nào chờ bạn duyệt lúc này!
+                    </div>
+                  ) : (
+                    pendingForRole.slice(0, 3).map(wf => (
+                      <div key={wf.id} onClick={() => onNavigate('workflow')} className="flex items-center justify-between p-3 rounded-xl bg-surface-elevated/40 hover:bg-surface-elevated border border-surface-border/50 cursor-pointer transition-all">
+                        <div className="flex items-start gap-2.5">
+                          <span className={`w-2 h-2 rounded-full mt-1.5 ${wf.priority === 'urgent' ? 'bg-red-500 animate-pulse' : wf.priority === 'high' ? 'bg-amber-500' : 'bg-brand'}`} />
+                          <div>
+                            <p className="text-sm font-semibold text-white line-clamp-1">{wf.title}</p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">Yêu cầu bởi: {wf.requester_name} • Step {wf.current_step}/{wf.total_steps}</p>
+                          </div>
+                        </div>
+                        <span className={`badge badge-neutral text-[10px] uppercase`}>
+                          {wf.type === 'leave_request' ? 'Nghỉ phép' : 'Hoa hồng'}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // ATTENDANCE & LEAVE PAGE
+      const AttendancePage = ({ user }) => {
+        const [timesheets, setTimesheets] = useState(() => db.get("timesheets") || []);
+        const [workflows, setWorkflows] = useState(() => db.get("workflows") || []);
+        const [employees] = useState(() => db.get("employees") || []);
+        const [month, setMonth] = useState(() => {
+          const now = new Date();
+          return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        });
+        const [selectedEmp, setSelectedEmp] = useState(user.id);
+        const [showCheckinModal, setShowCheckinModal] = useState(false);
+        const [showLeaveModal, setShowLeaveModal] = useState(false);
+        const [checkinLoading, setCheckinLoading] = useState(false);
+        const [checkinStatus, setCheckinStatus] = useState('idle'); // idle | locating | success | error
+        const [checkinNote, setCheckinNote] = useState('');
+        const [leaveForm, setLeaveForm] = useState({ leave_type: 'Nghỉ phép năm', start_date: '', end_date: '', reason: '' });
+        const [leaveSuccess, setLeaveSuccess] = useState(false);
+
+        // Filters
+        const filteredRecords = useMemo(() => {
+          return timesheets.filter(t => t.employee_id === selectedEmp && t.work_date.startsWith(month));
+        }, [timesheets, selectedEmp, month]);
+
+        const summaryStats = useMemo(() => {
+          const present = filteredRecords.filter(t => t.status === 'present').length;
+          const late = filteredRecords.filter(t => t.status === 'late').length;
+          const absent = filteredRecords.filter(t => t.status === 'absent').length;
+          const totalHours = filteredRecords.reduce((sum, r) => sum + (r.working_hours || 0), 0);
+          const otHours = filteredRecords.reduce((sum, r) => sum + (r.ot_hours || 0), 0);
+          return { present, late, absent, totalHours, otHours };
+        }, [filteredRecords]);
+
+        // Build Calendar Matrix (Mon-Sun layout)
+        const calendarGrid = useMemo(() => {
+          const [yr, mn] = month.split('-').map(Number);
+          const firstDayIndex = (new Date(yr, mn - 1, 1).getDay() + 6) % 7; // Mon index 0
+          const totalDays = new Date(yr, mn, 0).getDate();
+          
+          const grid = [];
+          for (let i = 0; i < firstDayIndex; i++) grid.push(null);
+          for (let d = 1; d <= totalDays; d++) grid.push(d);
+          return grid;
+        }, [month]);
+
+        // Handlers
+        const handleGPSCheckin = () => {
+          setCheckinStatus('locating');
+          setCheckinLoading(true);
+          setTimeout(() => {
+            const today = new Date();
+            const dateStr = today.toISOString().slice(0, 10);
+            
+            // Check if already checked in today
+            const exists = timesheets.find(t => t.employee_id === user.id && t.work_date === dateStr);
+            if (exists) {
+              setCheckinStatus('error');
+              setCheckinLoading(false);
+              alert("Bạn đã chấm công ngày hôm nay rồi!");
+              return;
+            }
+
+            const checkInHour = today.getHours() + today.getMinutes()/60;
+            const status = checkInHour > 8.5 ? "late" : "present";
+            const newRecord = {
+              id: `ts-${user.id}-${today.getDate()}-${Date.now()}`,
+              employee_id: user.id,
+              employee_name: user.full_name,
+              work_date: dateStr,
+              check_in_time: today.toISOString(),
+              check_out_time: null,
+              status: status,
+              source: "gps",
+              working_hours: status === 'present' ? 8.0 : 7.0,
+              ot_hours: 0,
+              note: checkinNote
+            };
+
+            const updated = [newRecord, ...timesheets];
+            setTimesheets(updated);
+            db.set("timesheets", updated);
+            
+            setCheckinStatus('success');
+            setCheckinLoading(false);
+            setTimeout(() => {
+              setShowCheckinModal(false);
+              setCheckinStatus('idle');
+              setCheckinNote('');
+            }, 1200);
+          }, 1500);
+        };
+
+        const handleLeaveSubmit = (e) => {
+          e.preventDefault();
+          const start = new Date(leaveForm.start_date);
+          const end = new Date(leaveForm.end_date);
+          const days = Math.round((end - start) / 86400000) + 1;
+
+          if (days <= 0 || isNaN(days)) {
+            alert("Vui lòng chọn ngày hợp lệ!");
+            return;
+          }
+
+          const newWf = {
+            id: `wf-${Date.now()}`,
+            type: "leave_request",
+            title: `Đơn nghỉ ${leaveForm.leave_type.toLowerCase()} - ${user.full_name} (${leaveForm.start_date} -> ${leaveForm.end_date})`,
+            requester_id: user.id,
+            requester_name: user.full_name,
+            status: "pending",
+            priority: "normal",
+            current_step: 1,
+            total_steps: 2,
+            created_at: new Date().toISOString(),
+            steps: [
+              { step: 1, name: "Trưởng phòng duyệt", role: "affiliate_manager", status: "pending" },
+              { step: 2, name: "HR ghi nhận", role: "hr", status: "waiting" }
+            ],
+            details: {
+              leave_type: leaveForm.leave_type,
+              start_date: leaveForm.start_date,
+              end_date: leaveForm.end_date,
+              total_days: days,
+              reason: leaveForm.reason
+            }
+          };
+
+          const updatedWfs = [newWf, ...workflows];
+          setWorkflows(updatedWfs);
+          db.set("workflows", updatedWfs);
+
+          setLeaveSuccess(true);
+          setTimeout(() => {
+            setShowLeaveModal(false);
+            setLeaveSuccess(false);
+            setLeaveForm({ leave_type: 'Nghỉ phép năm', start_date: '', end_date: '', reason: '' });
+          }, 1500);
+        };
+
+        const getCellStyles = (day) => {
+          if (!day) return 'bg-transparent border-transparent';
+          const [yr, mn] = month.split('-').map(Number);
+          const dateStr = `${yr}-${String(mn).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const rec = filteredRecords.find(t => t.work_date === dateStr);
+          const isToday = new Date().toISOString().slice(0, 10) === dateStr;
+
+          const dayOfWeek = new Date(yr, mn - 1, day).getDay();
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+          let bg = 'bg-surface-elevated/30 border-surface-border text-slate-500';
+          let label = '';
+          if (rec) {
+            if (rec.status === 'present') { bg = 'bg-emerald-950/40 border-emerald-700/30 text-emerald-400'; label = 'Đúng giờ'; }
+            if (rec.status === 'late') { bg = 'bg-amber-900/40 border-amber-700/30 text-amber-400'; label = 'Đi muộn'; }
+            if (rec.status === 'absent') { bg = 'bg-red-900/40 border-red-700/30 text-red-400'; label = 'Vắng'; }
+            if (rec.status === 'half_day') { bg = 'bg-blue-900/40 border-blue-700/30 text-blue-400'; label = 'Nửa ngày'; }
+          } else if (isWeekend) {
+            bg = 'bg-surface-elevated/10 border-surface-border/20 text-slate-700';
+            label = 'Cuối tuần';
+          }
+
+          return `${bg} ${isToday ? 'ring-2 ring-brand' : ''}`;
+        };
+
+        const getCellTime = (day) => {
+          if (!day) return '';
+          const [yr, mn] = month.split('-').map(Number);
+          const dateStr = `${yr}-${String(mn).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const rec = filteredRecords.find(t => t.work_date === dateStr);
+          if (rec && rec.check_in_time) {
+            return new Date(rec.check_in_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          }
+          return '';
+        };
+
+        const getStatusLabel = (day) => {
+          if (!day) return '';
+          const [yr, mn] = month.split('-').map(Number);
+          const dateStr = `${yr}-${String(mn).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const rec = filteredRecords.find(t => t.work_date === dateStr);
+          return rec ? rec.status : '';
+        };
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <input type="month" value={month} onChange={e => setMonth(e.target.value)} className="input w-44 py-2" />
+                {user.role !== 'employee' && (
+                  <select value={selectedEmp} onChange={e => setSelectedEmp(e.target.value)} className="input w-56 py-2">
+                    {employees.map(e => <option key={e.id} value={e.id}>{e.full_name}</option>)}
+                  </select>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setShowLeaveModal(true)} className="btn btn-secondary"><Icon name="Calendar" /> Đăng ký nghỉ</button>
+                <button onClick={() => setShowCheckinModal(true)} className="btn btn-success"><Icon name="MapPin" /> Check-in GPS</button>
+              </div>
+            </div>
+
+            {/* Stats row */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {[
+                { label: 'Đúng giờ', val: summaryStats.present, color: 'text-emerald-400' },
+                { label: 'Đi muộn', val: summaryStats.late, color: 'text-amber-400' },
+                { label: 'Vắng mặt', val: summaryStats.absent, color: 'text-red-400' },
+                { label: 'Giờ làm việc', val: `${summaryStats.totalHours}h`, color: 'text-blue-400' },
+                { label: 'Tăng ca (OT)', val: `${summaryStats.otHours}h`, color: 'text-purple-400' }
+              ].map((s, idx) => (
+                <div key={idx} className="card p-4 text-center">
+                  <p className={`text-2xl font-black ${s.color}`}>{s.val}</p>
+                  <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            <div className="card p-6">
+              <h3 className="font-bold text-white text-base mb-4 flex items-center gap-2"><Icon name="Calendar" className="text-brand" /> Bảng chấm công lịch</h3>
+              <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-slate-500">
+                {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(d => <div key={d}>{d}</div>)}
+              </div>
+              <div className="grid grid-cols-7 gap-2">
+                {calendarGrid.map((day, idx) => {
+                  const status = getStatusLabel(day);
+                  return (
+                    <div key={idx} className={`rounded-xl border p-2 min-h-[64px] flex flex-col justify-between transition-all hover:scale-105 ${getCellStyles(day)}`}>
+                      <span className="text-xs font-bold">{day || ''}</span>
+                      <div className="text-[10px] text-center mt-1">
+                        <span className="block font-bold">{getCellTime(day)}</span>
+                        {status && <span className="block text-[8px] uppercase font-bold opacity-85">{status === 'present' ? 'OK' : status === 'late' ? 'Muộn' : 'Vắng'}</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Timesheet List Table */}
+            <div className="card p-6">
+              <h3 className="font-bold text-white text-base mb-4 flex items-center gap-2"><Icon name="Clock" className="text-brand" /> Chi tiết chấm công</h3>
+              <div className="table-wrapper">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Ngày</th>
+                      <th>Check-in</th>
+                      <th>Check-out</th>
+                      <th>Giờ công</th>
+                      <th>Nguồn</th>
+                      <th>Ghi chú</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRecords.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="text-center text-slate-500 py-6">Chưa có dữ liệu chấm công cho tháng này</td>
+                      </tr>
+                    ) : (
+                      filteredRecords.map(r => (
+                        <tr key={r.id}>
+                          <td className="font-mono text-xs">{r.work_date}</td>
+                          <td className="text-emerald-400 font-mono text-sm">{r.check_in_time ? new Date(r.check_in_time).toLocaleTimeString('vi-VN') : '—'}</td>
+                          <td className="text-slate-400 font-mono text-sm">{r.check_out_time ? new Date(r.check_out_time).toLocaleTimeString('vi-VN') : '—'}</td>
+                          <td className="font-bold">{r.working_hours}h {r.ot_hours > 0 && <span className="text-purple-400 text-xs">+{r.ot_hours} OT</span>}</td>
+                          <td className="capitalize text-xs text-slate-400">{r.source}</td>
+                          <td className="text-xs text-slate-400 italic">"{r.note || ''}"</td>
+                          <td>
+                            <span className={`badge ${r.status === 'present' ? 'badge-success' : r.status === 'late' ? 'badge-warning' : 'badge-danger'}`}>
+                              {r.status === 'present' ? 'Đúng giờ' : r.status === 'late' ? 'Đi muộn' : 'Vắng mặt'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* MODALS */}
+            {/* GPS check-in modal */}
+            {showCheckinModal && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="glass-card w-full max-w-md p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="font-bold text-white flex items-center gap-2"><Icon name="MapPin" className="text-brand" /> Chấm công GPS</h4>
+                    <button onClick={() => setShowCheckinModal(false)} className="btn-ghost p-1 rounded-lg"><Icon name="X" /></button>
+                  </div>
+                  
+                  <div className={`p-6 border rounded-xl text-center mb-4 ${checkinStatus === 'locating' ? 'bg-indigo-950/20 border-brand/30' : checkinStatus === 'success' ? 'bg-emerald-950/20 border-emerald-700/30' : 'bg-surface-elevated/40 border-surface-border'}`}>
+                    {checkinStatus === 'locating' && (
+                      <div className="space-y-3">
+                        <Icon name="Loader2" size={32} className="animate-spin text-brand mx-auto" />
+                        <p className="text-sm font-semibold text-brand-light">Đang lấy tọa độ GPS...</p>
+                      </div>
+                    )}
+                    {checkinStatus === 'idle' && (
+                      <div className="space-y-2">
+                        <Icon name="MapPin" size={32} className="text-brand mx-auto" />
+                        <p className="text-sm font-semibold text-white">Yêu cầu quyền vị trí để check-in</p>
+                        <p className="text-xs text-slate-500">Phạm vi định vị văn phòng: 500m</p>
+                      </div>
+                    )}
+                    {checkinStatus === 'success' && (
+                      <div className="space-y-2">
+                        <Icon name="CheckCircle" size={32} className="text-emerald-400 mx-auto" />
+                        <p className="text-sm font-bold text-emerald-400">Check-in thành công!</p>
+                        <p className="text-xs text-slate-400">Vị trí: 10.7769, 106.7009 (Văn phòng Quận 1)</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="label">Ghi chú công việc (nếu có)</label>
+                    <input type="text" value={checkinNote} onChange={e => setCheckinNote(e.target.value)} className="input" placeholder="Ghi chú ca làm..." />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button onClick={() => setShowCheckinModal(false)} className="btn btn-secondary flex-1 justify-center">Hủy</button>
+                    <button onClick={handleGPSCheckin} disabled={checkinLoading || checkinStatus === 'success'} className="btn btn-success flex-1 justify-center">
+                      Xác nhận
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Leave Request modal */}
+            {showLeaveModal && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="glass-card w-full max-w-md p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="font-bold text-white flex items-center gap-2"><Icon name="Calendar" className="text-brand" /> Xin nghỉ phép</h4>
+                    <button onClick={() => setShowLeaveModal(false)} className="btn-ghost p-1 rounded-lg"><Icon name="X" /></button>
+                  </div>
+
+                  {leaveSuccess ? (
+                    <div className="text-center py-6">
+                      <Icon name="CheckCircle" size={48} className="text-emerald-400 mx-auto mb-3" />
+                      <p className="text-emerald-400 font-bold">Đơn xin nghỉ phép đã gửi!</p>
+                      <p className="text-xs text-slate-500 mt-1">Đang chờ trưởng bộ phận của bạn phê duyệt</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleLeaveSubmit} className="space-y-4">
+                      <div>
+                        <label className="label">Loại phép nghỉ</label>
+                        <select value={leaveForm.leave_type} onChange={e => setLeaveForm({...leaveForm, leave_type: e.target.value})} className="input">
+                          <option>Nghỉ phép năm</option>
+                          <option>Nghỉ ốm đau</option>
+                          <option>Nghỉ việc riêng (không lương)</option>
+                          <option>Nghỉ chế độ</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="label">Từ ngày</label>
+                          <input type="date" value={leaveForm.start_date} onChange={e => setLeaveForm({...leaveForm, start_date: e.target.value})} className="input" required />
+                        </div>
+                        <div>
+                          <label className="label">Đến ngày</label>
+                          <input type="date" value={leaveForm.end_date} onChange={e => setLeaveForm({...leaveForm, end_date: e.target.value})} className="input" required />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="label">Lý do xin nghỉ</label>
+                        <textarea value={leaveForm.reason} onChange={e => setLeaveForm({...leaveForm, reason: e.target.value})} className="input h-20 resize-none" placeholder="Lý do chi tiết..." required></textarea>
+                      </div>
+                      <div className="flex gap-3 pt-2">
+                        <button type="button" onClick={() => setShowLeaveModal(false)} className="btn btn-secondary flex-1 justify-center">Hủy</button>
+                        <button type="submit" className="btn btn-primary flex-1 justify-center">Gửi đơn duyệt</button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // EMPLOYEE PROFILES & ORG CHART PAGE
+      const EmployeesPage = () => {
+        const [employees, setEmployees] = useState(() => db.get("employees") || []);
+        const [showAddModal, setShowAddModal] = useState(false);
+        const [form, setForm] = useState({ full_name: '', email: '', role: 'employee', department: 'Phòng Marketing', position: 'Content Creator', hire_date: '', base_salary: 15000000 });
+        const [viewTab, setViewTab] = useState('list'); // list | tree
+
+        const handleAdd = (e) => {
+          e.preventDefault();
+          const newEmp = {
+            id: `emp-00${employees.length + 1}`,
+            employee_code: `GC00${employees.length + 1}`,
+            ...form,
+            status: "active",
+            avatar: form.full_name.split(' ').slice(-1)[0].substring(0, 2).toUpperCase()
+          };
+
+          const updated = [...employees, newEmp];
+          setEmployees(updated);
+          db.set("employees", updated);
+          setShowAddModal(false);
+          setForm({ full_name: '', email: '', role: 'employee', department: 'Phòng Marketing', position: 'Content Creator', hire_date: '', base_salary: 15000000 });
+        };
+
+        const orgTree = {
+          name: "Ban Giám Đốc",
+          head: employees.find(e => e.position === 'CEO'),
+          children: [
+            {
+              name: "Phòng Nhân Sự",
+              head: employees.find(e => e.role === 'hr'),
+              children: []
+            },
+            {
+              name: "Phòng Marketing",
+              head: employees.find(e => e.role === 'affiliate_manager'),
+              children: employees.filter(e => e.department === 'Phòng Marketing' && e.role === 'employee').map(e => ({ name: e.position, head: e }))
+            },
+            {
+              name: "Phòng Kế Toán",
+              head: employees.find(e => e.role === 'accountant'),
+              children: []
+            }
+          ]
+        };
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Tab controls */}
+            <div className="flex items-center justify-between">
+              <div className="flex gap-1 p-1 bg-surface-card rounded-xl border border-surface-border">
+                <button onClick={() => setViewTab('list')} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${viewTab === 'list' ? 'bg-brand text-white' : 'text-slate-400 hover:text-slate-200'}`}>Danh sách</button>
+                <button onClick={() => setViewTab('tree')} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${viewTab === 'tree' ? 'bg-brand text-white' : 'text-slate-400 hover:text-slate-200'}`}>Sơ đồ cây</button>
+              </div>
+              <button onClick={() => setShowAddModal(true)} className="btn btn-primary"><Icon name="Plus" /> Thêm nhân viên</button>
+            </div>
+
+            {/* View List */}
+            {viewTab === 'list' && (
+              <div className="card p-6">
+                <h3 className="font-bold text-white text-base mb-4 flex items-center gap-2"><Icon name="Users" className="text-brand" /> Hồ sơ nhân viên công ty</h3>
+                <div className="table-wrapper">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Nhân viên</th>
+                        <th>Email</th>
+                        <th>Phòng ban</th>
+                        <th>Vị trí</th>
+                        <th>Mức lương</th>
+                        <th>Ngày tuyển</th>
+                        <th>Vai trò</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {employees.map(emp => (
+                        <tr key={emp.id}>
+                          <td>
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-indigo-600/30 flex items-center justify-center font-bold text-brand-light text-xs">{emp.avatar}</div>
+                              <div>
+                                <p className="font-bold text-white">{emp.full_name}</p>
+                                <span className="text-[10px] text-slate-500 font-mono">{emp.employee_code}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="text-slate-300 text-sm font-mono">{emp.email}</td>
+                          <td className="text-sm font-medium">{emp.department}</td>
+                          <td className="text-slate-300">{emp.position}</td>
+                          <td className="font-bold text-slate-300">{new Intl.NumberFormat('vi-VN').format(emp.base_salary)}đ</td>
+                          <td className="text-slate-400 text-xs font-mono">{emp.hire_date}</td>
+                          <td>
+                            <span className="badge badge-info uppercase text-[9px]">{emp.role}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* View Tree Chart */}
+            {viewTab === 'tree' && (
+              <div className="card p-6 overflow-x-auto min-w-[700px]">
+                <h3 className="font-bold text-white text-base mb-6 flex items-center gap-2"><Icon name="Building2" className="text-brand" /> Cấu trúc sơ đồ tổ chức</h3>
+                
+                <div className="flex flex-col items-center gap-8 py-4">
+                  {/* CEO Level */}
+                  <div className="text-center">
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-600/30 to-indigo-600/30 border border-purple-500/40 w-56 mx-auto shadow-glow shadow-purple-500/10">
+                      <p className="text-[10px] font-bold text-purple-300 uppercase tracking-widest">{orgTree.name}</p>
+                      <p className="text-sm font-bold text-white mt-1">{orgTree.head?.full_name}</p>
+                      <p className="text-[11px] text-slate-500">{orgTree.head?.position}</p>
+                    </div>
+                  </div>
+
+                  {/* Vertical Line */}
+                  <div className="w-0.5 h-6 bg-slate-700 -mt-8" />
+
+                  {/* Departments grid level */}
+                  <div className="grid grid-cols-3 gap-8 relative">
+                    <div className="absolute top-0 left-1/6 right-1/6 h-0.5 bg-slate-700 -translate-y-4" style={{ left: '16.66%', right: '16.66%' }} />
+                    
+                    {orgTree.children.map((dep, idx) => (
+                      <div key={idx} className="flex flex-col items-center gap-4">
+                        {/* Connecting line */}
+                        <div className="w-0.5 h-4 bg-slate-700 -mt-4" />
+                        
+                        <div className="p-4 rounded-xl bg-surface-elevated/40 border border-surface-border w-52 text-center">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{dep.name}</p>
+                          <p className="text-xs font-bold text-white mt-1">{dep.head?.full_name || 'Đang tuyển'}</p>
+                          <p className="text-[10px] text-slate-500">{dep.head?.position || 'Trưởng phòng'}</p>
+                        </div>
+
+                        {/* Child staff level */}
+                        {dep.children.length > 0 && (
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-0.5 h-4 bg-slate-700" />
+                            <div className="flex flex-wrap gap-2 justify-center max-w-[220px]">
+                              {dep.children.map((child, cIdx) => (
+                                <div key={cIdx} className="p-2.5 rounded-lg bg-surface-elevated/20 border border-surface-border/50 text-center w-40 text-xs">
+                                  <p className="font-bold text-slate-200">{child.head?.full_name}</p>
+                                  <p className="text-[10px] text-slate-500">{child.head?.position}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modal: Add Employee */}
+            {showAddModal && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="glass-card w-full max-w-md p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="font-bold text-white flex items-center gap-2"><Icon name="UserCheck" className="text-brand" /> Thêm nhân viên mới</h4>
+                    <button onClick={() => setShowAddModal(false)} className="btn-ghost p-1 rounded-lg"><Icon name="X" /></button>
+                  </div>
+                  <form onSubmit={handleAdd} className="space-y-4">
+                    <div>
+                      <label className="label">Họ và tên *</label>
+                      <input type="text" value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} className="input" required placeholder="Nguyễn Văn A" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="label">Email *</label>
+                        <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="input" required placeholder="nva@goclick.vn" />
+                      </div>
+                      <div>
+                        <label className="label">Mức lương cơ bản</label>
+                        <input type="number" value={form.base_salary} onChange={e => setForm({...form, base_salary: Number(e.target.value)})} className="input" required />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="label">Phòng ban</label>
+                        <select value={form.department} onChange={e => setForm({...form, department: e.target.value})} className="input">
+                          <option>Ban Giám Đốc</option>
+                          <option>Phòng Nhân Sự</option>
+                          <option>Phòng Marketing</option>
+                          <option>Phòng Kế Toán</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="label">Vị trí công việc</label>
+                        <input type="text" value={form.position} onChange={e => setForm({...form, position: e.target.value})} className="input" placeholder="Content Creator" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="label">Vai trò RBAC</label>
+                        <select value={form.role} onChange={e => setForm({...form, role: e.target.value})} className="input">
+                          <option value="employee">Nhân viên</option>
+                          <option value="hr">Nhân sự (HR)</option>
+                          <option value="affiliate_manager">Affiliate Manager</option>
+                          <option value="accountant">Kế toán</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="label">Ngày nhận việc</label>
+                        <input type="date" value={form.hire_date} onChange={e => setForm({...form, hire_date: e.target.value})} className="input" required />
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary flex-1 justify-center">Hủy</button>
+                      <button type="submit" className="btn btn-primary flex-1 justify-center">Lưu hồ sơ</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // AFFILIATE MANAGEMENT PAGE
+      const AffiliatePage = ({ user }) => {
+        const [activeTab, setActiveTab] = useState('list'); // list | commission | postback
+        const [affiliates, setAffiliates] = useState(() => db.get("affiliates") || []);
+        const [postbackLogs, setPostbackLogs] = useState(() => db.get("postback_logs") || []);
+        const [config, setConfig] = useState(() => db.get("commission_config") || []);
+        const [workflows, setWorkflows] = useState(() => db.get("workflows") || []);
+
+        const [showAddAffModal, setShowAddAffModal] = useState(false);
+        const [affForm, setAffForm] = useState({ full_name: '', email: '', phone: '', traffic_source: 'SEO / Blog', tier_level: 1 });
+        const [search, setSearch] = useState('');
+        const [statusFilter, setStatusFilter] = useState('');
+
+        const [editConfig, setEditConfig] = useState(null);
+        const [editRate, setEditRate] = useState('');
+
+        const [calcResult, setCalcResult] = useState(null);
+        const [calcLoading, setCalcLoading] = useState(false);
+
+        // Sorting
+        const [sortField, setSortField] = useState('total_revenue');
+        const [sortDir, setSortDir] = useState('desc');
+
+        const handleAddAff = (e) => {
+          e.preventDefault();
+          const newAff = {
+            id: `aff-00${affiliates.length + 1}`,
+            affiliate_code: `AF00${affiliates.length + 1}`,
+            ...affForm,
+            status: "active",
+            manager_id: user.id,
+            manager_name: user.full_name,
+            total_clicks: 0,
+            total_conversions: 0,
+            total_revenue: 0,
+            total_commission: 0,
+            joined_at: new Date().toISOString().slice(0, 10)
+          };
+          const updated = [...affiliates, newAff];
+          setAffiliates(updated);
+          db.set("affiliates", updated);
+          setShowAddAffModal(false);
+          setAffForm({ full_name: '', email: '', phone: '', traffic_source: 'SEO / Blog', tier_level: 1 });
+        };
+
+        const handleSaveConfig = (tier) => {
+          const updated = config.map(c => c.tier_level === tier ? { ...c, rate_percent: parseFloat(editRate) } : c);
+          setConfig(updated);
+          db.set("commission_config", updated);
+          setEditConfig(null);
+        };
+
+        const runCommissionCalculation = () => {
+          setCalcLoading(true);
+          setTimeout(() => {
+            const now = new Date();
+            const fromDate = `${now.getFullYear()}-${String(now.getMonth()).padStart(2, '0')}-01`;
+            const toDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+
+            // Compute calculations
+            const payouts = affiliates.filter(a => a.status === 'active').map(aff => {
+              // Rate config
+              const rateCfg = config.find(c => c.tier_level === aff.tier_level) || { rate_percent: 5 };
+              const rate = rateCfg.rate_percent;
+
+              // We calculate direct commission based on simulated conversions
+              const directRevenue = aff.total_revenue * 0.15; // sales from previous month
+              const directComm = directRevenue * (rate / 100);
+
+              // Team/Level bonus
+              let teamBonus = 0;
+              if (aff.tier_level === 1) {
+                // Find all children
+                const children = affiliates.filter(x => x.parent_id === aff.id);
+                children.forEach(c => {
+                  const childRev = c.total_revenue * 0.15;
+                  const bonusRate = config.find(r => r.tier_level === 2)?.rate_percent || 3;
+                  teamBonus += childRev * (bonusRate / 100);
+                });
+              }
+
+              return {
+                id: `payout-${aff.id}-${Date.now()}`,
+                affiliate_name: aff.full_name,
+                affiliate_id: aff.id,
+                total_conversions: Math.round(aff.total_conversions * 0.15),
+                gross_revenue: directRevenue,
+                commission_rate: rate,
+                net_payable: directComm + teamBonus,
+                team_bonus: teamBonus
+              };
+            });
+
+            setCalcResult({
+              period: `${fromDate} -> ${toDate}`,
+              payouts,
+              summary: {
+                total_commission: payouts.reduce((sum, p) => sum + p.net_payable, 0),
+                total_affiliates: payouts.length
+              }
+            });
+            setCalcLoading(false);
+          }, 1200);
+        };
+
+        const submitPayoutWorkflow = (payout) => {
+          const newWf = {
+            id: `wf-${Date.now()}`,
+            type: "payout_approval",
+            title: `Duyệt hoa hồng đối tác - ${payout.affiliate_name} (${new Intl.NumberFormat('vi-VN').format(payout.net_payable)}đ)`,
+            requester_id: user.id,
+            requester_name: user.full_name,
+            status: "pending",
+            priority: "high",
+            current_step: 1,
+            total_steps: 2,
+            created_at: new Date().toISOString(),
+            steps: [
+              { step: 1, name: "AM đối soát số liệu", role: "affiliate_manager", status: "pending" },
+              { step: 2, name: "Kế toán trưởng duyệt chi", role: "accountant", status: "waiting" }
+            ],
+            details: payout
+          };
+          const updated = [newWf, ...workflows];
+          setWorkflows(updated);
+          db.set("workflows", updated);
+          alert("Đã tạo luồng yêu cầu chi hoa hồng! Xem tại tab Duyệt đơn.");
+        };
+
+        const sortedAffiliates = useMemo(() => {
+          const filtered = affiliates.filter(a => {
+            const matchSearch = a.full_name.toLowerCase().includes(search.toLowerCase()) || a.email.toLowerCase().includes(search.toLowerCase());
+            const matchStatus = statusFilter ? a.status === statusFilter : true;
+            return matchSearch && matchStatus;
+          });
+
+          return [...filtered].sort((a, b) => {
+            const va = a[sortField] ?? 0;
+            const vb = b[sortField] ?? 0;
+            return sortDir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+          });
+        }, [affiliates, search, statusFilter, sortField, sortDir]);
+
+        const toggleSort = (field) => {
+          if (sortField === field) {
+            setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+          } else {
+            setSortField(field);
+            setSortDir('desc');
+          }
+        };
+
+        const totalRevenue = affiliates.reduce((s, a) => s + a.total_revenue, 0);
+        const totalCommission = affiliates.reduce((s, a) => s + a.total_commission, 0);
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Tabs selector */}
+            <div className="flex gap-1 p-1 bg-surface-card rounded-xl border border-surface-border w-fit">
+              {[
+                { id: 'list', label: 'Danh sách đối tác', icon: 'Network' },
+                { id: 'commission', label: 'Tính toán hoa hồng', icon: 'Calculator' },
+                { id: 'postback', label: 'Logs postback URL', icon: 'Activity' }
+              ].map(t => (
+                <button key={t.id} onClick={() => setActiveTab(t.id)} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === t.id ? 'bg-brand text-white shadow-glow' : 'text-slate-400 hover:text-slate-200'}`}>
+                  <Icon name={t.icon} size={14} /> {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* TAB: LIST */}
+            {activeTab === 'list' && (
+              <div className="space-y-4">
+                {/* Search & Filters */}
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 bg-surface-card rounded-xl px-3 py-2 border border-surface-border flex-1 max-w-xs">
+                    <Icon name="Search" className="text-slate-500" />
+                    <input type="text" value={search} onChange={e => setSearch(e.target.value)} className="bg-transparent text-sm text-slate-200 placeholder-slate-500 focus:outline-none w-full" placeholder="Tìm đối tác..." />
+                  </div>
+                  <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="input w-auto py-2">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Hoạt động (Active)</option>
+                    <option value="pending">Chờ phê duyệt</option>
+                    <option value="suspended">Bị tạm khóa</option>
+                  </select>
+                  <button onClick={() => setShowAddAffModal(true)} className="btn btn-primary"><Icon name="Plus" /> Thêm đối tác</button>
+                </div>
+
+                {/* mini stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Tổng số đối tác', val: affiliates.length, color: 'text-white' },
+                    { label: 'Hoạt động (Active)', val: affiliates.filter(a => a.status === 'active').length, color: 'text-emerald-400' },
+                    { label: 'Tổng doanh thu', val: `${new Intl.NumberFormat('vi-VN').format(totalRevenue)}đ`, color: 'text-blue-400' },
+                    { label: 'Hoa hồng phát sinh', val: `${new Intl.NumberFormat('vi-VN').format(totalCommission)}đ`, color: 'text-amber-400' }
+                  ].map((s, idx) => (
+                    <div key={idx} className="card p-4 text-center">
+                      <p className={`text-xl font-black ${s.color}`}>{s.val}</p>
+                      <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Table */}
+                <div className="card">
+                  <div className="table-wrapper">
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th>Mã / Đối tác</th>
+                          <th>Cấp độ</th>
+                          <th>Traffic Source</th>
+                          <th onClick={() => toggleSort('total_clicks')} className="cursor-pointer hover:text-white">Clicks {sortField === 'total_clicks' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th onClick={() => toggleSort('total_conversions')} className="cursor-pointer hover:text-white">Đơn hàng {sortField === 'total_conversions' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th>CR %</th>
+                          <th onClick={() => toggleSort('total_revenue')} className="cursor-pointer hover:text-white">Doanh thu {sortField === 'total_revenue' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                          <th>Hoa hồng</th>
+                          <th>Trạng thái</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedAffiliates.map(aff => (
+                          <tr key={aff.id}>
+                            <td>
+                              <div>
+                                <p className="font-mono text-xs text-brand-light">{aff.affiliate_code}</p>
+                                <p className="font-bold text-white text-sm">{aff.full_name}</p>
+                                <p className="text-xs text-slate-500 font-mono">{aff.email}</p>
+                              </div>
+                            </td>
+                            <td><span className={`badge ${aff.tier_level === 1 ? 'badge-info' : 'badge-success'}`}>Cấp {aff.tier_level}</span></td>
+                            <td className="text-xs">{aff.traffic_source}</td>
+                            <td className="font-mono text-xs">{aff.total_clicks}</td>
+                            <td className="font-mono text-xs">{aff.total_conversions}</td>
+                            <td className="font-bold text-emerald-400 text-xs">{aff.total_clicks > 0 ? (aff.total_conversions/aff.total_clicks * 100).toFixed(2) : 0}%</td>
+                            <td className="font-bold text-blue-400">{new Intl.NumberFormat('vi-VN').format(aff.total_revenue)}đ</td>
+                            <td className="font-bold text-amber-400">{new Intl.NumberFormat('vi-VN').format(aff.total_commission)}đ</td>
+                            <td>
+                              <span className={`badge ${aff.status === 'active' ? 'badge-success' : aff.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>
+                                {aff.status === 'active' ? 'Active' : aff.status === 'pending' ? 'Pending' : 'Suspended'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: COMMISSION */}
+            {activeTab === 'commission' && (
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                {/* Tier config panel */}
+                <div className="card p-6 xl:col-span-1 h-fit">
+                  <h3 className="font-bold text-white text-base mb-4 flex items-center gap-2"><Icon name="Calculator" className="text-brand" /> Cấu hình Hoa hồng đa cấp</h3>
+                  
+                  <div className="space-y-4">
+                    {config.map(cfg => (
+                      <div key={cfg.tier_level} className="flex items-center justify-between p-3 rounded-xl bg-surface-elevated/40 border border-surface-border/50">
+                        <div>
+                          <p className="font-bold text-white text-sm">{cfg.name}</p>
+                          <p className="text-xs text-slate-500">Tier {cfg.tier_level} affiliate</p>
+                        </div>
+                        {editConfig === cfg.tier_level ? (
+                          <div className="flex items-center gap-1.5">
+                            <input type="number" step="0.5" value={editRate} onChange={e => setEditRate(e.target.value)} className="input w-16 text-center py-1 px-1.5" />
+                            <button onClick={() => handleSaveConfig(cfg.tier_level)} className="btn btn-success btn-sm p-1">✓</button>
+                            <button onClick={() => setEditConfig(null)} className="btn btn-secondary btn-sm p-1">✗</button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-black text-emerald-400">{cfg.rate_percent}%</span>
+                            <button onClick={() => { setEditConfig(cfg.tier_level); setEditRate(cfg.rate_percent); }} className="text-xs text-brand-light font-bold hover:underline">Sửa</button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-4 p-3.5 bg-brand/10 border border-brand/20 rounded-xl text-xs text-slate-400">
+                    💡 **Mô tả**: Khi đối tác Cấp 1 có doanh số, họ sẽ được hưởng % hoa hồng trực tiếp. Nếu họ tuyển thêm đối tác con (Cấp 2) và đối tác con phát sinh đơn, đối tác Cấp 1 sẽ nhận thêm hoa hồng chênh lệch thụ động (ví dụ: L2 = 3%).
+                  </div>
+                </div>
+
+                {/* Calculation simulation */}
+                <div className="card p-6 xl:col-span-2">
+                  <h3 className="font-bold text-white text-base mb-2">Tính toán và duyệt chi hoa hồng</h3>
+                  <p className="text-xs text-slate-500 mb-4">Mô phỏng đối soát dữ liệu tháng trước của toàn bộ đối tác</p>
+                  
+                  <button onClick={runCommissionCalculation} disabled={calcLoading} className="btn btn-primary w-full justify-center mb-4">
+                    {calcLoading ? <Icon name="Loader2" size={16} className="animate-spin" /> : <Icon name="Calculator" />}
+                    {calcLoading ? 'Hệ thống đang đối soát dữ liệu đối tác...' : 'Chạy đối soát và tính hoa hồng tháng vừa qua'}
+                  </button>
+
+                  {calcResult && (
+                    <div className="space-y-4 animate-fade-in">
+                      <div className="p-4 rounded-xl bg-brand/10 border border-brand/20 flex justify-between items-center text-sm">
+                        <div>
+                          <p className="text-xs text-slate-500">Chu kỳ đối soát</p>
+                          <p className="font-bold text-white mt-0.5">{calcResult.period}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-slate-500">Tổng hoa hồng cần chi</p>
+                          <p className="font-black text-emerald-400 text-lg">{new Intl.NumberFormat('vi-VN').format(calcResult.summary.total_commission)}đ</p>
+                        </div>
+                      </div>
+
+                      <div className="table-wrapper max-h-[220px] overflow-y-auto">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Đối tác</th>
+                              <th>Doanh thu (15%)</th>
+                              <th>Rate</th>
+                              <th>Được chi trả</th>
+                              <th>Duyệt</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {calcResult.payouts.map(p => (
+                              <tr key={p.id}>
+                                <td className="font-bold text-sm text-white">{p.affiliate_name}</td>
+                                <td>{new Intl.NumberFormat('vi-VN').format(p.gross_revenue)}đ</td>
+                                <td>{p.commission_rate}%</td>
+                                <td className="font-bold text-emerald-400">{new Intl.NumberFormat('vi-VN').format(p.net_payable)}đ</td>
+                                <td>
+                                  <button onClick={() => submitPayoutWorkflow(p)} className="btn btn-secondary btn-sm bg-brand/10 border-brand/20 text-brand-light font-bold hover:bg-brand/20 py-1">
+                                    Đệ trình duyệt chi
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: POSTBACK LOG */}
+            {activeTab === 'postback' && (
+              <div className="card p-6">
+                <h3 className="font-bold text-white text-base mb-4 flex items-center gap-2"><Icon name="Activity" className="text-brand" /> Postback Log realtime</h3>
+                <div className="table-wrapper">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Mã đối tác</th>
+                        <th>Tên đối tác</th>
+                        <th>Click ID</th>
+                        <th>Order ID</th>
+                        <th>Doanh thu đơn</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian nhận</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {postbackLogs.map(log => (
+                        <tr key={log.id}>
+                          <td className="text-xs font-mono text-slate-500">#{log.id}</td>
+                          <td className="text-brand-light font-bold font-mono text-xs">{log.affiliate_code}</td>
+                          <td className="text-sm font-semibold">{log.affiliate_name}</td>
+                          <td className="font-mono text-xs text-slate-400">{log.click_id}</td>
+                          <td className="font-mono text-xs text-slate-300">{log.order_id}</td>
+                          <td className="font-bold text-emerald-400">{new Intl.NumberFormat('vi-VN').format(log.revenue)}đ</td>
+                          <td>
+                            <span className={`badge ${log.status === 'confirmed' ? 'badge-success' : 'badge-warning'}`}>
+                              {log.status === 'confirmed' ? 'confirmed' : 'pending'}
+                            </span>
+                          </td>
+                          <td className="text-xs font-mono text-slate-400">{new Date(log.received_at).toLocaleString('vi-VN')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* MODAL: ADD PARTNER */}
+            {showAddAffModal && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="glass-card w-full max-w-md p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="font-bold text-white flex items-center gap-2"><Icon name="Network" className="text-brand" /> Đăng ký đối tác mới</h4>
+                    <button onClick={() => setShowAddAffModal(false)} className="btn-ghost p-1 rounded-lg"><Icon name="X" /></button>
+                  </div>
+                  <form onSubmit={handleAddAff} className="space-y-4">
+                    <div>
+                      <label className="label">Tên đối tác / Thương hiệu *</label>
+                      <input type="text" value={affForm.full_name} onChange={e => setAffForm({...affForm, full_name: e.target.value})} className="input" required placeholder="Media Star Ltd" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="label">Email liên hệ *</label>
+                        <input type="email" value={affForm.email} onChange={e => setAffForm({...affForm, email: e.target.value})} className="input" required placeholder="agency@mail.com" />
+                      </div>
+                      <div>
+                        <label className="label">Số điện thoại</label>
+                        <input type="text" value={affForm.phone} onChange={e => setAffForm({...affForm, phone: e.target.value})} className="input" placeholder="09xxxxxxx" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="label">Nguồn Traffic</label>
+                        <select value={affForm.traffic_source} onChange={e => setAffForm({...affForm, traffic_source: e.target.value})} className="input">
+                          <option>SEO / Blog</option>
+                          <option>Facebook Ads</option>
+                          <option>TikTok</option>
+                          <option>YouTube</option>
+                          <option>Email Marketing</option>
+                          <option>Khác</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="label">Cấp đối tác</label>
+                        <select value={affForm.tier_level} onChange={e => setAffForm({...affForm, tier_level: Number(e.target.value)})} className="input">
+                          <option value={1}>Lập mới (Cấp 1)</option>
+                          <option value={2}>Cấp dưới (Cấp 2)</option>
+                          <option value={3}>Cấp dưới (Cấp 3)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <button type="button" onClick={() => setShowAddAffModal(false)} className="btn btn-secondary flex-1 justify-center">Hủy</button>
+                      <button type="submit" className="btn btn-primary flex-1 justify-center">Thêm đối tác</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // WORKFLOW APPROVALS PAGE
+      const WorkflowPage = ({ user }) => {
+        const [workflows, setWorkflows] = useState(() => db.get("workflows") || []);
+        const [filterTab, setFilterTab] = useState('all'); // all | pending | hr | affiliate
+        const [activeWf, setActiveWf] = useState(null); // active workflow details modal
+        const [actionForm, setActionForm] = useState({ action: 'approve', note: '' });
+        const [actionLoading, setActionLoading] = useState(false);
+
+        const [expandedWf, setExpandedWf] = useState(null);
+
+        const handleActionSubmit = (e) => {
+          e.preventDefault();
+          setActionLoading(true);
+
+          setTimeout(() => {
+            const updated = workflows.map(wf => {
+              if (wf.id !== activeWf.id) return wf;
+
+              const stepIdx = wf.steps.findIndex(s => s.status === 'pending');
+              if (stepIdx === -1) return wf;
+
+              const updatedSteps = [...wf.steps];
+              
+              if (actionForm.action === 'approve') {
+                updatedSteps[stepIdx] = {
+                  ...updatedSteps[stepIdx],
+                  status: 'approved',
+                  acted_at: new Date().toISOString(),
+                  note: actionForm.note
+                };
+
+                // Move to next step or complete workflow
+                const nextStepIdx = stepIdx + 1;
+                let nextStatus = 'approved';
+                let nextStep = wf.current_step;
+
+                if (nextStepIdx < wf.total_steps) {
+                  updatedSteps[nextStepIdx].status = 'pending';
+                  nextStatus = 'in_progress';
+                  nextStep += 1;
+                }
+
+                // If fully approved payout workflow, update affiliate total paid or status simulation
+                if (nextStatus === 'approved' && wf.type === 'payout_approval') {
+                  const payouts = db.get("affiliates") || [];
+                  const affId = wf.details?.affiliate_id;
+                  const netPay = wf.details?.net_payable;
+                  if (affId) {
+                    const updatedAffs = payouts.map(a => a.id === affId ? { ...a, total_commission: a.total_commission - netPay } : a);
+                    db.set("affiliates", updatedAffs);
+                  }
+                }
+
+                return {
+                  ...wf,
+                  status: nextStatus,
+                  current_step: nextStep,
+                  steps: updatedSteps
+                };
+
+              } else {
+                // Reject or info requested
+                updatedSteps[stepIdx] = {
+                  ...updatedSteps[stepIdx],
+                  status: actionForm.action === 'reject' ? 'rejected' : 'waiting_info',
+                  acted_at: new Date().toISOString(),
+                  note: actionForm.note
+                };
+
+                return {
+                  ...wf,
+                  status: actionForm.action === 'reject' ? 'rejected' : 'in_progress',
+                  steps: updatedSteps
+                };
+              }
+            });
+
+            setWorkflows(updated);
+            db.set("workflows", updated);
+            
+            setActionLoading(false);
+            setActiveWf(null);
+            setActionForm({ action: 'approve', note: '' });
+          }, 800);
+        };
+
+        const hasApprovalRight = (wf) => {
+          const step = wf.steps.find(s => s.status === 'pending');
+          return step && (step.role === user.role || user.role === 'admin');
+        };
+
+        const filteredWfs = useMemo(() => {
+          return workflows.filter(w => {
+            if (filterTab === 'pending') return w.status === 'pending' || w.status === 'in_progress';
+            if (filterTab === 'hr') return w.type === 'leave_request';
+            if (filterTab === 'affiliate') return w.type === 'payout_approval';
+            return true;
+          });
+        }, [workflows, filterTab]);
+
+        const priorityConfig = {
+          low: { label: 'Thấp', cls: 'badge-neutral' },
+          normal: { label: 'Bình thường', cls: 'badge-info' },
+          high: { label: 'Ưu tiên cao', cls: 'badge-warning' },
+          urgent: { label: 'Khẩn cấp!', cls: 'badge-danger animate-pulse' }
+        };
+
+        const statusConfig = {
+          pending: { label: 'Chờ duyệt', cls: 'badge-warning' },
+          in_progress: { label: 'Đang xử lý', cls: 'badge-info' },
+          approved: { label: 'Đã phê duyệt', cls: 'badge-success' },
+          rejected: { label: 'Từ chối', cls: 'badge-danger' }
+        };
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Stats matrix */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { label: 'Tổng số đơn yêu cầu', val: workflows.length, color: 'text-white' },
+                { label: 'Đang chờ duyệt', val: workflows.filter(w => w.status === 'pending').length, color: 'text-amber-400' },
+                { label: 'Đang xử lý', val: workflows.filter(w => w.status === 'in_progress').length, color: 'text-blue-400' },
+                { label: 'Đã hoàn tất', val: workflows.filter(w => w.status === 'approved' || w.status === 'rejected').length, color: 'text-emerald-400' }
+              ].map((s, idx) => (
+                <div key={idx} className="card p-4 text-center">
+                  <p className={`text-2xl font-black ${s.color}`}>{s.val}</p>
+                  <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex gap-1 p-1 bg-surface-card rounded-xl border border-surface-border w-fit">
+              {[
+                { id: 'all', label: 'Tất cả' },
+                { id: 'pending', label: 'Chờ xử lý' },
+                { id: 'hr', label: '🏖️ Nhân sự & Nghỉ phép' },
+                { id: 'affiliate', label: '💰 Thanh toán Affiliate' }
+              ].map(t => (
+                <button key={t.id} onClick={() => setFilterTab(t.id)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filterTab === t.id ? 'bg-brand text-white shadow-glow' : 'text-slate-400 hover:text-slate-200'}`}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Cards List */}
+            <div className="space-y-3">
+              {filteredWfs.length === 0 ? (
+                <div className="card p-12 text-center text-slate-500 font-medium">Không tìm thấy yêu cầu nào phù hợp</div>
+              ) : (
+                filteredWfs.map(wf => {
+                  const pr = priorityConfig[wf.priority] || priorityConfig.normal;
+                  const st = statusConfig[wf.status] || statusConfig.pending;
+                  const isExpanded = expandedWf === wf.id;
+
+                  return (
+                    <div key={wf.id} className="card overflow-hidden hover:border-brand/20 transition-all duration-200">
+                      {/* Summary Trigger */}
+                      <div onClick={() => setExpandedWf(isExpanded ? null : wf.id)} className="p-5 flex items-center justify-between gap-4 cursor-pointer">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                            <span className={`badge ${pr.cls} text-[9px] uppercase`}>{pr.label}</span>
+                            <span className={`badge ${st.cls} text-[9px] uppercase`}>{st.label}</span>
+                            <span className="text-[10px] text-slate-500 font-mono">#{wf.id}</span>
+                          </div>
+                          <h4 className="font-bold text-white text-sm md:text-base line-clamp-1">{wf.title}</h4>
+                          <p className="text-xs text-slate-500 mt-1">Yêu cầu bởi: <strong className="text-slate-300">{wf.requester_name}</strong> • Khởi tạo: {new Date(wf.created_at).toLocaleDateString('vi-VN')}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right hidden sm:block">
+                            <p className="text-xs text-slate-400">Tiến trình</p>
+                            <p className="text-sm font-bold text-white mt-0.5">{wf.current_step}/{wf.total_steps} Cấp</p>
+                          </div>
+                          <Icon name={isExpanded ? 'ChevronUp' : 'ChevronDown'} size={18} className="text-slate-500" />
+                        </div>
+                      </div>
+
+                      {/* Detailed timeline expanded */}
+                      {isExpanded && (
+                        <div className="border-t border-surface-border bg-surface-elevated/10 p-5 space-y-4">
+                          {/* Render details if leave request */}
+                          {wf.details && wf.type === 'leave_request' && (
+                            <div className="p-3 bg-brand/10 border border-brand/20 rounded-xl text-xs space-y-1">
+                              <p className="text-brand-light font-bold">Chi tiết đơn nghỉ phép:</p>
+                              <p>Loại phép: <strong>{wf.details.leave_type}</strong></p>
+                              <p>Thời gian: <strong>{wf.details.start_date}</strong> đến <strong>{wf.details.end_date}</strong> ({wf.details.total_days} ngày)</p>
+                              <p>Lý do: <em>"{wf.details.reason}"</em></p>
+                            </div>
+                          )}
+
+                          {/* Render details if payout */}
+                          {wf.details && wf.type === 'payout_approval' && (
+                            <div className="p-3 bg-brand/10 border border-brand/20 rounded-xl text-xs space-y-1">
+                              <p className="text-brand-light font-bold">Chi tiết thanh toán hoa hồng:</p>
+                              <p>Doanh thu đối tác trực tiếp: <strong>{new Intl.NumberFormat('vi-VN').format(wf.details.gross_revenue)}đ</strong></p>
+                              <p>Hoa hồng chênh lệch thụ động (L2): <strong>{new Intl.NumberFormat('vi-VN').format(wf.details.team_bonus)}đ</strong></p>
+                              <p>Tổng tiền thanh toán: <strong className="text-emerald-400 text-sm">{new Intl.NumberFormat('vi-VN').format(wf.details.net_payable)}đ</strong></p>
+                            </div>
+                          )}
+
+                          <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tiến trình phê duyệt đa cấp:</h5>
+                          
+                          <div className="space-y-2.5">
+                            {wf.steps.map((s, sIdx) => {
+                              const isStepPending = s.status === 'pending';
+                              const isStepApproved = s.status === 'approved';
+                              const isStepWaiting = s.status === 'waiting';
+                              const isStepRejected = s.status === 'rejected';
+
+                              let borderCls = 'border-slate-800 bg-slate-900/30';
+                              let badge = <span className="badge badge-neutral">Chưa đến lượt</span>;
+                              
+                              if (isStepPending) {
+                                borderCls = 'border-amber-500/30 bg-amber-500/5';
+                                badge = <span className="badge badge-warning">Đang chờ duyệt</span>;
+                              } else if (isStepApproved) {
+                                borderCls = 'border-emerald-500/30 bg-emerald-500/5';
+                                badge = <span className="badge badge-success">✓ Đã thông qua</span>;
+                              } else if (isStepRejected) {
+                                borderCls = 'border-red-500/30 bg-red-500/5';
+                                badge = <span className="badge badge-danger">✗ Bị từ chối</span>;
+                              }
+
+                              return (
+                                <div key={sIdx} className={`p-3 border rounded-xl flex items-start justify-between gap-4 ${borderCls}`}>
+                                  <div className="flex gap-3">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${isStepApproved ? 'bg-emerald-500 text-white' : isStepPending ? 'bg-amber-500 text-white' : 'bg-slate-700 text-slate-500'}`}>
+                                      {s.step}
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-bold text-white">{s.name}</p>
+                                      <p className="text-[10px] text-slate-500 capitalize">Phê duyệt bởi vai trò: {s.role.replace('_', ' ')}</p>
+                                      {s.acted_at && <p className="text-[10px] text-slate-400 font-mono mt-0.5">{new Date(s.acted_at).toLocaleString('vi-VN')}</p>}
+                                      {s.note && <p className="text-xs text-slate-400 italic mt-1 font-mono">"{s.note}"</p>}
+                                    </div>
+                                  </div>
+                                  {badge}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Action button if currently pending for the logged in user */}
+                          {hasApprovalRight(wf) && (wf.status === 'pending' || wf.status === 'in_progress') && (
+                            <button onClick={() => setActiveWf(wf)} className="btn btn-primary w-full justify-center">
+                              <Icon name="CheckCircle" /> Xử lý và phê duyệt đơn này
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Action modal popup */}
+            {activeWf && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="glass-card w-full max-w-md p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="font-bold text-white text-base">Phê duyệt yêu cầu</h4>
+                    <button onClick={() => setActiveWf(null)} className="btn-ghost p-1 rounded-lg"><Icon name="X" /></button>
+                  </div>
+                  
+                  <div className="p-3.5 bg-surface-elevated/50 border border-surface-border rounded-xl text-xs mb-4">
+                    <p className="font-bold text-white text-sm truncate">{activeWf.title}</p>
+                    <p className="text-slate-500 mt-1">Người yêu cầu: {activeWf.requester_name}</p>
+                  </div>
+
+                  <form onSubmit={handleActionSubmit} className="space-y-4">
+                    <div>
+                      <label className="label">Hành động phê duyệt</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: 'approve', label: 'Thông qua', cls: 'btn-success bg-emerald-600' },
+                          { id: 'reject', label: 'Từ chối', cls: 'btn-danger bg-red-600' },
+                          { id: 'info', label: 'Cần làm rõ', cls: 'btn-secondary' }
+                        ].map(act => (
+                          <button key={act.id} type="button" onClick={() => setActionForm({...actionForm, action: act.id})} className={`btn btn-sm justify-center ${actionForm.action === act.id ? act.cls : 'btn-secondary opacity-60'}`}>
+                            {act.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="label">Ý kiến đóng góp (Bắt buộc nếu Từ chối/Yêu cầu làm rõ)</label>
+                      <textarea value={actionForm.note} onChange={e => setActionForm({...actionForm, note: e.target.value})} className="input h-20 resize-none" placeholder="Nhập ý kiến phê duyệt hoặc lý do..." required={actionForm.action !== 'approve'}></textarea>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button type="button" onClick={() => setActiveWf(null)} className="btn btn-secondary flex-1 justify-center">Hủy</button>
+                      <button type="submit" disabled={actionLoading} className="btn btn-primary flex-1 justify-center">
+                        {actionLoading ? <Icon name="Loader2" size={14} className="animate-spin" /> : null}
+                        Xác nhận xử lý
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // REPORTS & ANALYTICS PAGE
+      const ReportsPage = () => {
+        const [period, setPeriod] = useState('30d');
+        const [employees] = useState(() => db.get("employees") || []);
+        const [timesheets] = useState(() => db.get("timesheets") || []);
+        const [affiliates] = useState(() => db.get("affiliates") || []);
+
+        const totalClicks = affiliates.reduce((s,a) => s + a.total_clicks, 0);
+        const totalConversions = affiliates.reduce((s,a) => s + a.total_conversions, 0);
+        const avgCR = totalClicks > 0 ? (totalConversions/totalClicks * 100).toFixed(2) : 0;
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Header filters */}
+            <div className="flex justify-between items-center">
+              <div className="flex gap-1 p-1 bg-surface-card rounded-xl border border-surface-border">
+                {['7d', '30d', '90d'].map(p => (
+                  <button key={p} onClick={() => setPeriod(p)} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${period === p ? 'bg-brand text-white' : 'text-slate-400 hover:text-slate-200'}`}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-slate-500 font-medium">Báo cáo cập nhật theo chu kỳ</p>
+            </div>
+
+            {/* Stats row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { label: 'Tổng số Clicks ghi nhận', val: totalClicks.toLocaleString(), icon: 'Activity', color: 'text-brand-light' },
+                { label: 'Số đơn thành công (Conversions)', val: totalConversions.toLocaleString(), icon: 'TrendingUp', color: 'text-emerald-400' },
+                { label: 'Tỷ lệ chuyển đổi trung bình (Avg CR)', val: `${avgCR}%`, icon: 'BarChart3', color: 'text-amber-400' }
+              ].map((s, idx) => (
+                <div key={idx} className="card p-5 flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-brand/10 border border-brand/20">
+                    <Icon name={s.icon} size={20} className={s.color} />
+                  </div>
+                  <div>
+                    <p className={`text-2xl font-black ${s.color}`}>{s.val}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Graphs grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              {/* Click CR line chart */}
+              <div className="card p-5">
+                <h4 className="font-bold text-white text-sm mb-1">Clicks & Conversion Rate (CR)</h4>
+                <p className="text-xs text-slate-500 mb-4">Mô phỏng dữ liệu clicks và tỷ lệ chuyển đổi hàng ngày</p>
+                <div className="h-56 flex items-center justify-center">
+                  <AreaLineChart period={period} />
+                </div>
+              </div>
+
+              {/* Conversions bar chart */}
+              <div className="card p-5">
+                <h4 className="font-bold text-white text-sm mb-1">Số đơn hàng thành công theo ngày</h4>
+                <p className="text-xs text-slate-500 mb-4">Dữ liệu ghi nhận thông qua Universal Postback API</p>
+                <div className="h-56 flex items-center justify-center">
+                  <ConversionsBarChart period={period} />
+                </div>
+              </div>
+
+              {/* Attendance Stacked Bar chart */}
+              <div className="card p-5">
+                <h4 className="font-bold text-white text-sm mb-1">Thống kê ngày công nhân viên</h4>
+                <p className="text-xs text-slate-500 mb-4">Tỷ lệ đi làm đúng giờ, đi muộn và vắng mặt</p>
+                <div className="h-56 flex items-center justify-center">
+                  <AttendanceStackedChart employees={employees} timesheets={timesheets} />
+                </div>
+              </div>
+
+              {/* Top Affiliates rank chart */}
+              <div className="card p-5">
+                <h4 className="font-bold text-white text-sm mb-1">Xếp hạng đối tác liên kết cao nhất</h4>
+                <p className="text-xs text-slate-500 mb-4">So sánh tương quan giữa doanh thu (M) và hoa hồng được hưởng (M)</p>
+                <div className="h-56 flex items-center justify-center">
+                  <TopAffiliateRevenueChart affiliates={affiliates} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // INTEGRATION HUB PAGE
+      const IntegrationPage = () => {
+        const [integrations, setIntegrations] = useState(() => db.get("integrations") || []);
+        const [syncingId, setSyncingId] = useState(null);
+
+        const handleSync = (id) => {
+          setSyncingId(id);
+          setTimeout(() => {
+            const updated = integrations.map(int => {
+              if (int.id === id) {
+                return {
+                  ...int,
+                  status: 'active',
+                  last_sync: new Date().toISOString()
+                };
+              }
+              return int;
+            });
+            setIntegrations(updated);
+            db.set("integrations", updated);
+            setSyncingId(null);
+            alert("Đồng bộ dữ liệu thành công!");
+          }, 1500);
+        };
+
+        const typeLabels = {
+          payment_gateway: 'Cổng thanh toán',
+          tracking_network: 'Tracking Network',
+          attendance_device: 'Thiết bị chấm công',
+          webhook: 'Webhook'
+        };
+
+        const typeConfigs = {
+          payment_gateway: { icon: 'CreditCard', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+          tracking_network: { icon: 'Network', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+          attendance_device: { icon: 'Fingerprint', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+          webhook: { icon: 'Webhook', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' }
+        };
+
+        return (
+          <div className="space-y-6 animate-fade-in">
+            {/* Quick URL endpoint references */}
+            <div className="card p-5 bg-gradient-to-r from-brand/10 to-blue-500/10 border-brand/20">
+              <div className="flex gap-4">
+                <div className="p-3 rounded-xl bg-brand/20 border border-brand/30 h-fit">
+                  <Icon name="Zap" size={20} className="text-brand-light" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-sm md:text-base mb-2">Universal Postback & API Endpoints</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                    {[
+                      { label: 'Postback Tracking URL', url: 'POST /api/affiliates/postback', note: 'Params: affiliate_code, click_id, revenue' },
+                      { label: 'Đồng bộ thiết bị chấm công ZKTeco', url: 'POST /api/attendance/sync-device', note: 'Header: X-Device-ID: ZK-9988' }
+                    ].map((ep, idx) => (
+                      <div key={idx} className="p-3 bg-surface-card rounded-xl border border-surface-border">
+                        <p className="text-xs font-bold text-slate-300">{ep.label}</p>
+                        <code className="text-[10px] text-brand-light font-mono block mt-1">{ep.url}</code>
+                        <p className="text-[9px] text-slate-500 mt-1">{ep.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Integrations grid list */}
+            <div>
+              <h3 className="font-semibold text-slate-300 text-sm mb-4">Các cổng dịch vụ đã kết nối</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {integrations.map(int => {
+                  const tc = typeConfigs[int.type] || typeConfigs.webhook;
+                  const isSyncing = syncingId === int.id;
+
+                  return (
+                    <div key={int.id} className="card p-4 flex flex-col justify-between hover:border-brand/35 transition-all">
+                      <div>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2.5 rounded-xl border ${tc.bg}`}>
+                              <Icon name={tc.icon} size={18} className={tc.color} />
+                            </div>
+                            <div>
+                              <p className="font-bold text-white text-sm">{int.name}</p>
+                              <p className="text-[10px] text-slate-500">{typeLabels[int.type]}</p>
+                            </div>
+                          </div>
+                          <span className={`badge ${int.status === 'active' ? 'badge-success' : 'badge-neutral'} text-[9px]`}>
+                            {int.status === 'active' ? 'Hoạt động' : 'Tắt'}
+                          </span>
+                        </div>
+
+                        <div className="my-4 text-xs text-slate-400">
+                          <p>Lần đồng bộ cuối: <strong className="text-slate-300">{int.last_sync ? new Date(int.last_sync).toLocaleString('vi-VN') : 'Chưa đồng bộ'}</strong></p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button onClick={() => handleSync(int.id)} disabled={isSyncing || int.status !== 'active'} className="btn btn-primary btn-sm flex-1 justify-center">
+                          {isSyncing ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="RefreshCw" />}
+                          {isSyncing ? 'Đồng bộ...' : 'Đồng bộ ngay'}
+                        </button>
+                        <button className="btn btn-secondary btn-sm"><Icon name="Settings" size={14} /></button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // RBAC CONFIG MATRIX PAGE (System)
+      const RbacPage = () => {
+        const [permissions, setPermissions] = useState(() => db.get("permissions") || {});
+        
+        const roleLabels = {
+          admin: 'Admin / CEO',
+          hr: 'Phòng Nhân Sự',
+          affiliate_manager: 'Affiliate Manager',
+          accountant: 'Kế Toán Trưởng',
+          employee: 'Nhân Viên'
+        };
+
+        const moduleLabels = {
+          dashboard: 'Tổng quan Dashboard',
+          attendance: 'Chấm Công & GPS',
+          employees: 'Hồ Sơ Nhân Viên',
+          affiliates: 'Danh Sách Đối Tác Affiliate',
+          commission: 'Cấu Hình & Tính Hoa Hồng',
+          payouts: 'Duyệt Chi Trả Hoa Hồng',
+          workflow: 'Hàng Chờ Duyệt Workflow',
+          reports: 'Báo Cáo Analytics',
+          integration: 'Cổng Integration Hub',
+          rbac: 'Phân Quyền RBAC Matrix'
+        };
+
+        const handlePermissionToggle = (role, module) => {
+          if (role === 'admin') return; // Admin has full access always
+          
+          const rolePerms = permissions[role] || [];
+          let updatedPerms = [];
+          
+          if (rolePerms.includes(module)) {
+            updatedPerms = rolePerms.filter(m => m !== module);
+          } else {
+            updatedPerms = [...rolePerms, module];
+          }
+
+          const updated = {
+            ...permissions,
+            [role]: updatedPerms
+          };
+
+          setPermissions(updated);
+          db.set("permissions", updated);
+        };
+
+        return (
+          <div className="card p-6 animate-fade-in">
+            <h3 className="font-bold text-white text-base mb-2 flex items-center gap-2"><Icon name="Shield" className="text-brand" /> Cấu hình ma trận phân quyền hệ thống (RBAC)</h3>
+            <p className="text-xs text-slate-500 mb-6">Tích chọn các ô để bật/tắt quyền truy cập module của từng nhóm chức danh (Admin giữ toàn quyền)</p>
+            
+            <div className="table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr className="border-b border-surface-border text-xs uppercase text-slate-500">
+                    <th className="py-3 px-4">Module hệ thống</th>
+                    {Object.entries(roleLabels).map(([role, label]) => (
+                      <th key={role} className="py-3 px-4 text-center">{label}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(moduleLabels).map(([module, modLabel]) => (
+                    <tr key={module} className="border-b border-surface-border/40 hover:bg-slate-800/30">
+                      <td className="py-3.5 px-4 text-sm font-semibold text-slate-200">{modLabel}</td>
+                      {Object.keys(roleLabels).map(role => {
+                        const hasAccess = role === 'admin' || (permissions[role] && permissions[role].includes(module));
+                        return (
+                          <td key={role} className="py-3.5 px-4 text-center">
+                            <input
+                              type="checkbox"
+                              checked={hasAccess}
+                              disabled={role === 'admin'}
+                              onChange={() => handlePermissionToggle(role, module)}
+                              className="w-4 h-4 rounded border-slate-700 text-brand bg-slate-800 focus:ring-brand focus:ring-offset-slate-900 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+              ⚠️ **Lưu ý**: Việc thay đổi ma trận phân quyền này sẽ ảnh hưởng trực tiếp đến thanh điều hướng (Sidebar) và quyền truy cập các màn hình của người dùng ngay lập tức mà không cần tải lại trang.
+            </div>
+          </div>
+        );
+      };
+
+      // ────────────────────────────────────────────────────────
+      // MAIN APP ROUTER & WRAPPER
+      // ────────────────────────────────────────────────────────
+      const App = () => {
+        const [user, setUser] = useState(() => {
+          const cached = localStorage.getItem("gc_active_user");
+          return cached ? JSON.parse(cached) : null;
+        });
+
+        const [currentTab, setCurrentTab] = useState(() => {
+          const hash = window.location.hash.replace('#/', '');
+          return hash || 'dashboard';
+        });
+
+        const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+        // Sync tab route with window hash
+        useEffect(() => {
+          const handleHashChange = () => {
+            const hash = window.location.hash.replace('#/', '');
+            setCurrentTab(hash || 'dashboard');
+          };
+          window.addEventListener('hashchange', handleHashChange);
+          return () => window.removeEventListener('hashchange', handleHashChange);
+        }, []);
+
+        const navigateTo = (tab) => {
+          window.location.hash = `#/${tab}`;
+        };
+
+        const handleLogin = (employee) => {
+          setUser(employee);
+          localStorage.setItem("gc_active_user", JSON.stringify(employee));
+          navigateTo('dashboard');
+        };
+
+        const handleLogout = () => {
+          setUser(null);
+          localStorage.removeItem("gc_active_user");
+          window.location.hash = '#/login';
+        };
+
+        const handleRoleChange = (role) => {
+          const employees = db.get("employees") || [];
+          // Find employee with this role or update active user role simulation
+          const updated = {
+            ...user,
+            role: role,
+            full_name: role === 'admin' ? 'Nguyễn Văn Admin' : role === 'hr' ? 'Trần Thị HR' : role === 'affiliate_manager' ? 'Lê Minh AM' : role === 'accountant' ? 'Phạm Kế Toán' : 'Hoàng Văn B'
+          };
+          setUser(updated);
+          localStorage.setItem("gc_active_user", JSON.stringify(updated));
+        };
+
+        // If not logged in, force Login page
+        if (!user) {
+          return <LoginPage onLogin={handleLogin} />;
+        }
+
+        // Render appropriate tab page
+        const renderContent = () => {
+          switch (currentTab) {
+            case 'dashboard':
+              return <DashboardPage user={user} onNavigate={navigateTo} />;
+            case 'attendance':
+              return <AttendancePage user={user} />;
+            case 'employees':
+              return <EmployeesPage />;
+            case 'affiliates':
+              return <AffiliatePage user={user} />;
+            case 'workflow':
+              return <WorkflowPage user={user} />;
+            case 'reports':
+              return <ReportsPage />;
+            case 'integration':
+              return <IntegrationPage />;
+            case 'rbac':
+              return <RbacPage />;
+            default:
+              return <DashboardPage user={user} onNavigate={navigateTo} />;
+          }
+        };
+
+        const tabTitles = {
+          dashboard: 'Tổng quan Dashboard',
+          attendance: 'Chấm Công & GPS',
+          employees: 'Sơ đồ tổ chức & Nhân sự',
+          affiliates: 'Quản Lý Đối Tác Affiliate',
+          workflow: 'Workflow & Phê Duyệt Đơn',
+          reports: 'Báo Cáo & Phân Tích Metrics',
+          integration: 'API Integration Hub',
+          rbac: 'Phân Quyền Hệ Thống (RBAC)'
+        };
+
+        return (
+          <div className="flex h-screen overflow-hidden bg-surface">
+            {/* Sidebar Left */}
+            <Sidebar
+              currentTab={currentTab}
+              onNavigate={navigateTo}
+              collapsed={sidebarCollapsed}
+              onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+              user={user}
+              onLogout={handleLogout}
+            />
+
+            {/* Main content right */}
+            <div className={`flex flex-col flex-1 min-w-0 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+              <Header
+                title={tabTitles[currentTab] || 'GoClick ERP'}
+                subtitle={currentTab === 'dashboard' ? `Chào mừng trở lại, ${user.full_name} 👋` : 'Hệ thống ERP phiên bản trực quan'}
+                user={user}
+                onRoleChange={handleRoleChange}
+                onLogout={handleLogout}
+              />
+              <main className="flex-1 overflow-y-auto p-6">
+                {renderContent()}
+              </main>
+            </div>
+          </div>
+        );
+      };
+
+      // RENDER APP ROOT
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
