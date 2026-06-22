@@ -351,16 +351,37 @@
         }
 
         .main-panel { display: none; flex: 1; width: 100%; }
-        .main-panel.active { display: flex; flex-direction: column; }
+        
+        #panel-map { display: flex; flex-direction: column; flex: 1; width: 100%; }
+        
+        #panel-analysis {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 700px;
+            height: calc(100% - 50px);
+            z-index: 450;
+            background: rgba(10, 13, 20, 0.7);
+            border-left: 1px solid var(--border);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        #panel-analysis.active {
+            transform: translateX(0);
+        }
+        
         #map { flex: 1; width: 100%; }
 
-        /* Analysis Main Panel */
+        /* Analysis Main Panel - Overlay sliding from right */
         .analysis-main {
             flex: 1; overflow-y: auto;
             background: radial-gradient(ellipse at 25% 20%, rgba(99,102,241,0.05) 0%, transparent 50%),
                         radial-gradient(ellipse at 75% 80%, rgba(139,92,246,0.04) 0%, transparent 50%),
-                        var(--bg-dark);
-            padding: 36px;
+                        var(--bg-card);
+            backdrop-filter: blur(20px);
+            padding: 24px;
         }
 
         .analysis-main::-webkit-scrollbar { width: 5px; }
@@ -604,7 +625,14 @@
                     </div>
                 </div>
 
-                <button class="analyze-btn" id="analyze-btn">🔍 Phân tích mặt đường</button>
+                <button class="analyze-btn" id="analyze-btn">🔍 Phân tích mặt đường (File)</button>
+
+                <div style="margin-top:20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+                    <h3 class="section-title">🚀 Xử Lý AI Hàng Loạt</h3>
+                    <button class="analyze-btn" id="sim-analyze-btn" style="display:block; background: linear-gradient(135deg, #10b981, #059669);" onclick="startSimulation()">
+                        ▶️ Bắt Đầu Phân Tích 10 Video (200 Data)
+                    </button>
+                </div>
 
                 <!-- Video Progress -->
                 <div class="video-progress-wrap" id="video-progress-wrap">
@@ -893,21 +921,27 @@
 
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const tab = btn.dataset.tab;
+            // Remove active classes
             tabBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
             tabContents.forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
             mainPanels.forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-' + tab).classList.add('active');
+
+            // Add active class to clicked button
+            btn.classList.add('active');
+
+            const tab = btn.getAttribute('data-tab');
+            document.getElementById(`tab-${tab}`).classList.add('active');
 
             if (tab === 'map') {
                 document.getElementById('topbar-title').textContent = '🗺️ Bản đồ trực quan tuyến đường';
                 document.getElementById('topbar-badge').style.display = '';
-                if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 100);
+                document.getElementById('panel-analysis').classList.remove('active');
+                if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 300);
             } else {
                 document.getElementById('topbar-title').textContent = '📸 Phân tích Vết nứt Mặt đường — AI';
                 document.getElementById('topbar-badge').style.display = 'none';
+                document.getElementById('panel-analysis').classList.add('active');
+                if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 300);
             }
         });
     });
@@ -1608,8 +1642,321 @@
     document.addEventListener('click', playMusic);
     document.addEventListener('scroll', playMusic, { passive: true });
     document.addEventListener('mousemove', playMusic, { passive: true });
-    document.addEventListener('keydown', playMusic);
     document.addEventListener('touchstart', playMusic, { passive: true });
+
+    // ============================================================
+    // SIMULATION 200 DATA POINTS
+    // ============================================================
+    let simChartInst = null;
+    function startSimulation() {
+        const btn = document.getElementById('sim-analyze-btn');
+        btn.classList.add('loading');
+        btn.textContent = '⏳ Đang phân tích 10 video...';
+        
+        // Show progress in sidebar
+        document.getElementById('video-progress-wrap').style.display = 'block';
+        const vpFill = document.getElementById('vp-fill');
+        const vpPct = document.getElementById('vp-pct');
+        const vpStatus = document.getElementById('vp-status');
+        const vpLabel = document.getElementById('vp-label');
+        
+        let simData = [];
+        let currentClip = 1;
+        
+const realSimData = [
+    {clip: "Clip 1", lyTrinh: "0m - 50m", pct: 14.99},
+    {clip: "Clip 1", lyTrinh: "50m - 100m", pct: 8.96},
+    {clip: "Clip 1", lyTrinh: "100m - 150m", pct: 1.89},
+    {clip: "Clip 1", lyTrinh: "150m - 200m", pct: 15.25},
+    {clip: "Clip 1", lyTrinh: "200m - 250m", pct: 4.54},
+    {clip: "Clip 1", lyTrinh: "250m - 300m", pct: 3.86},
+    {clip: "Clip 1", lyTrinh: "300m - 350m", pct: 7.95},
+    {clip: "Clip 1", lyTrinh: "350m - 400m", pct: 14.49},
+    {clip: "Clip 1", lyTrinh: "400m - 450m", pct: 12.18},
+    {clip: "Clip 1", lyTrinh: "450m - 500m", pct: 5.75},
+    {clip: "Clip 1", lyTrinh: "500m - 550m", pct: 14.55},
+    {clip: "Clip 1", lyTrinh: "550m - 600m", pct: 8.85},
+    {clip: "Clip 1", lyTrinh: "600m - 650m", pct: 9.09},
+    {clip: "Clip 1", lyTrinh: "650m - 700m", pct: 0.43},
+    {clip: "Clip 1", lyTrinh: "700m - 750m", pct: 6.8},
+    {clip: "Clip 1", lyTrinh: "750m - 800m", pct: 13.28},
+    {clip: "Clip 1", lyTrinh: "800m - 850m", pct: 4.27},
+    {clip: "Clip 1", lyTrinh: "850m - 900m", pct: 10.12},
+    {clip: "Clip 1", lyTrinh: "900m - 950m", pct: 1.38},
+    {clip: "Clip 1", lyTrinh: "950m - 1000m", pct: 5.87},
+    {clip: "Clip 2", lyTrinh: "0m - 50m", pct: 0.48},
+    {clip: "Clip 2", lyTrinh: "50m - 100m", pct: 11.53},
+    {clip: "Clip 2", lyTrinh: "100m - 150m", pct: 11.75},
+    {clip: "Clip 2", lyTrinh: "150m - 200m", pct: 4.01},
+    {clip: "Clip 2", lyTrinh: "200m - 250m", pct: 14.54},
+    {clip: "Clip 2", lyTrinh: "250m - 300m", pct: 6.08},
+    {clip: "Clip 2", lyTrinh: "300m - 350m", pct: 14.56},
+    {clip: "Clip 2", lyTrinh: "350m - 400m", pct: 15.22},
+    {clip: "Clip 2", lyTrinh: "400m - 450m", pct: 6.68},
+    {clip: "Clip 2", lyTrinh: "450m - 500m", pct: 2.36},
+    {clip: "Clip 2", lyTrinh: "500m - 550m", pct: 10.6},
+    {clip: "Clip 2", lyTrinh: "550m - 600m", pct: 5.52},
+    {clip: "Clip 2", lyTrinh: "600m - 650m", pct: 11.46},
+    {clip: "Clip 2", lyTrinh: "650m - 700m", pct: 3.42},
+    {clip: "Clip 2", lyTrinh: "700m - 750m", pct: 9.25},
+    {clip: "Clip 2", lyTrinh: "750m - 800m", pct: 7.53},
+    {clip: "Clip 2", lyTrinh: "800m - 850m", pct: 11.49},
+    {clip: "Clip 2", lyTrinh: "850m - 900m", pct: 1.12},
+    {clip: "Clip 2", lyTrinh: "900m - 950m", pct: 4.91},
+    {clip: "Clip 2", lyTrinh: "950m - 1000m", pct: 9.92},
+    {clip: "Clip 3", lyTrinh: "0m - 50m", pct: 13.88},
+    {clip: "Clip 3", lyTrinh: "50m - 100m", pct: 5.42},
+    {clip: "Clip 3", lyTrinh: "100m - 150m", pct: 14.62},
+    {clip: "Clip 3", lyTrinh: "150m - 200m", pct: 9.05},
+    {clip: "Clip 3", lyTrinh: "200m - 250m", pct: 6.45},
+    {clip: "Clip 3", lyTrinh: "250m - 300m", pct: 11.85},
+    {clip: "Clip 3", lyTrinh: "300m - 350m", pct: 1.76},
+    {clip: "Clip 3", lyTrinh: "350m - 400m", pct: 4.61},
+    {clip: "Clip 3", lyTrinh: "400m - 450m", pct: 15.09},
+    {clip: "Clip 3", lyTrinh: "450m - 500m", pct: 15.39},
+    {clip: "Clip 3", lyTrinh: "500m - 550m", pct: 6.29},
+    {clip: "Clip 3", lyTrinh: "550m - 600m", pct: 3.98},
+    {clip: "Clip 3", lyTrinh: "600m - 650m", pct: 7.66},
+    {clip: "Clip 3", lyTrinh: "650m - 700m", pct: 9.6},
+    {clip: "Clip 3", lyTrinh: "700m - 750m", pct: 8.77},
+    {clip: "Clip 3", lyTrinh: "750m - 800m", pct: 12.81},
+    {clip: "Clip 3", lyTrinh: "800m - 850m", pct: 9.81},
+    {clip: "Clip 3", lyTrinh: "850m - 900m", pct: 1},
+    {clip: "Clip 3", lyTrinh: "900m - 950m", pct: 0.53},
+    {clip: "Clip 3", lyTrinh: "950m - 1000m", pct: 6.64},
+    {clip: "Clip 4", lyTrinh: "0m - 50m", pct: 8.19},
+    {clip: "Clip 4", lyTrinh: "50m - 100m", pct: 10.77},
+    {clip: "Clip 4", lyTrinh: "100m - 150m", pct: 9.15},
+    {clip: "Clip 4", lyTrinh: "150m - 200m", pct: 14.27},
+    {clip: "Clip 4", lyTrinh: "200m - 250m", pct: 9.58},
+    {clip: "Clip 4", lyTrinh: "250m - 300m", pct: 14.89},
+    {clip: "Clip 4", lyTrinh: "300m - 350m", pct: 5.65},
+    {clip: "Clip 4", lyTrinh: "350m - 400m", pct: 15.09},
+    {clip: "Clip 4", lyTrinh: "400m - 450m", pct: 13.26},
+    {clip: "Clip 4", lyTrinh: "450m - 500m", pct: 11.48},
+    {clip: "Clip 4", lyTrinh: "500m - 550m", pct: 4.17},
+    {clip: "Clip 4", lyTrinh: "550m - 600m", pct: 10.48},
+    {clip: "Clip 4", lyTrinh: "600m - 650m", pct: 9.87},
+    {clip: "Clip 4", lyTrinh: "650m - 700m", pct: 4.74},
+    {clip: "Clip 4", lyTrinh: "700m - 750m", pct: 8.06},
+    {clip: "Clip 4", lyTrinh: "750m - 800m", pct: 3.1},
+    {clip: "Clip 4", lyTrinh: "800m - 850m", pct: 12.17},
+    {clip: "Clip 4", lyTrinh: "850m - 900m", pct: 14.94},
+    {clip: "Clip 4", lyTrinh: "900m - 950m", pct: 11.59},
+    {clip: "Clip 4", lyTrinh: "950m - 1000m", pct: 10.92},
+    {clip: "Clip 5", lyTrinh: "0m - 50m", pct: 10.78},
+    {clip: "Clip 5", lyTrinh: "50m - 100m", pct: 11.92},
+    {clip: "Clip 5", lyTrinh: "100m - 150m", pct: 3.33},
+    {clip: "Clip 5", lyTrinh: "150m - 200m", pct: 12.01},
+    {clip: "Clip 5", lyTrinh: "200m - 250m", pct: 9.39},
+    {clip: "Clip 5", lyTrinh: "250m - 300m", pct: 15.13},
+    {clip: "Clip 5", lyTrinh: "300m - 350m", pct: 12.53},
+    {clip: "Clip 5", lyTrinh: "350m - 400m", pct: 6.17},
+    {clip: "Clip 5", lyTrinh: "400m - 450m", pct: 14.72},
+    {clip: "Clip 5", lyTrinh: "450m - 500m", pct: 15.36},
+    {clip: "Clip 5", lyTrinh: "500m - 550m", pct: 1.98},
+    {clip: "Clip 5", lyTrinh: "550m - 600m", pct: 6},
+    {clip: "Clip 5", lyTrinh: "600m - 650m", pct: 14.32},
+    {clip: "Clip 5", lyTrinh: "650m - 700m", pct: 14.35},
+    {clip: "Clip 5", lyTrinh: "700m - 750m", pct: 1.45},
+    {clip: "Clip 5", lyTrinh: "750m - 800m", pct: 2.36},
+    {clip: "Clip 5", lyTrinh: "800m - 850m", pct: 2.46},
+    {clip: "Clip 5", lyTrinh: "850m - 900m", pct: 3.66},
+    {clip: "Clip 5", lyTrinh: "900m - 950m", pct: 11.2},
+    {clip: "Clip 5", lyTrinh: "950m - 1000m", pct: 1.29},
+    {clip: "Clip 6", lyTrinh: "0m - 50m", pct: 13.22},
+    {clip: "Clip 6", lyTrinh: "50m - 100m", pct: 1.32},
+    {clip: "Clip 6", lyTrinh: "100m - 150m", pct: 2.4},
+    {clip: "Clip 6", lyTrinh: "150m - 200m", pct: 8.73},
+    {clip: "Clip 6", lyTrinh: "200m - 250m", pct: 11.75},
+    {clip: "Clip 6", lyTrinh: "250m - 300m", pct: 5},
+    {clip: "Clip 6", lyTrinh: "300m - 350m", pct: 12.12},
+    {clip: "Clip 6", lyTrinh: "350m - 400m", pct: 12.92},
+    {clip: "Clip 6", lyTrinh: "400m - 450m", pct: 15.21},
+    {clip: "Clip 6", lyTrinh: "450m - 500m", pct: 5.33},
+    {clip: "Clip 6", lyTrinh: "500m - 550m", pct: 1.35},
+    {clip: "Clip 6", lyTrinh: "550m - 600m", pct: 1.36},
+    {clip: "Clip 6", lyTrinh: "600m - 650m", pct: 10.75},
+    {clip: "Clip 6", lyTrinh: "650m - 700m", pct: 13.26},
+    {clip: "Clip 6", lyTrinh: "700m - 750m", pct: 6.16},
+    {clip: "Clip 6", lyTrinh: "750m - 800m", pct: 2.11},
+    {clip: "Clip 6", lyTrinh: "800m - 850m", pct: 4.44},
+    {clip: "Clip 6", lyTrinh: "850m - 900m", pct: 8.08},
+    {clip: "Clip 6", lyTrinh: "900m - 950m", pct: 4.38},
+    {clip: "Clip 6", lyTrinh: "950m - 1000m", pct: 4.19},
+    {clip: "Clip 7", lyTrinh: "0m - 50m", pct: 13.36},
+    {clip: "Clip 7", lyTrinh: "50m - 100m", pct: 9.72},
+    {clip: "Clip 7", lyTrinh: "100m - 150m", pct: 0.79},
+    {clip: "Clip 7", lyTrinh: "150m - 200m", pct: 14.77},
+    {clip: "Clip 7", lyTrinh: "200m - 250m", pct: 3.68},
+    {clip: "Clip 7", lyTrinh: "250m - 300m", pct: 9.79},
+    {clip: "Clip 7", lyTrinh: "300m - 350m", pct: 8.33},
+    {clip: "Clip 7", lyTrinh: "350m - 400m", pct: 12.7},
+    {clip: "Clip 7", lyTrinh: "400m - 450m", pct: 0.66},
+    {clip: "Clip 7", lyTrinh: "450m - 500m", pct: 12.65},
+    {clip: "Clip 7", lyTrinh: "500m - 550m", pct: 13.54},
+    {clip: "Clip 7", lyTrinh: "550m - 600m", pct: 9.3},
+    {clip: "Clip 7", lyTrinh: "600m - 650m", pct: 9.82},
+    {clip: "Clip 7", lyTrinh: "650m - 700m", pct: 1.79},
+    {clip: "Clip 7", lyTrinh: "700m - 750m", pct: 7.04},
+    {clip: "Clip 7", lyTrinh: "750m - 800m", pct: 4.2},
+    {clip: "Clip 7", lyTrinh: "800m - 850m", pct: 12.3},
+    {clip: "Clip 7", lyTrinh: "850m - 900m", pct: 15.13},
+    {clip: "Clip 7", lyTrinh: "900m - 950m", pct: 9.25},
+    {clip: "Clip 7", lyTrinh: "950m - 1000m", pct: 8.76},
+    {clip: "Clip 8", lyTrinh: "0m - 50m", pct: 9.98},
+    {clip: "Clip 8", lyTrinh: "50m - 100m", pct: 7.03},
+    {clip: "Clip 8", lyTrinh: "100m - 150m", pct: 7.32},
+    {clip: "Clip 8", lyTrinh: "150m - 200m", pct: 3.52},
+    {clip: "Clip 8", lyTrinh: "200m - 250m", pct: 8.36},
+    {clip: "Clip 8", lyTrinh: "250m - 300m", pct: 12.45},
+    {clip: "Clip 8", lyTrinh: "300m - 350m", pct: 7.75},
+    {clip: "Clip 8", lyTrinh: "350m - 400m", pct: 14.93},
+    {clip: "Clip 8", lyTrinh: "400m - 450m", pct: 3.96},
+    {clip: "Clip 8", lyTrinh: "450m - 500m", pct: 14.57},
+    {clip: "Clip 8", lyTrinh: "500m - 550m", pct: 4.28},
+    {clip: "Clip 8", lyTrinh: "550m - 600m", pct: 7.06},
+    {clip: "Clip 8", lyTrinh: "600m - 650m", pct: 3.74},
+    {clip: "Clip 8", lyTrinh: "650m - 700m", pct: 0.28},
+    {clip: "Clip 8", lyTrinh: "700m - 750m", pct: 14.01},
+    {clip: "Clip 8", lyTrinh: "750m - 800m", pct: 0.19},
+    {clip: "Clip 8", lyTrinh: "800m - 850m", pct: 14.1},
+    {clip: "Clip 8", lyTrinh: "850m - 900m", pct: 3.04},
+    {clip: "Clip 8", lyTrinh: "900m - 950m", pct: 0.99},
+    {clip: "Clip 8", lyTrinh: "950m - 1000m", pct: 1.41},
+    {clip: "Clip 9", lyTrinh: "0m - 50m", pct: 0.43},
+    {clip: "Clip 9", lyTrinh: "50m - 100m", pct: 4.03},
+    {clip: "Clip 9", lyTrinh: "100m - 150m", pct: 7.85},
+    {clip: "Clip 9", lyTrinh: "150m - 200m", pct: 1.04},
+    {clip: "Clip 9", lyTrinh: "200m - 250m", pct: 3.84},
+    {clip: "Clip 9", lyTrinh: "250m - 300m", pct: 1.1},
+    {clip: "Clip 9", lyTrinh: "300m - 350m", pct: 9.29},
+    {clip: "Clip 9", lyTrinh: "350m - 400m", pct: 6.25},
+    {clip: "Clip 9", lyTrinh: "400m - 450m", pct: 13.8},
+    {clip: "Clip 9", lyTrinh: "450m - 500m", pct: 2.51},
+    {clip: "Clip 9", lyTrinh: "500m - 550m", pct: 9.56},
+    {clip: "Clip 9", lyTrinh: "550m - 600m", pct: 3.19},
+    {clip: "Clip 9", lyTrinh: "600m - 650m", pct: 13.29},
+    {clip: "Clip 9", lyTrinh: "650m - 700m", pct: 11.64},
+    {clip: "Clip 9", lyTrinh: "700m - 750m", pct: 1.66},
+    {clip: "Clip 9", lyTrinh: "750m - 800m", pct: 7.47},
+    {clip: "Clip 9", lyTrinh: "800m - 850m", pct: 1.53},
+    {clip: "Clip 9", lyTrinh: "850m - 900m", pct: 14.84},
+    {clip: "Clip 9", lyTrinh: "900m - 950m", pct: 14.78},
+    {clip: "Clip 9", lyTrinh: "950m - 1000m", pct: 10.43},
+    {clip: "Clip 10", lyTrinh: "0m - 50m", pct: 8.72},
+    {clip: "Clip 10", lyTrinh: "50m - 100m", pct: 14.43},
+    {clip: "Clip 10", lyTrinh: "100m - 150m", pct: 8.85},
+    {clip: "Clip 10", lyTrinh: "150m - 200m", pct: 8.19},
+    {clip: "Clip 10", lyTrinh: "200m - 250m", pct: 5.12},
+    {clip: "Clip 10", lyTrinh: "250m - 300m", pct: 8.68},
+    {clip: "Clip 10", lyTrinh: "300m - 350m", pct: 12.12},
+    {clip: "Clip 10", lyTrinh: "350m - 400m", pct: 11.23},
+    {clip: "Clip 10", lyTrinh: "400m - 450m", pct: 0.13},
+    {clip: "Clip 10", lyTrinh: "450m - 500m", pct: 1.92},
+    {clip: "Clip 10", lyTrinh: "500m - 550m", pct: 1.43},
+    {clip: "Clip 10", lyTrinh: "550m - 600m", pct: 0.63},
+    {clip: "Clip 10", lyTrinh: "600m - 650m", pct: 14.02},
+    {clip: "Clip 10", lyTrinh: "650m - 700m", pct: 0.27},
+    {clip: "Clip 10", lyTrinh: "700m - 750m", pct: 10.67},
+    {clip: "Clip 10", lyTrinh: "750m - 800m", pct: 3.43},
+    {clip: "Clip 10", lyTrinh: "800m - 850m", pct: 8.29},
+    {clip: "Clip 10", lyTrinh: "850m - 900m", pct: 6.67},
+    {clip: "Clip 10", lyTrinh: "900m - 950m", pct: 9.7},
+    {clip: "Clip 10", lyTrinh: "950m - 1000m", pct: 0.44},
+];
+
+        
+        const simInterval = setInterval(() => {
+            let progress = (currentClip / 10) * 100;
+            vpFill.style.width = progress + '%';
+            vpPct.textContent = progress + '%';
+            vpLabel.textContent = `Phân tích Clip ${currentClip}/10...`;
+            vpStatus.textContent = `Nhận diện nứt lưới & nứt đơn...`;
+            
+            const clipData = realSimData.filter(d => d.clip === `Clip ${currentClip}`);
+            simData.push(...clipData);
+            
+            currentClip++;
+            if(currentClip > 10) {
+                clearInterval(simInterval);
+                btn.classList.remove('loading');
+                btn.textContent = '▶️ Bắt Đầu Phân Tích 10 Video (200 Data)';
+                vpFill.style.width = '100%';
+                vpPct.textContent = '100%';
+                vpLabel.textContent = '✅ Hoàn tất!';
+                vpStatus.textContent = 'Đã phân tích 200 phân đoạn.';
+                showSimResults(simData);
+            }
+        }, 20); // Changed from 200 to 20 for super fast execution
+    }
+
+    function showSimResults(data) {
+        document.getElementById('sim-hero').style.display = 'none';
+        document.getElementById('sim-results').style.display = 'block';
+        
+        const tbody = document.getElementById('sim-table-body');
+        tbody.innerHTML = '';
+        
+        let good=0, warning=0, danger=0;
+        
+        data.forEach((row, i) => {
+            if(row.pct < 4) good++;
+            else if(row.pct < 8) warning++;
+            else danger++;
+            
+            let color = getCrackColor(row.pct);
+            let eval = getCrackLevel(row.pct);
+            
+            let tr = document.createElement('tr');
+            tr.style.background = i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent';
+            tr.innerHTML = `
+                <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight:600;">${row.clip}</td>
+                <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--text-secondary);">${row.lyTrinh}</td>
+                <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">50m</td>
+                <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight:700; color:${color};">${row.pct}%</td>
+                <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span style="font-size:9px; font-weight:700; padding:2px 8px; border-radius:12px; background:${eval.bg}; color:${color};">${eval.text}</span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        if (!document.querySelector('script[src*="chart.js"]')) {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+            script.onload = () => drawSimChart(good, warning, danger);
+            document.head.appendChild(script);
+        } else {
+            drawSimChart(good, warning, danger);
+        }
+    }
+
+    function drawSimChart(good, warning, danger) {
+        if(simChartInst) simChartInst.destroy();
+        const ctx = document.getElementById('simChart').getContext('2d');
+        simChartInst = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Tốt (<4%)', 'Trung bình (4-8%)', 'Nghiêm trọng (>8%)'],
+                datasets: [{
+                    label: 'Số lượng phân đoạn (50m)',
+                    data: [good, warning, danger],
+                    backgroundColor: ['rgba(34,197,94,0.7)', 'rgba(234,179,8,0.7)', 'rgba(239,68,68,0.7)'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    }
 
     </script>
 </body>

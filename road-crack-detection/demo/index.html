@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phân Tích Vết Nứt Mặt Đường (Demo 200 Số Liệu)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.7);
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .info-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), #2dd4bf);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Loading Simulation */
+        .loading-container {
+            display: none;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #34d399);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Results Area */
+        .results-area {
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .results-area {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge.good { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge.warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .badge.danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .chart-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>Hệ Thống Phân Tích Vết Nứt Mặt Đường</h1>
+            <p>Mô phỏng xử lý tự động 10 clip video (1000m/clip), chia thành 200 phân đoạn 50m.</p>
+        </header>
+
+        <div class="card">
+            <div class="control-panel">
+                <div class="info-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">10</div>
+                        <div class="stat-label">Video Clips</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10,000</div>
+                        <div class="stat-label">Tổng Chiều Dài (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">200</div>
+                        <div class="stat-label">Phân Đoạn (50m)</div>
+                    </div>
+                </div>
+
+                <button id="startBtn" class="btn" onclick="startAnalysis()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    Bắt Đầu Phân Tích AI
+                </button>
+            </div>
+
+            <div id="loadingArea" class="loading-container">
+                <h3 id="loadingTitle" style="color: var(--text-primary); margin-bottom: 0.5rem;">Đang khởi tạo mô hình...</h3>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="loadingText" class="loading-text">Chuẩn bị đọc dữ liệu video mặt đường...</p>
+            </div>
+
+            <div id="resultsArea" class="results-area">
+                <div class="table-container">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Clip Số</th>
+                                <th>Lý Trình</th>
+                                <th>Chiều Dài</th>
+                                <th>Tỉ Lệ Nứt (%)</th>
+                                <th>Đánh Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-secondary); text-align: center;">Thống kê mức độ nứt</h3>
+                    <canvas id="crackChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const NUM_CLIPS = 10;
+        const SEGMENTS_PER_CLIP = 20;
+        const SEGMENT_LENGTH = 50;
+
+        let generatedData = [];
+        let chartInstance = null;
+
+        function startAnalysis() {
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('loadingArea').style.display = 'block';
+            document.getElementById('resultsArea').style.display = 'none';
+            
+            // Reset
+            generatedData = [];
+            document.getElementById('progressFill').style.width = '0%';
+            
+            simulateProcessing();
+        }
+
+        function simulateProcessing() {
+            let currentClip = 1;
+            const progressFill = document.getElementById('progressFill');
+            const loadingTitle = document.getElementById('loadingTitle');
+            const loadingText = document.getElementById('loadingText');
+
+            const interval = setInterval(() => {
+                const progress = (currentClip / NUM_CLIPS) * 100;
+                progressFill.style.width = `${progress}%`;
+                
+                loadingTitle.innerText = `Đang phân tích Video Clip ${currentClip}/${NUM_CLIPS}...`;
+                loadingText.innerText = `Trích xuất frame, nhận diện nứt lưới & nứt đơn, loại bỏ khe nối...`;
+
+                // Generate data for this clip
+                for(let i = 1; i <= SEGMENTS_PER_CLIP; i++) {
+                    const startM = (i - 1) * SEGMENT_LENGTH;
+                    const endM = i * SEGMENT_LENGTH;
+                    
+                    // Simulate crack percentage based on some random logic
+                    let crackPct = 0;
+                    const rand = Math.random();
+                    if(rand < 0.6) {
+                        crackPct = (Math.random() * 4); // 60% chance of < 4%
+                    } else if (rand < 0.9) {
+                        crackPct = 4 + (Math.random() * 6); // 30% chance 4-10%
+                    } else {
+                        crackPct = 10 + (Math.random() * 8); // 10% chance 10-18%
+                    }
+
+                    generatedData.push({
+                        clip: `Clip ${currentClip}`,
+                        lyTrinh: `${startM}m - ${endM}m`,
+                        chieuDai: 50,
+                        tiLeNut: parseFloat(crackPct.toFixed(2))
+                    });
+                }
+
+                currentClip++;
+
+                if (currentClip > NUM_CLIPS) {
+                    clearInterval(interval);
+                    setTimeout(showResults, 500);
+                }
+            }, 300); // 300ms per clip for simulation effect
+        }
+
+        function getEvaluation(pct) {
+            if (pct < 4) return { text: 'Tốt', class: 'good' };
+            if (pct < 8) return { text: 'Trung bình', class: 'warning' };
+            return { text: 'Nghiêm trọng', class: 'danger' };
+        }
+
+        function showResults() {
+            document.getElementById('loadingArea').style.display = 'none';
+            document.getElementById('resultsArea').style.display = 'grid';
+            
+            renderTable();
+            renderChart();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            // Add slight delay for rows animation
+            generatedData.forEach((row, index) => {
+                const evalInfo = getEvaluation(row.tiLeNut);
+                
+                const tr = document.createElement('tr');
+                tr.style.animation = `fadeInUp 0.3s ease-out ${Math.min(index * 0.02, 1)}s both`;
+                
+                tr.innerHTML = `
+                    <td style="font-weight: 500;">${row.clip}</td>
+                    <td style="color: var(--text-secondary);">${row.lyTrinh}</td>
+                    <td>${row.chieuDai}m</td>
+                    <td style="font-weight: 600; color: ${
+                        row.tiLeNut >= 8 ? 'var(--danger-color)' : 
+                        row.tiLeNut >= 4 ? 'var(--warning-color)' : 'var(--success-color)'
+                    }">${row.tiLeNut}%</td>
+                    <td><span class="badge ${evalInfo.class}">${evalInfo.text}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('crackChart').getContext('2d');
+            
+            // Calculate stats
+            let good = 0, warning = 0, danger = 0;
+            generatedData.forEach(row => {
+                if (row.tiLeNut < 4) good++;
+                else if (row.tiLeNut < 8) warning++;
+                else danger++;
+            });
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tốt (< 4%)', 'Trung bình (4-8%)', 'Nghiêm trọng (> 8%)'],
+                    datasets: [{
+                        data: [good, warning, danger],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: 'rgba(30, 41, 59, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#f8fafc',
+                                padding: 20,
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 13
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
